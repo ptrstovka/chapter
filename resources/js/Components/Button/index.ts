@@ -1,20 +1,22 @@
 import { type VariantProps, cva } from 'class-variance-authority'
-import type { Component } from 'vue'
+import type { PrimitiveProps } from 'radix-vue'
+import type { Component, HTMLAttributes } from 'vue'
 
 export { default as Button } from './Button.vue'
-export { default as ActionButton } from './ActionButton.vue'
 export { default as LinkButton } from './LinkButton.vue'
 
-export interface ButtonProps {
+export interface ButtonProps extends PrimitiveProps {
   as?: string | Component
   variant?: NonNullable<Parameters<typeof buttonVariants>[0]>['variant']
   size?: NonNullable<Parameters<typeof buttonVariants>[0]>['size']
+  class?: HTMLAttributes['class']
   processing?: boolean
   recentlySuccessful?: boolean
   recentlySuccessfulLabel?: string | undefined
   label?: string
   icon?: Component
   contentClass?: string
+  plain?: boolean
 }
 
 export const buttonVariants = cva(

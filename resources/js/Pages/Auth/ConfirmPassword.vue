@@ -14,7 +14,7 @@
           <Input v-model="form.password" autocomplete="current-password" type="password" required id="password" />
         </FormControl>
 
-        <ActionButton :processing="form.processing">Confirm</ActionButton>
+        <Button :processing="form.processing">Confirm</Button>
       </form>
     </div>
   </GuestLayout>
@@ -25,7 +25,7 @@ import { useForm, Head } from '@inertiajs/vue3'
 import { GuestLayout } from "@/Layouts";
 import { FormControl} from "@/Components/Form";
 import { Input } from '@/Components/Input';
-import { ActionButton } from "@/Components/Button";
+import { Button } from "@/Components/Button";
 
 const form = useForm({
   password: ''

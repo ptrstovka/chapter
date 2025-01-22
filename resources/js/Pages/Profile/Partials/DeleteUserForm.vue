@@ -8,7 +8,7 @@
       </CardDescription>
     </CardHeader>
     <CardContent>
-      <ActionButton @click="confirmModal.activate" variant="destructive">Delete Account</ActionButton>
+      <Button @click="confirmModal.activate" variant="destructive">Delete Account</Button>
 
       <AlertDialog :control="confirmModal">
         <AlertDialogContent>
@@ -33,7 +33,7 @@
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
 
-            <ActionButton @click="deleteUser" variant="destructive" :processing="form.processing">Delete Account</ActionButton>
+            <Button @click="deleteUser" variant="destructive" :processing="form.processing">Delete Account</Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { ActionButton } from '@/Components/Button'
+import { Button } from '@/Components/Button'
 import { Card, CardContent, CardTitle, CardHeader, CardDescription } from '@/Components/Card'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel  } from '@/Components/AlertDialog'
 import { FormControl } from "@/Components/Form"

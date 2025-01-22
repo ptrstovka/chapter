@@ -22,7 +22,7 @@
           <Input v-model="form.password_confirmation" autocomplete="new-password" type="password" required id="password_confirmation" />
         </FormControl>
 
-        <ActionButton :processing="form.processing">Reset Password</ActionButton>
+        <Button :processing="form.processing">Reset Password</Button>
       </form>
     </div>
   </GuestLayout>
@@ -33,7 +33,7 @@ import { useForm, Head } from '@inertiajs/vue3'
 import { GuestLayout } from "@/Layouts";
 import { FormControl } from "@/Components/Form";
 import { Input } from "@/Components/Input";
-import { ActionButton } from "@/Components/Button";
+import { Button } from "@/Components/Button";
 
 const props = defineProps<{
   email: string;

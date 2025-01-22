@@ -2,9 +2,9 @@
   <Head title="Register" />
 
   <GuestLayout>
-    <LinkButton :href="route('login')" variant="ghost" class="absolute right-4 top-4 md:right-8 md:top-8">
+    <Button :as="Link" :href="route('login')" variant="ghost" class="absolute right-4 top-4 md:right-8 md:top-8">
       Login
-    </LinkButton>
+    </Button>
 
     <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
       <div class="flex flex-col space-y-2 text-center">
@@ -30,16 +30,16 @@
           <Input v-model="form.password_confirmation" autocomplete="new-password" type="password" required id="password_confirmation" />
         </FormControl>
 
-        <ActionButton :processing="form.processing">Register</ActionButton>
+        <Button :processing="form.processing">Register</Button>
       </form>
     </div>
   </GuestLayout>
 </template>
 
 <script setup lang="ts">
-import { useForm, Head } from '@inertiajs/vue3'
+import { useForm, Head, Link } from '@inertiajs/vue3'
 import { GuestLayout } from "@/Layouts";
-import { ActionButton, LinkButton } from "@/Components/Button";
+import { Button } from "@/Components/Button";
 import { Input } from '@/Components/Input';
 import { FormControl } from "@/Components/Form";
 

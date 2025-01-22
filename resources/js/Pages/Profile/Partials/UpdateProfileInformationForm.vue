@@ -34,7 +34,7 @@
           </p>
         </div>
 
-        <ActionButton :recently-successful="form.recentlySuccessful" :processing="form.processing">Save</ActionButton>
+        <Button :recently-successful="form.recentlySuccessful" :processing="form.processing">Save</Button>
       </form>
     </CardContent>
   </Card>
@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 import { Alert, AlertDescription } from '@/Components/Alert'
-import { ActionButton } from "@/Components/Button"
+import { Button } from "@/Components/Button"
 import { FormControl } from "@/Components/Form"
 import { Input } from "@/Components/Input"
 import { Card, CardContent, CardTitle, CardHeader, CardDescription } from '@/Components/Card'

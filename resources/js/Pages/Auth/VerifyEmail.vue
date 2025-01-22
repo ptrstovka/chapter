@@ -21,7 +21,7 @@
       </div>
 
       <form @submit.prevent="submit" class="flex justify-center">
-        <ActionButton :processing="form.processing">Resend Verification Email</ActionButton>
+        <Button :processing="form.processing">Resend Verification Email</Button>
       </form>
     </div>
   </GuestLayout>
@@ -31,7 +31,7 @@
 import { computed } from 'vue'
 import { useForm, Head } from '@inertiajs/vue3'
 import { GuestLayout } from "@/Layouts";
-import { LinkButton, ActionButton } from "@/Components/Button";
+import { Button, LinkButton } from "@/Components/Button";
 import { Alert, AlertDescription } from "@/Components/Alert";
 
 const props = defineProps<{

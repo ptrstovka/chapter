@@ -2,9 +2,9 @@
   <Head title="Log in" />
 
   <GuestLayout>
-    <LinkButton v-if="canRegister" :href="route('register')" variant="ghost" class="absolute right-4 top-4 md:right-8 md:top-8">
+    <Button :as="Link" v-if="canRegister" :href="route('register')" variant="ghost" class="absolute right-4 top-4 md:right-8 md:top-8">
       Register
-    </LinkButton>
+    </Button>
 
     <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
       <Alert v-if="status" variant="positive">
@@ -33,7 +33,7 @@
           </Label>
         </FormControl>
 
-        <ActionButton :processing="form.processing">Log in</ActionButton>
+        <Button :processing="form.processing">Log in</Button>
       </form>
 
       <p v-if="canResetPassword" class="px-8 text-center text-sm text-muted-foreground">
@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import { GuestLayout } from '@/Layouts'
 import { Alert, AlertDescription } from "@/Components/Alert"
-import { ActionButton, LinkButton } from "@/Components/Button"
+import { Button } from "@/Components/Button"
 import { FormControl } from "@/Components/Form";
 import { Input } from '@/Components/Input'
 import { Label } from "@/Components/Label"

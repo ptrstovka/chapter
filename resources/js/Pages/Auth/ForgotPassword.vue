@@ -2,9 +2,9 @@
   <Head title="Forgot Password" />
 
   <GuestLayout>
-    <LinkButton v-if="canLogin" :href="route('login')" variant="ghost" class="absolute right-4 top-4 md:right-8 md:top-8">
+    <Button :as="Link" v-if="canLogin" :href="route('login')" variant="ghost" class="absolute right-4 top-4 md:right-8 md:top-8">
       Login
-    </LinkButton>
+    </Button>
 
     <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
       <Alert v-if="status" variant="positive">
@@ -27,7 +27,7 @@
             <Input v-model="form.email" autocomplete="username" type="email" required autofocus id="email" />
           </FormControl>
 
-          <ActionButton :processing="form.processing">Email Password Reset Link</ActionButton>
+          <Button :processing="form.processing">Email Password Reset Link</Button>
         </form>
       </div>
     </div>
@@ -35,9 +35,9 @@
 </template>
 
 <script setup lang="ts">
-import { useForm, Head } from '@inertiajs/vue3'
+import { useForm, Head, Link } from '@inertiajs/vue3'
 import { GuestLayout } from '@/Layouts'
-import { LinkButton, ActionButton } from "@/Components/Button";
+import { Button } from "@/Components/Button";
 import { Alert, AlertDescription } from "@/Components/Alert";
 import { FormControl } from "@/Components/Form";
 import { Input } from '@/Components/Input';
