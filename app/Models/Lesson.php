@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $description
  * @property \App\Models\Video|null $video
  * @property int $position
+ * @property \App\Models\Chapter $chapter
  */
 class Lesson extends Model
 {
@@ -18,5 +19,10 @@ class Lesson extends Model
     public function video(): BelongsTo
     {
         return $this->belongsTo(Video::class);
+    }
+
+    public function chapter(): BelongsTo
+    {
+        return $this->belongsTo(Chapter::class);
     }
 }

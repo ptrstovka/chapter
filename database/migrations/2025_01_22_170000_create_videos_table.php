@@ -10,8 +10,10 @@ return new class extends Migration
     {
         Schema::create('videos', function (Blueprint $table) {
             $table->id();
+            $table->string('status');
             $table->string('file_path');
             $table->string('thumbnail_file_path')->nullable();
+            $table->unsignedInteger('duration_seconds')->nullable();
             $table->timestamps();
         });
     }
