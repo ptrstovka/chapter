@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type AlertDialogEmits, type AlertDialogProps, AlertDialogRoot, useForwardPropsEmits } from 'radix-vue'
-import { type Toggle } from '@stacktrace/ui'
+import { type Toggle } from '@/Composables'
 
 const props = defineProps<AlertDialogProps & {
   control: Toggle
