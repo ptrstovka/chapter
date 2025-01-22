@@ -4,7 +4,7 @@
       <Link href="/" class="inline-flex items-center text-lg font-medium">
         <Logo class="mr-2 h-6 w-6" />
 
-        Acme Inc
+        Chapter
       </Link>
     </div>
 
@@ -15,7 +15,7 @@
         <Link href="/" class="inline-flex items-center text-lg font-medium">
           <Logo class="mr-2 h-6 w-6" />
 
-          Acme Inc
+          Chapter
         </Link>
       </div>
 

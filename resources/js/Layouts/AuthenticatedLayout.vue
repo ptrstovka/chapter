@@ -8,7 +8,7 @@
             <!-- Logo -->
             <div class="shrink-0 flex items-center">
               <Link :href="route('dashboard')" class="inline-flex flex-row gap-4 items-center font-medium">
-                <Logo class="block h-8 w-auto text-foreground" />
+                <Logo class="block h-6 w-auto text-foreground" />
               </Link>
             </div>
 
