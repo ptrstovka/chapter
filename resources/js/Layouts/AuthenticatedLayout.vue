@@ -41,7 +41,12 @@
                 <DropdownMenuLink :href="route('profile.edit')">
                   Profile
                 </DropdownMenuLink>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator/>
+                <DropdownMenuLabel>Theme</DropdownMenuLabel>
+                <DropdownMenuCheckboxItem @select="mode = 'dark'" :checked="mode == 'dark'">Dark</DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem @select="mode = 'light'" :checked="mode == 'light'">Light</DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem @select="mode = 'system'" :checked="mode == 'system'">System</DropdownMenuCheckboxItem>
+                <DropdownMenuSeparator/>
                 <DropdownMenuLink :href="route('logout')" method="post" as="button">
                   Log Out
                 </DropdownMenuLink>
@@ -107,15 +112,18 @@
 </template>
 
 <script setup lang="ts">
+import { useDarkMode } from '@/Composables'
 import { ref } from 'vue'
 import { navigationMenuTriggerStyle } from '@/Components/NavigationMenu'
 import { ChevronDownIcon, MenuIcon, XIcon } from 'lucide-vue-next'
 import { cn } from '@/Utils'
 import { Link } from '@inertiajs/vue3'
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from '@/Components/NavigationMenu'
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLink, DropdownMenuSeparator } from '@/Components/DropdownMenu'
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLink, DropdownMenuSeparator, DropdownMenuCheckboxItem, DropdownMenuLabel } from '@/Components/DropdownMenu'
 import { Button } from '@/Components/Button'
 import { Logo } from '@/Components/Logo'
 
 const showingNavigationDropdown = ref(false)
+
+const { mode } = useDarkMode()
 </script>
