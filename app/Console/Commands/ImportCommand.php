@@ -63,8 +63,48 @@ class ImportCommand extends Command
             'title' => $categoryTitle,
         ]);
 
-        // TODO: Autor nam chyba
-        $author = Author::query()->firstOrFail();
+        $author = null;
+
+        $storeImageAsset = function (string $name, string $folder) use ($dir) {
+            $path = "{$dir}/assets/{$name}";
+
+            if (! File::exists($path)) {
+                return null;
+            }
+
+            $dest = storage_path("app/public/{$folder}");
+            File::ensureDirectoryExists($dest);
+
+            $ext = match (File::mimeType($path)) {
+                'image/jpeg' => 'jpeg',
+                'image/png' => 'png'
+            };
+
+            $fileName = Str::random(32).'.'.$ext;
+
+            File::copy($path, "{$dest}/$fileName");
+
+            return "{$folder}/{$fileName}";
+        };
+
+        if ($authorSource = Arr::get($manifest, 'author')) {
+            $name = Arr::get($authorSource, 'name');
+            if (! $name) {
+                $this->fail("Author name could not be resolved");
+            }
+
+            $author = Author::query()->firstWhere('name', $name);
+
+            if (! $author) {
+                $author = Author::create([
+                    'name' => $name,
+                    'avatar_file_path' => $storeImageAsset('author_avatar', 'author-avatars'),
+                    'bio' => Arr::get($authorSource, 'bio'),
+                ]);
+            }
+        } else {
+            $this->fail("The course does not have author.");
+        }
 
         $resolveVideoPath = function (string $id) use ($dir) {
             $path = "{$dir}/videos/$id";
@@ -108,6 +148,7 @@ class ImportCommand extends Command
             'description' => Arr::get($manifest, 'description'),
             'category_id' => $category->id,
             'trailer_id' => $trailerVideo?->id,
+            'cover_image_file_path' => $storeImageAsset('cover_full', 'course-covers') ?: $storeImageAsset('cover', 'course-covers'),
         ]);
 
         $resources = collect(Arr::get($manifest, 'attachments', []))->mapWithKeys(function (array $attachment) use ($course, $dir) {
@@ -136,8 +177,6 @@ class ImportCommand extends Command
 
             return [$attachment['id'] => $resource->id];
         });
-
-        // TODO: Cover Image
 
         $chapters->sortBy('position')->values()->each(function (array $chapterSource, int $idx) use ($course, $resolveVideoPath, $uploadVideo, $resources) {
             $title = Arr::get($chapterSource, 'title');
