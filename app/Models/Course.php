@@ -3,9 +3,15 @@
 namespace App\Models;
 
 use App\Enums\CourseStatus;
+use App\Jobs\CalculateCourseDuration;
+use App\Jobs\PublishCourse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Facades\Bus;
+use LogicException;
+use Throwable;
 
 /**
  * @property string $title
@@ -18,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \App\Models\Category $category
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chapter> $chapters
  * @property \Illuminate\Support\Collection<int, \App\Models\Resource> $resources
+ * @property \Illuminate\Support\Collection<int, \App\Models\Lesson> $lessons
  */
 class Course extends Model
 {
@@ -50,8 +57,67 @@ class Course extends Model
         return $this->hasMany(Chapter::class);
     }
 
+    public function lessons(): HasManyThrough
+    {
+        return $this->hasManyThrough(Lesson::class, Chapter::class);
+    }
+
     public function resources(): HasMany
     {
         return $this->hasMany(Resource::class);
+    }
+
+    /**
+     * Publish the course.
+     */
+    public function publish(): void
+    {
+        if ($this->status === CourseStatus::Published) {
+            return;
+        }
+
+        if ($this->status === CourseStatus::Publishing) {
+            throw new LogicException("The course is already being published.");
+        }
+
+        if ($this->status === CourseStatus::Unpublished) {
+            $this->update([
+                'status' => CourseStatus::Published,
+            ]);
+            return;
+        }
+
+        $this->load(['lessons.video']);
+
+        $jobs = $this->lessons
+            ->map(fn (Lesson $lesson) => $lesson->video)
+            ->push($this->trailer)
+            ->filter()
+            ->values()
+            ->map(fn (Video $video) => $video->getProcessingJobs())
+            ->flatten(1);
+
+        $chain = [];
+
+        if ($jobs->isNotEmpty()) {
+            $chain[] = Bus::batch($jobs);
+        }
+
+        $chain[] = new CalculateCourseDuration($this);
+        $chain[] = new PublishCourse($this);
+
+        $course = $this;
+
+        $this->update([
+            'status' => CourseStatus::Publishing,
+            'failure_reason' => null,
+        ]);
+
+        Bus::chain($chain)->catch(function (Throwable $exception) use ($course) {
+            $course->update([
+                'status' => CourseStatus::PublishFailure,
+                'failure_reason' => $exception->getMessage(),
+            ]);
+        })->dispatch();
     }
 }

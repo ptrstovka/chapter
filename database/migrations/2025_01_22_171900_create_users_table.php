@@ -15,6 +15,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->foreignId('author_id')->nullable()->constrained('authors');
+            $table->boolean('is_admin');
             $table->rememberToken();
             $table->timestamps();
         });

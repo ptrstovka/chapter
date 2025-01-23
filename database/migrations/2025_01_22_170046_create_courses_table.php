@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('cover_image_file_path')->nullable();
             $table->foreignId('category_id')->constrained('categories');
             $table->unsignedInteger('duration_seconds')->nullable();
+            $table->text('failure_reason')->nullable();
             $table->timestamps();
         });
     }

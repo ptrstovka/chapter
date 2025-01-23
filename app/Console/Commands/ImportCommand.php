@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Enums\CourseStatus;
-use App\Enums\VideoStatus;
 use App\Models\Author;
 use App\Models\Category;
 use App\Models\Chapter;
@@ -133,7 +132,6 @@ class ImportCommand extends Command
             File::copy($path, $dest);
 
             return Video::create([
-                'status' => VideoStatus::Pending,
                 'file_path' => "course-videos/{$name}",
             ]);
         };

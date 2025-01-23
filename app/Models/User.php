@@ -11,6 +11,7 @@ use Illuminate\Notifications\Notifiable;
  * @property string $email
  * @property string $name
  * @property \App\Models\Author|null $author
+ * @property boolean $is_admin
  */
 class User extends Authenticatable
 {
@@ -29,6 +30,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
     }
 
