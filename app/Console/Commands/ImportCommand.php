@@ -85,9 +85,8 @@ class ImportCommand extends Command
 
         $uploadVideo = function (string $path) {
             $ext = File::extension($path);
-            $id = Str::uuid()->toString();
-            $name = "{$id}.{$ext}";
-            $dir = storage_path("app/public/videos");
+            $name = Str::random(32).".{$ext}";
+            $dir = storage_path("app/public/course-videos");
             File::ensureDirectoryExists($dir);
             $dest = "{$dir}/{$name}";
 
@@ -95,7 +94,7 @@ class ImportCommand extends Command
 
             return Video::create([
                 'status' => VideoStatus::Pending,
-                'file_path' => "videos/{$name}",
+                'file_path' => "course-videos/{$name}",
             ]);
         };
 
@@ -111,9 +110,36 @@ class ImportCommand extends Command
             'trailer_id' => $trailerVideo?->id,
         ]);
 
+        $resources = collect(Arr::get($manifest, 'attachments', []))->mapWithKeys(function (array $attachment) use ($course, $dir) {
+            $destDir = storage_path("app/public/course-resources");
+            File::ensureDirectoryExists($destDir);
+
+            $path = "{$dir}/attachments/{$attachment['id']}";
+
+            if (! File::exists($path)) {
+                $this->fail("Attachment {$attachment['id']} does not exist.");
+            }
+
+            $mime = File::mimeType($path);
+            $size = File::size($path);
+
+            $name = Str::random(32);
+
+            File::copy($path, "$destDir/{$name}");
+
+            $resource = $course->resources()->create([
+                'file_path' => "course-resources/{$name}",
+                'client_file_name' => $attachment['file_name'],
+                'mime_type' => $mime,
+                'size' => $size,
+            ]);
+
+            return [$attachment['id'] => $resource->id];
+        });
+
         // TODO: Cover Image
 
-        $chapters->sortBy('position')->values()->each(function (array $chapterSource, int $idx) use ($course, $resolveVideoPath, $uploadVideo) {
+        $chapters->sortBy('position')->values()->each(function (array $chapterSource, int $idx) use ($course, $resolveVideoPath, $uploadVideo, $resources) {
             $title = Arr::get($chapterSource, 'title');
 
             $chapter = Chapter::create([
@@ -122,7 +148,7 @@ class ImportCommand extends Command
                 'course_id' => $course->id,
             ]);
 
-            collect(Arr::get($chapterSource, 'episodes', []))->sortBy('position')->values()->each(function (array $episodeSource, int $idx) use ($chapter, $resolveVideoPath, $uploadVideo) {
+            collect(Arr::get($chapterSource, 'episodes', []))->sortBy('position')->values()->each(function (array $episodeSource, int $idx) use ($chapter, $resolveVideoPath, $uploadVideo, $resources) {
                 $video = null;
                 if ($videoId = Arr::get($episodeSource, 'video_id')) {
                     $path = $resolveVideoPath($videoId);
@@ -130,6 +156,7 @@ class ImportCommand extends Command
                     $video = $uploadVideo($path);
                 }
 
+                /** @var Lesson $lesson */
                 $lesson = Lesson::create([
                     'title' => Arr::get($episodeSource, 'title'),
                     'description' => Arr::get($episodeSource, 'description'),
@@ -138,7 +165,12 @@ class ImportCommand extends Command
                     'video_id' => $video?->id,
                 ]);
 
-                // TODO: Prilohy
+                $attachments = collect(Arr::get($episodeSource, 'attachments', []));
+                if ($attachments->isNotEmpty()) {
+                    $ids = $attachments->pluck('id')->map(fn (string $id) => $resources->get($id));
+
+                    $lesson->resources()->attach($ids);
+                }
             });
         });
 

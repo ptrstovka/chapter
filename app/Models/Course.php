@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \App\Models\Video|null $trailer
  * @property \App\Models\Category $category
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chapter> $chapters
+ * @property \Illuminate\Support\Collection<int, \App\Models\Resource> $resources
  */
 class Course extends Model
 {
@@ -47,5 +48,10 @@ class Course extends Model
     public function chapters(): HasMany
     {
         return $this->hasMany(Chapter::class);
+    }
+
+    public function resources(): HasMany
+    {
+        return $this->hasMany(Resource::class);
     }
 }
