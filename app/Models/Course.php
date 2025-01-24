@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Storage;
 use LogicException;
 use Throwable;
 
@@ -22,6 +23,7 @@ use Throwable;
  * @property \App\Models\Author $author
  * @property \App\Models\Video|null $trailer
  * @property \App\Models\Category $category
+ * @property string $slug
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chapter> $chapters
  * @property \Illuminate\Support\Collection<int, \App\Models\Resource> $resources
  * @property \Illuminate\Support\Collection<int, \App\Models\Lesson> $lessons
@@ -119,5 +121,36 @@ class Course extends Model
                 'failure_reason' => $exception->getMessage(),
             ]);
         })->dispatch();
+    }
+
+    /**
+     * Retrieve total course duration as label.
+     */
+    public function getDurationLabel(): ?string
+    {
+        if (! $this->duration_seconds) {
+            return null;
+        }
+
+        $hours = number_format(floor($this->duration_seconds / 3600), 0, '', '');
+        $minutes = str_pad(number_format(floor(($this->duration_seconds % 3600) / 60), 0, '', ''), 2, '0', STR_PAD_LEFT);
+
+        if ($hours != "0") {
+            return "{$hours}h {$minutes}m";
+        }
+
+        return "{$minutes}m";
+    }
+
+    /**
+     * Retrieve URl to the cover image.
+     */
+    public function getCoverImageUrl(): ?string
+    {
+        if ($this->cover_image_file_path) {
+            return Storage::disk('public')->url($this->cover_image_file_path);
+        }
+
+        return null;
     }
 }

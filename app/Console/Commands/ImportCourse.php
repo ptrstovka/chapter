@@ -14,11 +14,11 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class ImportCommand extends Command
+class ImportCourse extends Command
 {
-    protected $signature = 'import {dir}';
+    protected $signature = 'course:import {dir}';
 
-    protected $description = 'Import course';
+    protected $description = 'Import course from folder';
 
     public function handle(): int
     {
@@ -60,6 +60,7 @@ class ImportCommand extends Command
 
         $category = Category::query()->firstWhere('title', $categoryTitle) ?: Category::create([
             'title' => $categoryTitle,
+            'slug' => Str::slug($categoryTitle),
         ]);
 
         $author = null;
@@ -143,6 +144,7 @@ class ImportCommand extends Command
             'status' => CourseStatus::Draft,
             'author_id' => $author->id,
             'title' => $title,
+            'slug' => Str::slug($title),
             'description' => Arr::get($manifest, 'description'),
             'category_id' => $category->id,
             'trailer_id' => $trailerVideo?->id,

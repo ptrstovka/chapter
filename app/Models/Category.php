@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property string $title
+ * @property string $slug
  */
 class Category extends Model
 {

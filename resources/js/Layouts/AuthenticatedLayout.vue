@@ -23,6 +23,14 @@
                       :active="route().current('dashboard')"
                     >Dashboard</NavigationMenuLink>
                   </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      :href="route('courses')"
+                      :class="navigationMenuTriggerStyle()"
+                      :active="route().current('courses')"
+                    >Courses</NavigationMenuLink>
+                  </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
             </div>
@@ -72,6 +80,10 @@
         <div class="pt-2 pb-3 flex flex-col gap-1 px-2">
           <Link :href="route('dashboard')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('dashboard') || undefined">
             Dashboard
+          </Link>
+
+          <Link :href="route('courses')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('courses') || undefined">
+            Courses
           </Link>
         </div>
 
