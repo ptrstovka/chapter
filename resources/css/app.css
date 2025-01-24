@@ -72,7 +72,28 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  .editor-content {
+    @apply text-sm leading-7;
+  }
+
+  .editor-content h2 {
+    @apply text-xl font-medium pb-2;
+  }
+
+  .editor-content h2:not(:first-child) {
+    @apply pt-6;
+  }
+
+  .editor-content ul {
+    @apply list-disc pl-4;
+  }
+
+  .editor-content a {
+    @apply underline;
   }
 }

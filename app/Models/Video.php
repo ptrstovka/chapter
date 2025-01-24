@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Jobs\CalculateVideoDuration;
 use App\Jobs\ExtractVideoPoster;
+use App\Support\Duration;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property string $file_path
@@ -33,5 +35,35 @@ class Video extends Model
         }
 
         return $jobs;
+    }
+
+    /**
+     * Retrieve URL to the video.
+     */
+    public function getUrl(): ?string
+    {
+        return Storage::disk('public')->url($this->file_path);
+    }
+
+    /**
+     * Retrieve URL to the video poster.
+     */
+    public function getPosterImageUrl(): ?string
+    {
+        if ($this->poster_image_file_path) {
+            return Storage::disk('public')->url($this->poster_image_file_path);
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieve total video duration as label.
+     */
+    public function getDurationLabel(): ?string
+    {
+        return $this->duration_seconds
+            ? Duration::seconds($this->duration_seconds)->format()
+            : null;
     }
 }

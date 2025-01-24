@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('chapters', function (Blueprint $table) {
             $table->id();
+            $table->uuid()->unique();
             $table->string('title')->nullable();
             $table->unsignedInteger('position');
             $table->foreignId('course_id')->constrained('courses');

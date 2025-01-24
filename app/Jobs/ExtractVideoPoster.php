@@ -32,6 +32,6 @@ class ExtractVideoPoster implements ShouldQueue
             ->toDisk('public')
             ->save("video-posters/{$name}");
 
-        $this->video->update(['poster_image_file_path' => $name]);
+        $this->video->update(['poster_image_file_path' => "video-posters/{$name}"]);
     }
 }

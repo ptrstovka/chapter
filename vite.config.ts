@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import laravel from 'laravel-vite-plugin'
 import vue from '@vitejs/plugin-vue'
+import { vite as vidstack } from 'vidstack/plugins';
 
 export default defineConfig({
   plugins: [
@@ -13,8 +14,12 @@ export default defineConfig({
         transformAssetUrls: {
           base: null,
           includeAbsolute: false
-        }
+        },
+        compilerOptions: {
+          isCustomElement: (tag) => tag.startsWith('media-'),
+        },
       }
     }),
+    vidstack()
   ]
 })

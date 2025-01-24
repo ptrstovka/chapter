@@ -30,3 +30,8 @@ export interface Paginator<T> {
   to: number
   total: number
 }
+
+export interface VideoSource {
+  url: string
+  posterImageUrl: string | null
+}

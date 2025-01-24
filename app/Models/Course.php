@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\CourseStatus;
 use App\Jobs\CalculateCourseDuration;
 use App\Jobs\PublishCourse;
+use App\Support\Duration;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -128,18 +129,9 @@ class Course extends Model
      */
     public function getDurationLabel(): ?string
     {
-        if (! $this->duration_seconds) {
-            return null;
-        }
-
-        $hours = number_format(floor($this->duration_seconds / 3600), 0, '', '');
-        $minutes = str_pad(number_format(floor(($this->duration_seconds % 3600) / 60), 0, '', ''), 2, '0', STR_PAD_LEFT);
-
-        if ($hours != "0") {
-            return "{$hours}h {$minutes}m";
-        }
-
-        return "{$minutes}m";
+        return $this->duration_seconds
+            ? Duration::seconds($this->duration_seconds)->format()
+            : null;
     }
 
     /**

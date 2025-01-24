@@ -18,7 +18,8 @@
             "ziggy-js": [
                 "./vendor/tightenco/ziggy"
             ]
-        }
+        },
+        "types": ["vidstack/vue"]
     },
     "include": [
         "resources/js/**/*.ts",
