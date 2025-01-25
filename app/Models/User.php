@@ -14,6 +14,7 @@ use Illuminate\Notifications\Notifiable;
  * @property \App\Models\Author|null $author
  * @property boolean $is_admin
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\CourseEnrollment> $enrolledCourses
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\CompletedLesson> $completedLessons
  */
 class User extends Authenticatable
 {
@@ -46,12 +47,25 @@ class User extends Authenticatable
         return $this->hasMany(CourseEnrollment::class);
     }
 
+    public function completedLessons(): HasMany
+    {
+        return $this->hasMany(CompletedLesson::class);
+    }
+
     /**
      * Retrieve enrollment for given course.
      */
     public function findEnrollmentFor(Course $course): ?CourseEnrollment
     {
         return $this->enrolledCourses()->whereBelongsTo($course)->latest()->first();
+    }
+
+    /**
+     * Retrieve lesson completion for given course lesson.
+     */
+    public function findLessonCompletionFor(Lesson $lesson): ?CompletedLesson
+    {
+        return $this->completedLessons()->whereBelongsTo($lesson)->first();
     }
 
     /**

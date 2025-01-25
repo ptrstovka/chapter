@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('video_id')->nullable()->constrained('videos');
             $table->unsignedInteger('position');
             $table->foreignId('chapter_id')->constrained('chapters');
+            $table->foreignId('course_id')->constrained('courses');
             $table->timestamps();
         });
     }

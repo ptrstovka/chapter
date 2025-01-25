@@ -5,29 +5,48 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Chapter;
+use App\Models\CompletedLesson;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\View\Models\VideoSource;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class LessonController
 {
-    public function show(Course $course, Lesson $lesson)
+    public function show(Request $request, Course $course, Lesson $lesson)
     {
         Gate::authorize('study', $course);
 
+        $user = Auth::user();
+
         $course->load(['chapters.lessons.video']);
 
+        if ($completeId = $request->input('complete')) {
+            if ($lessonToComplete = $course->lessons->firstWhere('uuid', $completeId)) {
+                if (! $user->findLessonCompletionFor($lessonToComplete)) {
+                    $lessonToComplete->markCompletedFor($user);
+                }
+            }
+        }
+
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\CompletedLesson> $completions */
+        $completions = $user->completedLessons()
+            ->whereRelation('lesson.course', 'courses.id', $course->id)
+            ->get()
+            ->keyBy(fn (CompletedLesson $completion) => $completion->lesson_id);
+
+        $enrollment = $user->findEnrollmentFor($course);
+
         $lessonNo = 0;
-
         $currentLesson = $lesson;
-
         $chapters = $course
             ->chapters
             ->sortBy('position')
             ->values()
-            ->map(function (Chapter $chapter, int $idx) use (&$lessonNo, $currentLesson, $course) {
+            ->map(function (Chapter $chapter, int $idx) use (&$lessonNo, $currentLesson, $course, $completions) {
                 return [
                     'no' => $idx + 1,
                     'title' => $chapter->title,
@@ -35,21 +54,26 @@ class LessonController
                         ->lessons
                         ->sortBy('position')
                         ->values()
-                        ->map(function (Lesson $lesson) use (&$lessonNo, $currentLesson, $course) {
+                        ->map(function (Lesson $lesson) use (&$lessonNo, $currentLesson, $course, $completions) {
                             $lessonNo++;
 
                             return [
+                                'slugId' => $lesson->slug_id,
                                 'no' => $lessonNo,
                                 'title' => $lesson->title,
                                 'isCurrent' => $lesson->is($currentLesson),
                                 'duration' => $lesson->video?->getDurationLabel(),
                                 'url' => route('lessons.show', [$course->slug, $lesson->slug_id]),
+                                'isCompleted' => $completions->has($lesson->id),
                             ];
                         }),
                 ];
             });
 
         return Inertia::render('Courses/CourseLesson', [
+            'id' => $lesson->uuid,
+            'isCompleted' => $completions->has($lesson->id),
+            'progress' => $enrollment->progress,
             'courseSlug' => $course->slug,
             'courseTitle' => $course->title,
             'lessonTitle' => $lesson->title,

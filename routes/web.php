@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\BeginCourseController;
+use App\Http\Controllers\CompletedLessonController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollCourseController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\NextLessonController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -32,7 +34,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/courses/{course:uuid}/enroll', EnrollCourseController::class)->name('courses.enroll');
     Route::get('/courses/{course:slug}/begin', BeginCourseController::class)->name('courses.begin');
 
+    Route::post('/courses/{course:slug}/next', NextLessonController::class)->name('lessons.next');
     Route::get('/courses/{course:slug}/{lesson:slugid}', [LessonController::class, 'show'])->name('lessons.show');
+
+    Route::post('/completed-lessons/{lesson:uuid}', [CompletedLessonController::class, 'store'])->name('completed-lessons.store');
+    Route::delete('/completed-lessons/{lesson:uuid}', [CompletedLessonController::class, 'destroy'])->name('completed-lessons.destroy');
 });
 
 require __DIR__.'/auth.php';

@@ -178,7 +178,9 @@ class ImportCourse extends Command
             return [$attachment['id'] => $resource->id];
         });
 
-        $chapters->sortBy('position')->values()->each(function (array $chapterSource, int $idx) use ($course, $resolveVideoPath, $uploadVideo, $resources) {
+        $lessonPosition = 1;
+
+        $chapters->sortBy('position')->values()->each(function (array $chapterSource, int $idx) use ($course, $resolveVideoPath, $uploadVideo, $resources, &$lessonPosition) {
             $title = Arr::get($chapterSource, 'title');
 
             $chapter = Chapter::create([
@@ -187,7 +189,7 @@ class ImportCourse extends Command
                 'course_id' => $course->id,
             ]);
 
-            collect(Arr::get($chapterSource, 'episodes', []))->sortBy('position')->values()->each(function (array $episodeSource, int $idx) use ($chapter, $resolveVideoPath, $uploadVideo, $resources) {
+            collect(Arr::get($chapterSource, 'episodes', []))->sortBy('position')->values()->each(function (array $episodeSource) use ($chapter, $resolveVideoPath, $uploadVideo, $resources, $course, &$lessonPosition) {
                 $video = null;
                 if ($videoId = Arr::get($episodeSource, 'video_id')) {
                     $path = $resolveVideoPath($videoId);
@@ -202,10 +204,13 @@ class ImportCourse extends Command
                     'slug' => Str::slug($title),
                     'title' => $title,
                     'description' => Arr::get($episodeSource, 'description'),
-                    'position' => $idx + 1,
+                    'position' => $lessonPosition,
                     'chapter_id' => $chapter->id,
                     'video_id' => $video?->id,
+                    'course_id' => $course->id,
                 ]);
+
+                $lessonPosition++;
 
                 $attachments = collect(Arr::get($episodeSource, 'attachments', []));
                 if ($attachments->isNotEmpty()) {

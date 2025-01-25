@@ -63,9 +63,9 @@ class Course extends Model
         return $this->hasMany(Chapter::class);
     }
 
-    public function lessons(): HasManyThrough
+    public function lessons(): HasMany
     {
-        return $this->hasManyThrough(Lesson::class, Chapter::class);
+        return $this->hasMany(Lesson::class);
     }
 
     public function resources(): HasMany

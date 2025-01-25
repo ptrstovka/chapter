@@ -73,6 +73,7 @@ class CourseController
             'description' => $course->description,
             'enrollment' => $enrollment ? [
                 'isCompleted' => $enrollment->isCompleted(),
+                'progress' => $enrollment->progress,
             ] : null,
             'author' => [
                 'name' => $course->author->name,

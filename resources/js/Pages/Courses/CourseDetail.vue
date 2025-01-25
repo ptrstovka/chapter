@@ -56,6 +56,8 @@
                   <LinkButton v-if="enrollment" :href="route('courses.begin', slug)">Continue Learning</LinkButton>
                   <Button v-else :processing="enrollForm.processing" @click="enroll">Enroll</Button>
                 </div>
+
+                <p class="text-sm text-muted-foreground mt-4" v-if="enrollment && !enrollment.isCompleted">{{ enrollment.progress }}% completed</p>
               </CardContent>
             </Card>
           </div>
@@ -90,6 +92,7 @@ const props = defineProps<{
   }
   enrollment: {
     isCompleted: boolean
+    progress: number
   } | null
   chapters: Array<{
     id: string
