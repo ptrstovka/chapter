@@ -63,7 +63,9 @@ class CourseController
 
         $course->load('chapters.lessons.video');
 
-        $enrollment = Auth::user()->findEnrollmentFor($course);
+        $user = Auth::user();
+
+        $enrollment = $user->findEnrollmentFor($course);
 
         return Inertia::render('Courses/CourseDetail', [
             'id' => $course->uuid,
@@ -74,6 +76,7 @@ class CourseController
             'enrollment' => $enrollment ? [
                 'isCompleted' => $enrollment->isCompleted(),
                 'progress' => $enrollment->progress,
+                'completedLessons' => $user->completedLessons()->whereRelation('lesson.course', 'id', $course->id)->count(),
             ] : null,
             'author' => [
                 'name' => $course->author->name,

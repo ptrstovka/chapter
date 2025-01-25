@@ -52,12 +52,20 @@
                 <h3 class="text-lg font-semibold mt-4">{{ author.name }}</h3>
                 <p v-if="author.bio" class="text-center text-muted-foreground text-sm mt-1">{{ author.bio }}</p>
 
+                <div class="mt-4" v-if="enrollment">
+                  <Badge variant="positive" v-if="enrollment.isCompleted">Course Completed!</Badge>
+                  <p class="text-sm text-muted-foreground" v-else>{{ enrollment.progress }}% completed</p>
+                </div>
+
                 <div class="mt-4 flex flex-col w-full gap-2">
-                  <LinkButton v-if="enrollment" :href="route('courses.begin', slug)">Continue Learning</LinkButton>
+                  <LinkButton
+                    v-if="enrollment"
+                    :href="route('courses.begin', slug)"
+                  >{{ enrollment.isCompleted ? 'Browse Lessons' : (enrollment.completedLessons === 0 ? 'Start Learning' : 'Continue Learning') }}</LinkButton>
                   <Button v-else :processing="enrollForm.processing" @click="enroll">Enroll</Button>
                 </div>
 
-                <p class="text-sm text-muted-foreground mt-4" v-if="enrollment && !enrollment.isCompleted">{{ enrollment.progress }}% completed</p>
+                <Button @click="resetProgress" v-if="enrollment && enrollment.completedLessons > 0" class="w-full mt-3" variant="ghost">Start Over</Button>
               </CardContent>
             </Card>
           </div>
@@ -68,8 +76,10 @@
 </template>
 
 <script setup lang="ts">
+import { useConfirmable } from '@/Components/ConfirmationDialog'
 import { AuthenticatedLayout } from '@/Layouts'
 import type { VideoSource } from '@/Types'
+import { asyncRouter } from '@/Utils'
 import { Head, useForm } from '@inertiajs/vue3'
 import { Card, CardContent } from '@/Components/Card'
 import { Player } from '@/Components/Player'
@@ -78,6 +88,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/Components/Avatar'
 import { Button, LinkButton } from '@/Components/Button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/Tabs'
 import { Accordion, AccordionTrigger, AccordionContent, AccordionItem } from '@/Components/Accordion'
+import { Badge } from '@/Components/Badge'
 
 const props = defineProps<{
   id: string
@@ -93,6 +104,7 @@ const props = defineProps<{
   enrollment: {
     isCompleted: boolean
     progress: number
+    completedLessons: number
   } | null
   chapters: Array<{
     id: string
@@ -113,4 +125,15 @@ const enroll = () => {
 
   enrollForm.post(route('courses.enroll', props.id))
 }
+
+const { confirm } = useConfirmable()
+
+const resetProgress = () => confirm('Are you sure you want to restart this course? Your current progress will be reset, and you’ll begin from the very first lesson. This action cannot be undone.', async () => {
+  await asyncRouter.post(route('courses.reset-progress', props.slug))
+}, {
+  title: 'Start Over?',
+  destructive: true,
+  cancelLabel: 'Keep Progress',
+  confirmLabel: 'Start Over',
+})
 </script>

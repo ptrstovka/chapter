@@ -33,7 +33,7 @@ export const buttonVariants = cva(
           'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
-        positive: 'bg-green-50 border-green-200 text-green-700 dark:bg-green-800 dark:text-green-50 dark:border-green-800',
+        positive: 'bg-green-50 border border-green-200 text-green-700 dark:bg-green-800 dark:text-green-50 dark:border-green-800',
       },
       size: {
         default: 'h-9 px-4 py-2',

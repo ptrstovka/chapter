@@ -10,23 +10,26 @@
     <h2 class="font-semibold text-xl leading-tight">{{ lessonTitle }}</h2>
 
     <div class="inline-flex flex-row gap-2">
-      <Button v-if="isCompleted" variant="positive" :processing="markCompletedForm.processing" @click="markNotCompleted">
-        <CheckIcon class="w-4 h-4" /> Completed
-      </Button>
-      <Button v-else :processing="markCompletedForm.processing" @click="markCompleted" v-if="nextLesson" variant="outline">
-        <CheckIcon class="w-4 h-4" /> Mark Completed
-      </Button>
+      <template v-if="! courseCompleted">
+        <Button v-if="isCompleted" variant="positive" :processing="markCompletedForm.processing" @click="markNotCompleted">
+          <CheckIcon class="w-4 h-4" /> Completed
+        </Button>
+        <Button v-else-if="!isCompleted && remainingLessons > 1" :processing="markCompletedForm.processing" @click="markCompleted" variant="outline">
+          <CheckIcon class="w-4 h-4" /> Mark Completed
+        </Button>
+      </template>
 
       <LinkButton v-if="prevLesson" :href="prevLesson.url" class="gap-2" variant="outline">
         <RewindIcon class="w-4 h-4" />
         Previous Lesson
       </LinkButton>
-      <Button v-if="nextLesson" @click="navigateToNextLesson">
+      <Button v-if="remainingLessons == 1 && !isCompleted" @click="finish">
+        <CheckIcon class="w-4 h-4" />
+        Finish Course
+      </Button>
+      <Button v-else-if="nextLesson" @click="navigateToNextLesson">
         Next Lesson
         <FastForwardIcon class="w-4 h-4" />
-      </Button>
-      <Button v-else class="gap-2">
-        Finish Course
       </Button>
     </div>
   </div>
@@ -43,6 +46,19 @@
       <p>resources</p>
     </TabsContent>
   </Tabs>
+
+  <Dialog :control="completeDialog">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Congratulations! 🎉</DialogTitle>
+      </DialogHeader>
+      <p>You did it! You’ve officially completed the course.</p>
+      <p>Taking the time and effort to learn something new is no small feat, and you should be proud of yourself for making it through to the end.</p>
+      <DialogFooter>
+        <Button @click="exit">Continue</Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -56,6 +72,9 @@ import { computed } from 'vue'
 import sortBy from "lodash/sortBy"
 import { RootLayout } from '@/Layouts'
 import LessonLayout from './CourseLessonLayout.vue'
+import confetti from "canvas-confetti"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/Components/Dialog'
+import { useToggle } from '@/Composables'
 
 interface Lesson {
   slugId: string
@@ -80,6 +99,7 @@ const props = defineProps<{
   progress: number
   video: VideoSource | null
   description: string | null
+  remainingLessons: number
   resources: Array<{}>
   chapters: Array<{
     no: number
@@ -89,6 +109,8 @@ const props = defineProps<{
 }>()
 
 const lessons = computed<Array<Lesson>>(() => sortBy(props.chapters.map(it => it.lessons).flatMap(it => it), it => it.no))
+
+const courseCompleted = computed(() => props.remainingLessons === 0)
 
 const prevLesson = computed<Lesson | null>(() => {
   const idx = lessons.value.findIndex(it => it.isCurrent)
@@ -132,5 +154,50 @@ const navigateToNextLesson = () => {
   router.post(route('lessons.next', props.courseSlug), {
     from: props.id,
   })
+}
+
+const completeDialog = useToggle()
+const finish = () => {
+  router.post(route('completed-lessons.store', props.id), {}, {
+    preserveScroll: true,
+    showProgress: false,
+  })
+
+  const end = Date.now() + 2 * 1000
+  const colors = ['#a786ff', '#fd8bbc', '#eca184', '#f8deb1']
+
+  function frame() {
+    if (Date.now() > end) {
+      return
+    }
+
+    confetti({
+      particleCount: 2,
+      angle: 60,
+      spread: 55,
+      startVelocity: 60,
+      origin: { x: 0, y: 0.8 },
+      colors: colors,
+    })
+
+    confetti({
+      particleCount: 2,
+      angle: 120,
+      spread: 55,
+      startVelocity: 60,
+      origin: { x: 1, y: 0.8 },
+      colors: colors,
+    })
+
+    requestAnimationFrame(frame)
+  }
+
+  frame()
+  completeDialog.activate()
+}
+
+const exit = () => {
+  completeDialog.deactivate()
+  router.visit(route('courses.show', props.courseSlug))
 }
 </script>

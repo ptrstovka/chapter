@@ -23,14 +23,7 @@ class LessonController
         $user = Auth::user();
 
         $course->load(['chapters.lessons.video']);
-
-        if ($completeId = $request->input('complete')) {
-            if ($lessonToComplete = $course->lessons->firstWhere('uuid', $completeId)) {
-                if (! $user->findLessonCompletionFor($lessonToComplete)) {
-                    $lessonToComplete->markCompletedFor($user);
-                }
-            }
-        }
+        $course->loadCount('lessons');
 
         /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\CompletedLesson> $completions */
         $completions = $user->completedLessons()
@@ -73,6 +66,9 @@ class LessonController
         return Inertia::render('Courses/CourseLesson', [
             'id' => $lesson->uuid,
             'isCompleted' => $completions->has($lesson->id),
+            'completedLessons' => $completions->count(),
+            'totalLessons' => $course->lessons_count,
+            'remainingLessons' => $course->lessons_count - $completions->count(),
             'progress' => $enrollment->progress,
             'courseSlug' => $course->slug,
             'courseTitle' => $course->title,

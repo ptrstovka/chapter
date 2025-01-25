@@ -25,26 +25,29 @@ class CompletedLesson extends Model
                     ->whereRelation('lesson.course', 'courses.id', $course->id)
                     ->get();
 
-                if ($course->lessons()->count() == $completedLessons->count()) {
+                $allLessonsCount = $course->lessons()->count();
+                $completedCount = $completedLessons->count();
+
+                if ($allLessonsCount == $completedCount) {
                     $enrollment->update([
                         'completed_at' => now(),
                         'progress' => 100,
                     ]);
                 } else {
-                    $completedTime = $completedLessons
-                        ->load('lesson.video')
-                        ->map(fn (CompletedLesson $completion) => $completion->lesson->video?->duration_seconds ?: 0)
-                        ->sum();
-
                     $progress = 0;
 
-                    if ($course->duration_seconds && $course->duration_seconds > 0) {
-                        $progress = (int) floor($completedTime / $course->duration_seconds * 100);
+                    if ($completedCount > 0 && $course->duration_seconds && $course->duration_seconds > 0) {
+                        $completedTime = $completedLessons
+                            ->load('lesson.video')
+                            ->map(fn (CompletedLesson $completion) => $completion->lesson->video?->duration_seconds ?: 0)
+                            ->sum();
+
+                        $progress = (int) ceil($completedTime / $course->duration_seconds * 100);
                     }
 
                     $enrollment->update([
                         'completed_at' => null,
-                        'progress' => $progress,
+                        'progress' => min($progress, 99),
                     ]);
                 }
             }

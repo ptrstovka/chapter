@@ -7,6 +7,7 @@ use App\Http\Controllers\EnrollCourseController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\NextLessonController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ResetProgressController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,8 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
     Route::post('/courses/{course:uuid}/enroll', EnrollCourseController::class)->name('courses.enroll');
     Route::get('/courses/{course:slug}/begin', BeginCourseController::class)->name('courses.begin');
-
-    Route::post('/courses/{course:slug}/next', NextLessonController::class)->name('lessons.next');
+    Route::post('/courses/{course:slug}/reset', ResetProgressController::class)->name('courses.reset-progress');
+    Route::post('/courses/{course:slug}/lessons/next', NextLessonController::class)->name('lessons.next');
     Route::get('/courses/{course:slug}/{lesson:slugid}', [LessonController::class, 'show'])->name('lessons.show');
 
     Route::post('/completed-lessons/{lesson:uuid}', [CompletedLessonController::class, 'store'])->name('completed-lessons.store');
