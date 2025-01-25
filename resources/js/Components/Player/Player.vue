@@ -1,6 +1,6 @@
 <template>
   <media-player ref="player" :src="src" playsInline>
-    <media-poster class="vds-poster" v-if="poster" :src="poster"></media-poster>
+    <media-poster class="vds-poster rounded-md" v-if="poster" :src="poster"></media-poster>
     <media-provider></media-provider>
     <media-audio-layout></media-audio-layout>
     <media-video-layout></media-video-layout>
