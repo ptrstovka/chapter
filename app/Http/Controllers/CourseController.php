@@ -58,6 +58,7 @@ class CourseController
         $course->load('chapters.lessons.video');
 
         return Inertia::render('Courses/CourseDetail', [
+            'id' => $course->uuid,
             'title' => $course->title,
             'trailer' => VideoSource::for($course->trailer),
             'description' => $course->description,

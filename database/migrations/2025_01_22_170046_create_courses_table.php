@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
+            $table->uuid()->unique();
             $table->string('slug')->index();
             $table->string('status');
             $table->foreignId('author_id')->constrained('authors');

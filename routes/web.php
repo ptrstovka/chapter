@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EnrollCourseController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/courses', [CourseController::class, 'index'])->name('courses');
     Route::get('/courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
+    Route::post('/courses/{course:uuid}/enroll', EnrollCourseController::class)->name('courses.enroll');
 });
 
 require __DIR__.'/auth.php';

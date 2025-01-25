@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\CourseStatus;
 use App\Jobs\CalculateCourseDuration;
 use App\Jobs\PublishCourse;
+use App\Models\Concerns\HasUuid;
 use App\Support\Duration;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,6 +32,8 @@ use Throwable;
  */
 class Course extends Model
 {
+    use HasUuid;
+
     protected $guarded = false;
 
     protected function casts(): array
