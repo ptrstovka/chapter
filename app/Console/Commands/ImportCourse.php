@@ -195,9 +195,12 @@ class ImportCourse extends Command
                     $video = $uploadVideo($path);
                 }
 
+                $title = Arr::get($episodeSource, 'title');
+
                 /** @var Lesson $lesson */
                 $lesson = Lesson::create([
-                    'title' => Arr::get($episodeSource, 'title'),
+                    'slug' => Str::slug($title),
+                    'title' => $title,
                     'description' => Arr::get($episodeSource, 'description'),
                     'position' => $idx + 1,
                     'chapter_id' => $chapter->id,

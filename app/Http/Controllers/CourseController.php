@@ -12,12 +12,16 @@ use App\View\Models\Paginator;
 use App\View\Models\VideoSource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class CourseController
 {
     public function index(Request $request)
     {
+        Gate::authorize('viewAny', Course::class);
+
         $categories = Category::all()->map(fn (Category $category) => [
             'value' => $category->slug,
             'title' => $category->title,
@@ -55,13 +59,21 @@ class CourseController
 
     public function show(Course $course)
     {
+        Gate::authorize('view', $course);
+
         $course->load('chapters.lessons.video');
+
+        $enrollment = Auth::user()->findEnrollmentFor($course);
 
         return Inertia::render('Courses/CourseDetail', [
             'id' => $course->uuid,
+            'slug' => $course->slug,
             'title' => $course->title,
             'trailer' => VideoSource::for($course->trailer),
             'description' => $course->description,
+            'enrollment' => $enrollment ? [
+                'isCompleted' => $enrollment->isCompleted(),
+            ] : null,
             'author' => [
                 'name' => $course->author->name,
                 'avatarUrl' => $course->author->getAvatarUrl(),

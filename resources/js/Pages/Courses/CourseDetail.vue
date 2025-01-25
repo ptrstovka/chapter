@@ -53,7 +53,8 @@
                 <p v-if="author.bio" class="text-center text-muted-foreground text-sm mt-1">{{ author.bio }}</p>
 
                 <div class="mt-4 flex flex-col w-full gap-2">
-                  <Button>Enroll</Button>
+                  <LinkButton v-if="enrollment" :href="route('courses.begin', slug)">Continue Learning</LinkButton>
+                  <Button v-else :processing="enrollForm.processing" @click="enroll">Enroll</Button>
                 </div>
               </CardContent>
             </Card>
@@ -67,16 +68,18 @@
 <script setup lang="ts">
 import { AuthenticatedLayout } from '@/Layouts'
 import type { VideoSource } from '@/Types'
-import { Head } from '@inertiajs/vue3'
+import { Head, useForm } from '@inertiajs/vue3'
 import { Card, CardContent } from '@/Components/Card'
 import { Player } from '@/Components/Player'
 import { ContactIcon } from 'lucide-vue-next'
 import { Avatar, AvatarImage, AvatarFallback } from '@/Components/Avatar'
-import { Button } from '@/Components/Button'
+import { Button, LinkButton } from '@/Components/Button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/Tabs'
 import { Accordion, AccordionTrigger, AccordionContent, AccordionItem } from '@/Components/Accordion'
 
-defineProps<{
+const props = defineProps<{
+  id: string
+  slug: string
   title: string
   trailer: VideoSource | null
   description: string | null
@@ -85,6 +88,9 @@ defineProps<{
     avatarUrl: string | null
     bio: string | null
   }
+  enrollment: {
+    isCompleted: boolean
+  } | null
   chapters: Array<{
     id: string
     title: string | null
@@ -95,4 +101,13 @@ defineProps<{
     }>
   }>
 }>()
+
+const enrollForm = useForm({})
+const enroll = () => {
+  if (enrollForm.processing) {
+    return
+  }
+
+  enrollForm.post(route('courses.enroll', props.id))
+}
 </script>

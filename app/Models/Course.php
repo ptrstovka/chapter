@@ -93,9 +93,9 @@ class Course extends Model
             return;
         }
 
-        $this->load(['lessons.video']);
-
-        $jobs = $this->lessons
+        $jobs = $this->lessons()
+            ->with(['video'])
+            ->get()
             ->map(fn (Lesson $lesson) => $lesson->video)
             ->push($this->trailer)
             ->filter()
@@ -109,10 +109,10 @@ class Course extends Model
             $chain[] = Bus::batch($jobs);
         }
 
-        $chain[] = new CalculateCourseDuration($this);
-        $chain[] = new PublishCourse($this);
+        $chain[] = new CalculateCourseDuration($this->withoutRelations());
+        $chain[] = new PublishCourse($this->withoutRelations());
 
-        $course = $this;
+        $course = $this->withoutRelations();
 
         $this->update([
             'status' => CourseStatus::Publishing,

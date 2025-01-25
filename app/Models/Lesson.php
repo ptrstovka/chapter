@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSlugId;
 use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
+ * @property string $slug
  * @property string $title
  * @property string|null $description
  * @property \App\Models\Video|null $video
@@ -17,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Lesson extends Model
 {
-    use HasUuid;
+    use HasUuid, HasSlugId;
 
     protected $guarded = false;
 

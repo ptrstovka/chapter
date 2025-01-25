@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
             $table->uuid()->unique();
+            $table->string('slug');
             $table->string('title');
             $table->longText('description')->nullable();
             $table->foreignId('video_id')->nullable()->constrained('videos');

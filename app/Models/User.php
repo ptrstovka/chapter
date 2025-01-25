@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -12,6 +13,7 @@ use Illuminate\Notifications\Notifiable;
  * @property string $name
  * @property \App\Models\Author|null $author
  * @property boolean $is_admin
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\CourseEnrollment> $enrolledCourses
  */
 class User extends Authenticatable
 {
@@ -37,5 +39,26 @@ class User extends Authenticatable
     public function author(): BelongsTo
     {
         return $this->belongsTo(Author::class);
+    }
+
+    public function enrolledCourses(): HasMany
+    {
+        return $this->hasMany(CourseEnrollment::class);
+    }
+
+    /**
+     * Retrieve enrollment for given course.
+     */
+    public function findEnrollmentFor(Course $course): ?CourseEnrollment
+    {
+        return $this->enrolledCourses()->whereBelongsTo($course)->latest()->first();
+    }
+
+    /**
+     * Determine whether user is enrolled in given course.
+     */
+    public function isEnrolledIn(Course $course): bool
+    {
+        return $this->enrolledCourses()->whereBelongsTo($course)->exists();
     }
 }

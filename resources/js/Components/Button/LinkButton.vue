@@ -1,5 +1,5 @@
 <template>
-  <Button v-bind="forwardedProps" as-child>
+  <Button v-bind="forwardedProps" as-child plain>
     <!-- @vue-ignore -->
     <Link :as="props.as || undefined">
       <slot />

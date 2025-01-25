@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex flex-col bg-stone-50 dark:bg-background">
-    <div class="border-b bg-background">
+    <div class="border-b bg-background h-16">
       <!-- Primary Navigation Menu -->
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -110,8 +110,8 @@
     </div>
 
     <!-- Page Heading -->
-    <header class="border-b bg-background" v-if="$slots.header">
-      <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <header class="border-b bg-background h-16 flex justify-center items-center" v-if="$slots.header">
+      <div class="max-w-7xl w-full px-4 sm:px-6 lg:px-8">
         <slot name="header" />
       </div>
     </header>

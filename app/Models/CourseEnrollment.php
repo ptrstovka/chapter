@@ -33,4 +33,12 @@ class CourseEnrollment extends Model
     {
         return $this->belongsTo(Course::class);
     }
+
+    /**
+     * Determine whether the course is completed.
+     */
+    public function isCompleted(): bool
+    {
+        return $this->completed_at != null;
+    }
 }
