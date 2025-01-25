@@ -58,10 +58,9 @@
                 </div>
 
                 <div class="mt-4 flex flex-col w-full gap-2">
-                  <LinkButton
-                    v-if="enrollment"
-                    :href="route('courses.begin', slug)"
-                  >{{ enrollment.isCompleted ? 'Browse Lessons' : (enrollment.completedLessons === 0 ? 'Start Learning' : 'Continue Learning') }}</LinkButton>
+                  <LinkButton v-if="enrollment" :href="route('courses.begin', slug)">
+                    {{ enrollment.isCompleted ? 'Browse Lessons' : (enrollment.completedLessons === 0 ? 'Start Learning' : 'Continue Learning') }}
+                  </LinkButton>
                   <Button v-else :processing="enrollForm.processing" @click="enroll">Enroll</Button>
                 </div>
 

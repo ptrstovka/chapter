@@ -1,10 +1,23 @@
 <template>
-  <Player
-    v-if="video"
-    :src="video.url"
-    :poster="video.posterImageUrl"
-    class="mb-6"
-  />
+  <div v-if="video" class="mb-6 relative">
+    <Player
+      :src="video.url"
+      :poster="video.posterImageUrl"
+      @ended="onPlaybackEnded"
+      autoplay
+    />
+
+    <LessonCompleted
+      v-if="showLessonCompleted"
+      class="absolute inset-0 z-50 border rounded-md"
+      v-motion
+      :initial="{ opacity: 0 }"
+      :enter="{ opacity: 1, transition: { duration: 300, easing: 'easeInOut', delay: 0 } }"
+      :auto="true"
+      :next="remainingLessons == 1 && !isCompleted ? false : !!nextLesson"
+      @next="navigateToNextLesson"
+    />
+  </div>
 
   <div class="flex flex-row justify-between items-start gap-6">
     <h2 class="font-semibold text-xl leading-tight">{{ lessonTitle }}</h2>
@@ -68,13 +81,14 @@ import type { VideoSource } from '@/Types'
 import { router, useForm } from '@inertiajs/vue3'
 import { Button, LinkButton } from '@/Components/Button'
 import { CheckIcon, RewindIcon, FastForwardIcon } from 'lucide-vue-next'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import sortBy from "lodash/sortBy"
 import { RootLayout } from '@/Layouts'
 import LessonLayout from './CourseLessonLayout.vue'
 import confetti from "canvas-confetti"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/Components/Dialog'
 import { useToggle } from '@/Composables'
+import LessonCompleted from './Components/LessonCompleted.vue'
 
 interface Lesson {
   slugId: string
@@ -107,6 +121,11 @@ const props = defineProps<{
     lessons: Array<Lesson>
   }>
 }>()
+
+const showLessonCompleted = ref(false)
+watch(() => props.id, () => {
+  showLessonCompleted.value = false
+})
 
 const lessons = computed<Array<Lesson>>(() => sortBy(props.chapters.map(it => it.lessons).flatMap(it => it), it => it.no))
 
@@ -158,6 +177,8 @@ const navigateToNextLesson = () => {
 
 const completeDialog = useToggle()
 const finish = () => {
+  completeDialog.activate()
+
   router.post(route('completed-lessons.store', props.id), {}, {
     preserveScroll: true,
     showProgress: false,
@@ -193,11 +214,18 @@ const finish = () => {
   }
 
   frame()
-  completeDialog.activate()
 }
 
 const exit = () => {
   completeDialog.deactivate()
   router.visit(route('courses.show', props.courseSlug))
+}
+
+const onPlaybackEnded = () => {
+  showLessonCompleted.value = true
+
+  if (props.remainingLessons === 1 && !props.isCompleted && !completeDialog.active.value) {
+    finish()
+  }
 }
 </script>

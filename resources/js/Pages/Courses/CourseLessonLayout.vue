@@ -6,8 +6,9 @@
       <div class="flex flex-row items-center justify-between w-full">
         <div class="inline-flex items-center gap-4">
           <h2 class="font-semibold text-xl leading-tight">{{ courseTitle }}</h2>
+
           <Badge v-if="courseCompleted" variant="positive">Course completed!</Badge>
-          <Badge v-else>{{ progress }}% completed</Badge>
+          <CircularProgressBar v-else :value="progress" class="w-8 h-8 text-xs" />
         </div>
 
         <LinkButton :href="route('courses.show', courseSlug)" variant="outline" class="gap-2">
@@ -71,6 +72,7 @@
 </template>
 
 <script setup lang="ts">
+import { CircularProgressBar } from '@/Components/CircularProgressBar'
 import { AuthenticatedLayout } from '@/Layouts'
 import { cn } from '@/Utils'
 import { Head, Link } from '@inertiajs/vue3'
