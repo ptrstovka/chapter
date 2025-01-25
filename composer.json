@@ -2,7 +2,7 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "ptrstovka/chapter",
     "type": "project",
-    "description": "Self hosted video course platform.",
+    "description": "Simple and minimal self hosted video course platform.",
     "license": "MIT",
     "require": {
         "php": "^8.2",
