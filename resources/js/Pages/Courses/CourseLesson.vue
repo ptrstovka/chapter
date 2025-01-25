@@ -4,7 +4,7 @@
       :src="video.url"
       :poster="video.posterImageUrl"
       @ended="onPlaybackEnded"
-      autoplay
+      :autoplay="shouldAutoPlay"
     />
 
     <LessonCompleted
@@ -13,7 +13,7 @@
       v-motion
       :initial="{ opacity: 0 }"
       :enter="{ opacity: 1, transition: { duration: 300, easing: 'easeInOut', delay: 0 } }"
-      :auto="true"
+      :auto="shouldPlayNextLesson"
       :next="remainingLessons == 1 && !isCompleted ? false : !!nextLesson"
       @next="navigateToNextLesson"
     />
@@ -22,7 +22,19 @@
   <div class="flex flex-row justify-between items-start gap-6">
     <h2 class="font-semibold text-xl leading-tight">{{ lessonTitle }}</h2>
 
-    <div class="inline-flex flex-row gap-2">
+    <div class="inline-flex flex-row gap-3">
+      <DropdownMenu>
+        <DropdownMenuTrigger as-child>
+          <Button variant="outline" size="icon">
+            <SettingsIcon class="w-4 h-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" class="w-56" side="top">
+          <DropdownMenuCheckboxItem @select="shouldAutoPlay = !shouldAutoPlay" :checked="shouldAutoPlay">Start playing automatically</DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem @select="shouldPlayNextLesson = !shouldPlayNextLesson" :checked="shouldPlayNextLesson">Start next lesson automatically</DropdownMenuCheckboxItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       <template v-if="! courseCompleted">
         <Button v-if="isCompleted" variant="positive" :processing="markCompletedForm.processing" @click="markNotCompleted">
           <CheckIcon class="w-4 h-4" /> Completed
@@ -80,7 +92,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/Tabs'
 import type { VideoSource } from '@/Types'
 import { router, useForm } from '@inertiajs/vue3'
 import { Button, LinkButton } from '@/Components/Button'
-import { CheckIcon, RewindIcon, FastForwardIcon } from 'lucide-vue-next'
+import { useLocalStorage } from '@vueuse/core'
+import { CheckIcon, RewindIcon, FastForwardIcon, SettingsIcon } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
 import sortBy from "lodash/sortBy"
 import { RootLayout } from '@/Layouts'
@@ -89,6 +102,7 @@ import confetti from "canvas-confetti"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/Components/Dialog'
 import { useToggle } from '@/Composables'
 import LessonCompleted from './Components/LessonCompleted.vue'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuCheckboxItem } from '@/Components/DropdownMenu'
 
 interface Lesson {
   slugId: string
@@ -126,6 +140,9 @@ const showLessonCompleted = ref(false)
 watch(() => props.id, () => {
   showLessonCompleted.value = false
 })
+
+const shouldAutoPlay = useLocalStorage('PreferenceAutoPlay', true)
+const shouldPlayNextLesson = useLocalStorage('PreferenceNextLesson', true)
 
 const lessons = computed<Array<Lesson>>(() => sortBy(props.chapters.map(it => it.lessons).flatMap(it => it), it => it.no))
 
