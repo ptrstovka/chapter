@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasUuid;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,10 +13,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $position
  * @property \App\Models\Course $course
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Lesson> $lessons
+ *
+ * @method static \Database\Factories\ChapterFactory factory($count = null, $state = [])
  */
 class Chapter extends Model
 {
-    use HasUuid;
+    use HasUuid, HasFactory;
 
     protected $guarded = false;
 

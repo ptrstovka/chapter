@@ -13,7 +13,7 @@ class AuthorFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'bio' => fake()->realText(),
+            'bio' => fake()->sentence,
         ];
     }
 }

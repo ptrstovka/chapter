@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\HasSlugId;
 use App\Models\Concerns\HasUuid;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,10 +18,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property \App\Models\Chapter $chapter
  * @property \App\Models\Course $course
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Resource> $resources
+ *
+ * @method static \Database\Factories\LessonFactory factory($count = null, $state = [])
  */
 class Lesson extends Model
 {
-    use HasUuid, HasSlugId;
+    use HasUuid, HasSlugId, HasFactory;
 
     protected $guarded = false;
 

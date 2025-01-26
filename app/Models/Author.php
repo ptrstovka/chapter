@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
  * @property string $name
  * @property string|null $bio
  * @property string|null $avatar_file_path
+ *
+ * @method static \Database\Factories\AuthorFactory factory($count = null, $state = [])
  */
 class Author extends Model
 {

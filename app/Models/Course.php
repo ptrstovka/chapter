@@ -7,6 +7,7 @@ use App\Jobs\CalculateCourseDuration;
 use App\Jobs\PublishCourse;
 use App\Models\Concerns\HasUuid;
 use App\Support\Duration;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -29,10 +30,12 @@ use Throwable;
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Resource> $resources
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Lesson> $lessons
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\CourseEnrollment> $enrollments
+ *
+ * @method static \Database\Factories\CourseFactory factory($count = null, $state = [])
  */
 class Course extends Model
 {
-    use HasUuid;
+    use HasUuid, HasFactory;
 
     protected $guarded = false;
 
