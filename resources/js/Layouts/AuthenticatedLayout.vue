@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-stone-50 dark:bg-background">
+  <div :class="cn('min-h-screen flex flex-col bg-stone-50 dark:bg-background', $attrs.class || '')">
     <div v-if="header" class="border-b bg-background h-16">
       <!-- Primary Navigation Menu -->
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -4,9 +4,11 @@
 namespace App\Http\Controllers;
 
 
+use App\Enums\CourseStatus;
 use App\Models\Category;
 use App\Models\Chapter;
 use App\Models\Course;
+use App\Models\CourseEnrollment;
 use App\Models\Lesson;
 use App\View\Models\Paginator;
 use App\View\Models\VideoSource;
@@ -33,14 +35,45 @@ class CourseController
             $category = Category::query()->firstWhere('slug', $request->input('category'));
         }
 
-        $courses = Course::query()
+        $builder = Course::query()
+            ->select('courses.*')
             ->with(['author'])
             ->when($category, function (Builder $builder, Category $category) {
                 $builder->whereBelongsTo($category);
             })
+            ->when($request->boolean('hideCompleted'), function (Builder $builder) {
+                $builder
+                    ->leftJoin('course_enrollments', 'course_enrollments.course_id', 'courses.id')
+                    ->whereNull('course_enrollments.completed_at');
+            })
+            ->where('status', CourseStatus::Published);
+
+        match ($request->input('sort')) {
+            'title-asc' => $builder->orderBy('title'),
+            'title-desc' => $builder->orderByDesc('title'),
+            'popular' => $builder->withCount('enrollments')->orderByDesc('enrollments_count'),
+            default => $builder->latest(),
+        };
+
+        $courses = $builder
             ->paginate(12)
-            ->withQueryString()
-            ->through(fn (Course $course) => [
+            ->withQueryString();
+
+        $enrollments = collect();
+
+        if ($courses->collect()->isNotEmpty()) {
+            $enrollments = Auth::user()
+                ->enrolledCourses()
+                ->whereIn('course_id', $courses->collect()->pluck('id'))
+                ->get()
+                ->keyBy(fn (CourseEnrollment $enrollment) => $enrollment->course_id);
+        }
+
+
+        return Inertia::render('Courses/CourseList', [
+            'categories' => $categories,
+            'category' => $category?->title,
+            'courses' => Paginator::make($courses->through(fn (Course $course) => [
                 'title' => $course->title,
                 'url' => route('courses.show', $course->slug),
                 'coverImageUrl' => $course->getCoverImageUrl(),
@@ -48,12 +81,18 @@ class CourseController
                 'author' => [
                     'name' => $course->author->name,
                 ],
-            ]);
+                'enrollment' => value(function () use ($enrollments, $course) {
+                    /** @var CourseEnrollment $enrollment */
+                    if ($enrollment = $enrollments->get($course->id)) {
+                        return [
+                            'isCompleted' => $enrollment->isCompleted(),
+                            'progress' => $enrollment->progress,
+                        ];
+                    }
 
-        return Inertia::render('Courses/CourseList', [
-            'categories' => $categories,
-            'category' => $category?->title,
-            'courses' => Paginator::make($courses),
+                    return null;
+                }),
+            ])),
         ]);
     }
 

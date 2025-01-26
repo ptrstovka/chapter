@@ -24,7 +24,6 @@
     "include": [
         "resources/js/**/*.ts",
         "resources/js/**/*.d.ts",
-        "resources/js/**/*.vue",
-        "components.d.ts"
+        "resources/js/**/*.vue"
     ]
 }

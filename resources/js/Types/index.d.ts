@@ -35,3 +35,8 @@ export interface VideoSource {
   url: string
   posterImageUrl: string | null
 }
+
+export type Option<V = string, T = {}> = {
+  label: string
+  value: V
+} & T

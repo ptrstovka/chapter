@@ -10,7 +10,6 @@ use App\Support\Duration;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use LogicException;
@@ -27,8 +26,9 @@ use Throwable;
  * @property \App\Models\Category $category
  * @property string $slug
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chapter> $chapters
- * @property \Illuminate\Support\Collection<int, \App\Models\Resource> $resources
- * @property \Illuminate\Support\Collection<int, \App\Models\Lesson> $lessons
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Resource> $resources
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Lesson> $lessons
+ * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\CourseEnrollment> $enrollments
  */
 class Course extends Model
 {
@@ -71,6 +71,11 @@ class Course extends Model
     public function resources(): HasMany
     {
         return $this->hasMany(Resource::class);
+    }
+
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(CourseEnrollment::class);
     }
 
     /**
