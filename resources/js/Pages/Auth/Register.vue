@@ -30,6 +30,10 @@
           <Input v-model="form.password_confirmation" autocomplete="new-password" type="password" required id="password_confirmation" />
         </FormControl>
 
+        <FormControl label="Invitation Code" :error="form.errors.invitation" for="invitation">
+          <Input v-model="form.invitation" required id="invitation" />
+        </FormControl>
+
         <Button :processing="form.processing">Register</Button>
       </form>
     </div>
@@ -47,7 +51,8 @@ const form = useForm({
   name: '',
   email: '',
   password: '',
-  password_confirmation: ''
+  password_confirmation: '',
+  invitation: '',
 })
 
 const submit = () => {
