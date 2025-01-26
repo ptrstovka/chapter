@@ -43,6 +43,6 @@ class DatabaseSeeder extends Seeder
 
         Author::factory(30)->create();
 
-        // Course::factory(30)->random()->create();
+        Course::factory(30)->random()->create();
     }
 }
