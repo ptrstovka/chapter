@@ -1,14 +1,12 @@
 <?php
 
-
 namespace App\Support;
-
 
 class Duration
 {
     public function __construct(
         protected int $seconds
-    ) { }
+    ) {}
 
     /**
      * Format numeric value to a string integer.

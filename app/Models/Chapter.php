@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Chapter extends Model
 {
-    use HasUuid, HasFactory;
+    use HasFactory, HasUuid;
 
     protected $guarded = false;
 

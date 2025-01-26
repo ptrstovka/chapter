@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers;
-
 
 use App\Models\Lesson;
 use Illuminate\Support\Facades\Auth;

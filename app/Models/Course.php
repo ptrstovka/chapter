@@ -35,7 +35,7 @@ use Throwable;
  */
 class Course extends Model
 {
-    use HasUuid, HasFactory;
+    use HasFactory, HasUuid;
 
     protected $guarded = false;
 
@@ -91,13 +91,14 @@ class Course extends Model
         }
 
         if ($this->status === CourseStatus::Publishing) {
-            throw new LogicException("The course is already being published.");
+            throw new LogicException('The course is already being published.');
         }
 
         if ($this->status === CourseStatus::Unpublished) {
             $this->update([
                 'status' => CourseStatus::Published,
             ]);
+
             return;
         }
 

@@ -13,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
  * @property string $email
  * @property string $name
  * @property \App\Models\Author|null $author
- * @property boolean $is_admin
+ * @property bool $is_admin
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\CourseEnrollment> $enrolledCourses
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\CompletedLesson> $completedLessons
  */

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\View\Models;
-
 
 use App\Models\Video;
 
@@ -11,7 +9,7 @@ class VideoSource extends Model
     public function __construct(
         protected string $url,
         protected ?string $posterImageUrl,
-    ) { }
+    ) {}
 
     public function toView(): array
     {

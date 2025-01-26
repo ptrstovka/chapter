@@ -66,7 +66,7 @@ trait HasHashId
      */
     protected function getHashIdSalt(): string
     {
-        return hash('sha256', get_called_class().':'. Str::of(env('APP_KEY'))->reverse()->substr(2, 12)->value());
+        return hash('sha256', get_called_class().':'.Str::of(env('APP_KEY'))->reverse()->substr(2, 12)->value());
     }
 
     /**

@@ -30,7 +30,7 @@ return [
         'main' => [
             'salt' => env('HASH_ID_SALT', hash('sha256', 'Main:'.\Illuminate\Support\Str::of(env('APP_KEY'))->reverse()->substr(2, 12)->value())),
             'length' => 8,
-            'alphabet' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+            'alphabet' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890',
         ],
     ],
 ];

@@ -11,11 +11,11 @@ use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class ExtractVideoPoster implements ShouldQueue
 {
-    use Queueable, Batchable;
+    use Batchable, Queueable;
 
     public function __construct(
         public Video $video
-    ) { }
+    ) {}
 
     public function handle(): void
     {

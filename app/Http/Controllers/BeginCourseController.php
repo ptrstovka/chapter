@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers;
-
 
 use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +16,7 @@ class BeginCourseController
 
         $enrollment = $user->findEnrollmentFor($course);
 
-        abort_if(is_null($enrollment), 400, "You are not enrolled in the course.");
+        abort_if(is_null($enrollment), 400, 'You are not enrolled in the course.');
 
         $nextLesson = $course
             ->lessons()

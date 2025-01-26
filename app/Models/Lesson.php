@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Lesson extends Model
 {
-    use HasUuid, HasSlugId, HasFactory;
+    use HasFactory, HasSlugId, HasUuid;
 
     protected $guarded = false;
 

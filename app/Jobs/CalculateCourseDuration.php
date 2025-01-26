@@ -13,7 +13,7 @@ class CalculateCourseDuration implements ShouldQueue
 
     public function __construct(
         public Course $course
-    ) { }
+    ) {}
 
     public function handle(): void
     {

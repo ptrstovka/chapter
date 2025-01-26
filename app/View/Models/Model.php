@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\View\Models;
-
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
@@ -15,7 +13,7 @@ abstract class Model implements Arrayable, JsonSerializable
     /**
      * Define props of the view model.
      */
-    public abstract function toView(): array;
+    abstract public function toView(): array;
 
     /**
      * Format key to camel case.
@@ -40,10 +38,10 @@ abstract class Model implements Arrayable, JsonSerializable
                 // Convert regular array
                 return collect($value)->map(fn ($val) => $this->resolveValue($val))->all();
             }
-        } else if ($value instanceof Collection) {
+        } elseif ($value instanceof Collection) {
             // Convert collection
             return $value->map(fn ($val) => $this->resolveValue($val))->all();
-        } else if ($value instanceof Model) {
+        } elseif ($value instanceof Model) {
             // Convert another view model
             return $this->resolveValue($value->toView());
         }

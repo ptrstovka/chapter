@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers;
-
 
 use App\Models\Course;
 use App\Models\CourseEnrollment;
@@ -19,7 +17,7 @@ class EnrollCourseController
 
         $enrollment = $user->findEnrollmentFor($course);
 
-        abort_unless(is_null($enrollment), 400, "You already enrolled this course.");
+        abort_unless(is_null($enrollment), 400, 'You already enrolled this course.');
 
         $enrollment = new CourseEnrollment([
             'progress' => 0,

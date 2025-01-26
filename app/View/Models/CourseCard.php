@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\View\Models;
-
 
 use App\Models\Course;
 use App\Models\CourseEnrollment;
@@ -12,7 +10,7 @@ class CourseCard extends Model
     public function __construct(
         protected Course $course,
         protected ?CourseEnrollment $enrollment
-    ) { }
+    ) {}
 
     public function toView(): array
     {

@@ -35,7 +35,7 @@ class ImportCourse extends Command
         $manifestPath = "{$dir}/manifest.json";
 
         if (! File::exists($manifestPath)) {
-            $this->fail("The manifest file does not exist.");
+            $this->fail('The manifest file does not exist.');
         }
 
         $manifest = File::json($manifestPath);
@@ -43,19 +43,19 @@ class ImportCourse extends Command
         $title = Arr::get($manifest, 'title');
 
         if (! $title) {
-            $this->fail("The course does not have a title.");
+            $this->fail('The course does not have a title.');
         }
 
         $chapters = collect(Arr::get($manifest, 'chapters', []));
         if ($chapters->isEmpty()) {
-            $this->fail("No chapters in the course.");
+            $this->fail('No chapters in the course.');
         }
 
         $categoryTitle = collect(Arr::get($manifest, 'stats', []))->firstWhere('name', 'Kategória');
         $categoryTitle = is_array($categoryTitle) ? Arr::get($categoryTitle, 'value') : null;
 
-        if(!$categoryTitle) {
-            $this->fail("No category specified.");
+        if (! $categoryTitle) {
+            $this->fail('No category specified.');
         }
 
         $category = Category::query()->firstWhere('title', $categoryTitle) ?: Category::create([
@@ -90,7 +90,7 @@ class ImportCourse extends Command
         if ($authorSource = Arr::get($manifest, 'author')) {
             $name = Arr::get($authorSource, 'name');
             if (! $name) {
-                $this->fail("Author name could not be resolved");
+                $this->fail('Author name could not be resolved');
             }
 
             $author = Author::query()->firstWhere('name', $name);
@@ -103,7 +103,7 @@ class ImportCourse extends Command
                 ]);
             }
         } else {
-            $this->fail("The course does not have author.");
+            $this->fail('The course does not have author.');
         }
 
         $resolveVideoPath = function (string $id) use ($dir) {
@@ -111,8 +111,8 @@ class ImportCourse extends Command
 
             if (File::exists("{$path}.mp4")) {
                 return $path.'.mp4';
-            } else if (File::exists("{$path}.webm")) {
-                $this->fail("This video is webm type. Might be an issue tho");
+            } elseif (File::exists("{$path}.webm")) {
+                $this->fail('This video is webm type. Might be an issue tho');
             }
 
             $this->fail("Unable to find video file for id {$id}");
@@ -126,7 +126,7 @@ class ImportCourse extends Command
         $uploadVideo = function (string $path) {
             $ext = File::extension($path);
             $name = Str::random(32).".{$ext}";
-            $dir = storage_path("app/public/course-videos");
+            $dir = storage_path('app/public/course-videos');
             File::ensureDirectoryExists($dir);
             $dest = "{$dir}/{$name}";
 
@@ -152,7 +152,7 @@ class ImportCourse extends Command
         ]);
 
         $resources = collect(Arr::get($manifest, 'attachments', []))->mapWithKeys(function (array $attachment) use ($course, $dir) {
-            $destDir = storage_path("app/public/course-resources");
+            $destDir = storage_path('app/public/course-resources');
             File::ensureDirectoryExists($destDir);
 
             $path = "{$dir}/attachments/{$attachment['id']}";

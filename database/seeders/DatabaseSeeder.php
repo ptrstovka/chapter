@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Author;
 use App\Models\Category;
-use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Database\Seeder;
