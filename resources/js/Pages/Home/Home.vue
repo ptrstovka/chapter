@@ -4,6 +4,12 @@
   <AuthenticatedLayout class="bg-background">
     <div class="py-8">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-10">
+        <EmptyState
+          v-if="isEmpty"
+          title="Nothing to Show Here"
+          message="It looks like there are no courses in this section right now. Check back later or explore other categories to find something new!"
+        />
+
         <CourseRow
           v-if="inProgress.length > 0"
           title="Pick Up Where You Left Off"
@@ -46,12 +52,21 @@
 import type { Course } from '@/Components/Course'
 import { Head } from '@inertiajs/vue3'
 import { AuthenticatedLayout } from '@/Layouts'
+import { computed } from 'vue'
 import CourseRow from './Components/CourseRow.vue'
+import { EmptyState } from '@/Components/EmptyState'
 
-defineProps<{
+const props = defineProps<{
   inProgress: Array<Course>
   latest: Array<Course>
   popular: Array<Course>
   discover: Array<Course>
 }>()
+
+const isEmpty = computed(() =>
+  props.inProgress.length === 0
+  && props.latest.length === 0
+  && props.popular.length === 0
+  && props.discover.length === 0
+)
 </script>

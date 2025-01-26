@@ -38,18 +38,12 @@
               <OptionSelect v-if="courses.total > 0" class="w-32" :options="sortOptions" v-model="filter.sort" />
             </div>
 
-            <div v-if="courses.total === 0" class="overflow-hidden flex items-center flex-col mt-12">
-              <div class="flex flex-col max-w-sm items-center relative">
-                <EmptyPattern class="text-foreground/10 h-[520px] -translate-y-2/3 absolute" />
-
-                <div class="w-16 h-16 rounded-full bg-muted text-foreground inline-flex items-center justify-center mb-8">
-                  <TvIcon class="w-6 h-6" />
-                </div>
-
-                <p class="font-semibold text-center">No Courses Available</p>
-                <p class="max-w-md text-center text-muted-foreground text-sm mt-1">There are no video courses available right now. Please check back later!</p>
-              </div>
-            </div>
+            <EmptyState
+              v-if="courses.total === 0"
+              title="No Courses Available"
+              message="There are no video courses available right now. Please check back later!"
+              class="mt-12"
+            />
 
             <div v-if="courses.data.length > 0" class="grid grid-cols-3 my-6 gap-4 w-full">
               <CourseCard v-for="course in courses.data" :course="course" />
@@ -66,17 +60,16 @@
 </template>
 
 <script setup lang="ts">
+import { EmptyState } from '@/Components/EmptyState'
 import { useFilter } from '@/Composables'
 import { Head } from '@inertiajs/vue3'
 import { AuthenticatedLayout } from '@/Layouts'
 import { Button } from '@/Components/Button'
 import type { Option, Paginator } from '@/Types'
-import { TvIcon } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { OptionSelect } from '@/Components/Select'
 import { SimplePagination } from '@/Components/Pagination'
 import { CheckboxControl } from '@/Components/Checkbox'
-import EmptyPattern from './Components/EmptyPattern.vue'
 import type { Course } from '@/Components/Course'
 import { CourseCard } from '@/Components/Course'
 
