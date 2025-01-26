@@ -97,7 +97,7 @@ import { CheckIcon, RewindIcon, FastForwardIcon, SettingsIcon } from 'lucide-vue
 import { computed, ref, watch } from 'vue'
 import sortBy from "lodash/sortBy"
 import { RootLayout } from '@/Layouts'
-import LessonLayout from './CourseLessonLayout.vue'
+import LessonLayout from './Layouts/LessonLayout.vue'
 import confetti from "canvas-confetti"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/Components/Dialog'
 import { useToggle } from '@/Composables'

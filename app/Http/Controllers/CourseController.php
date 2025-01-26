@@ -10,9 +10,11 @@ use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
 use App\Models\Lesson;
+use App\View\Models\CourseCard;
 use App\View\Models\Paginator;
 use App\View\Models\VideoSource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -29,6 +31,8 @@ class CourseController
             'title' => $category->title,
         ])->sortBy('title')->values();
 
+        $user = Auth::user();
+
         $category = null;
 
         if ($request->has('category')) {
@@ -41,9 +45,12 @@ class CourseController
             ->when($category, function (Builder $builder, Category $category) {
                 $builder->whereBelongsTo($category);
             })
-            ->when($request->boolean('hideCompleted'), function (Builder $builder) {
+            ->when($request->boolean('hideCompleted'), function (Builder $builder) use ($user) {
                 $builder
-                    ->leftJoin('course_enrollments', 'course_enrollments.course_id', 'courses.id')
+                    ->leftJoin('course_enrollments', function (JoinClause $join) use ($user) {
+                        $join->on('course_enrollments.course_id', 'courses.id')
+                            ->where('course_enrollments.user_id', $user->id);
+                    })
                     ->whereNull('course_enrollments.completed_at');
             })
             ->where('status', CourseStatus::Published);
@@ -62,37 +69,19 @@ class CourseController
         $enrollments = collect();
 
         if ($courses->collect()->isNotEmpty()) {
-            $enrollments = Auth::user()
+            $enrollments = $user
                 ->enrolledCourses()
                 ->whereIn('course_id', $courses->collect()->pluck('id'))
                 ->get()
                 ->keyBy(fn (CourseEnrollment $enrollment) => $enrollment->course_id);
         }
 
-
         return Inertia::render('Courses/CourseList', [
             'categories' => $categories,
             'category' => $category?->title,
-            'courses' => Paginator::make($courses->through(fn (Course $course) => [
-                'title' => $course->title,
-                'url' => route('courses.show', $course->slug),
-                'coverImageUrl' => $course->getCoverImageUrl(),
-                'duration' => $course->getDurationLabel(),
-                'author' => [
-                    'name' => $course->author->name,
-                ],
-                'enrollment' => value(function () use ($enrollments, $course) {
-                    /** @var CourseEnrollment $enrollment */
-                    if ($enrollment = $enrollments->get($course->id)) {
-                        return [
-                            'isCompleted' => $enrollment->isCompleted(),
-                            'progress' => $enrollment->progress,
-                        ];
-                    }
-
-                    return null;
-                }),
-            ])),
+            'courses' => Paginator::make(
+                $courses->through(fn (Course $course) => new CourseCard($course, $enrollments->get($course->id)))
+            ),
         ]);
     }
 
