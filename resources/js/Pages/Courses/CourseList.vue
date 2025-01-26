@@ -1,5 +1,5 @@
 <template>
-  <Head :title="category || 'All courses'" />
+  <Head :title="category || 'All Courses'" />
 
   <AuthenticatedLayout class="bg-background">
     <div class="py-8">
@@ -11,14 +11,14 @@
             <ul class="mt-4 -ml-4 flex flex-col gap-1">
               <li v-for="category in categories">
                 <Button
-                  @click="filter.category = category.value"
+                  @click="filter.category = filter.category === category.value ? null : category.value"
                   :variant="filter.category == category.value ? 'default' : 'ghost'"
-                  class="w-full justify-start"
+                  class="w-full justify-start line-clamp-1 text-left"
                   plain
                 >{{ category.title }}</Button>
               </li>
               <li>
-                <Button @click="filter.category = null" variant="ghost" class="w-full justify-start" plain>All courses</Button>
+                <Button @click="filter.category = null" variant="ghost" class="w-full justify-start" plain>All Courses</Button>
               </li>
             </ul>
 
@@ -33,7 +33,7 @@
 
           <div class="w-full">
             <div class="flex flex-row justify-between">
-              <h2 class="font-semibold text-xl leading-tight">{{ category || 'All courses' }}</h2>
+              <h2 class="font-semibold text-xl leading-tight">{{ category || 'All Courses' }}</h2>
 
               <OptionSelect v-if="courses.total > 0" class="w-32" :options="sortOptions" v-model="filter.sort" />
             </div>

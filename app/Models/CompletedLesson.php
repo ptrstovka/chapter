@@ -36,13 +36,8 @@ class CompletedLesson extends Model
                 } else {
                     $progress = 0;
 
-                    if ($completedCount > 0 && $course->duration_seconds && $course->duration_seconds > 0) {
-                        $completedTime = $completedLessons
-                            ->load('lesson.video')
-                            ->map(fn (CompletedLesson $completion) => $completion->lesson->video?->duration_seconds ?: 0)
-                            ->sum();
-
-                        $progress = (int) ceil($completedTime / $course->duration_seconds * 100);
+                    if ($completedCount > 0 && $allLessonsCount > 0) {
+                        $progress = (int) ceil($completedCount / $allLessonsCount * 100);
                     }
 
                     $enrollment->update([

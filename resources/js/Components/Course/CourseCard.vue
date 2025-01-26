@@ -4,7 +4,7 @@
       <Link :href="course.url">
         <div class="h-44 relative">
           <img :class="{ 'grayscale': course.enrollment && course.enrollment.isCompleted }" class="w-full h-full object-cover" v-if="course.coverImageUrl" :src="course.coverImageUrl" :alt="`Cover image of ${course.title} course`">
-          <div v-else class="w-full h-full bg-stone-50 flex items-center justify-center">
+          <div v-else class="w-full h-full bg-stone-50 dark:bg-background flex items-center justify-center">
             <ImageOffIcon class="w-5 h-5 text-stone-400" />
           </div>
 

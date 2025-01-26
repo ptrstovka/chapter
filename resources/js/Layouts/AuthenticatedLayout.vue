@@ -7,7 +7,7 @@
           <div class="flex">
             <!-- Logo -->
             <div class="shrink-0 flex items-center">
-              <Link :href="route('dashboard')" class="inline-flex flex-row gap-4 items-center font-medium">
+              <Link :href="route('home')" class="inline-flex flex-row gap-4 items-center font-medium">
                 <Logo class="block h-6 w-auto text-foreground" />
               </Link>
             </div>
@@ -18,10 +18,10 @@
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuLink
-                      :href="route('dashboard')"
+                      :href="route('home')"
                       :class="navigationMenuTriggerStyle()"
-                      :active="route().current('dashboard')"
-                    >Dashboard</NavigationMenuLink>
+                      :active="route().current('home')"
+                    >Home</NavigationMenuLink>
                   </NavigationMenuItem>
 
                   <NavigationMenuItem>
@@ -29,7 +29,7 @@
                       :href="route('courses')"
                       :class="navigationMenuTriggerStyle()"
                       :active="route().current('courses')"
-                    >Courses</NavigationMenuLink>
+                    >Browse Courses</NavigationMenuLink>
                   </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
@@ -78,12 +78,12 @@
         class="sm:hidden"
       >
         <div class="pt-2 pb-3 flex flex-col gap-1 px-2">
-          <Link :href="route('dashboard')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('dashboard') || undefined">
-            Dashboard
+          <Link :href="route('home')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('dashboard') || undefined">
+            Home
           </Link>
 
           <Link :href="route('courses')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('courses') || undefined">
-            Courses
+            Browse Course
           </Link>
         </div>
 

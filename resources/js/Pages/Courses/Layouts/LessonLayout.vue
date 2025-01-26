@@ -3,18 +3,22 @@
 
   <AuthenticatedLayout :header="false" fluid>
     <template #header>
-      <div class="flex flex-row items-center justify-between w-full">
+      <div class="flex flex-row items-center justify-center w-full relative">
         <div class="inline-flex items-center gap-4">
           <h2 class="font-semibold text-xl leading-tight">{{ courseTitle }}</h2>
+        </div>
 
+        <div class="inline-flex absolute right-0">
           <Badge v-if="courseCompleted" variant="positive">Course completed!</Badge>
           <CircularProgressBar v-else :value="progress" class="w-8 h-8 text-xs" />
         </div>
 
-        <LinkButton :href="route('courses.show', courseSlug)" variant="outline" class="gap-2">
-          Leave Course
-          <XIcon class="w-4 h-4" />
-        </LinkButton>
+        <div class="inline-flex absolute left-0">
+          <LinkButton :href="route('courses.show', courseSlug)" variant="outline" class="gap-2">
+            <XIcon class="w-4 h-4" />
+            Leave Course
+          </LinkButton>
+        </div>
       </div>
     </template>
 

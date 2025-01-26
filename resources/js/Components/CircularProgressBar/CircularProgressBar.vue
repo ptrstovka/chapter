@@ -59,7 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
   min: 0,
   value: 0,
   gaugePrimaryColor: "hsl(var(--primary))",
-  gaugeSecondaryColor: "rgba(0, 0, 0, 0.1)",
+  gaugeSecondaryColor: "hsl(var(--primary) / 0.15)",
   circleStrokeWidth: 10,
 });
 

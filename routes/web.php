@@ -3,27 +3,16 @@
 use App\Http\Controllers\BeginCourseController;
 use App\Http\Controllers\CompletedLessonController;
 use App\Http\Controllers\CourseController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EnrollCourseController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\NextLessonController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResetProgressController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/', HomeController::class)->name('home');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
