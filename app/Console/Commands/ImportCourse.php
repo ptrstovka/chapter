@@ -12,6 +12,7 @@ use App\Models\Video;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ImportCourse extends Command
@@ -32,13 +33,18 @@ class ImportCourse extends Command
             $this->fail("The [$dir] is not a directory.");
         }
 
-        $manifestPath = "{$dir}/manifest.json";
+        $sourceStorage = Storage::build([
+            'driver' => 'local',
+            'root' => realpath($dir),
+        ]);
 
-        if (! File::exists($manifestPath)) {
+        $destinationStorage = Storage::disk(config('filesystems.content_disk'));
+
+        if (! $sourceStorage->exists('manifest.json')) {
             $this->fail('The manifest file does not exist.');
         }
 
-        $manifest = File::json($manifestPath);
+        $manifest = json_decode($sourceStorage->get('manifest.json'), true);
 
         $title = Arr::get($manifest, 'title');
 
@@ -65,24 +71,25 @@ class ImportCourse extends Command
 
         $author = null;
 
-        $storeImageAsset = function (string $name, string $folder) use ($dir) {
-            $path = "{$dir}/assets/{$name}";
+        $storeImageAsset = function (string $name, string $folder) use ($sourceStorage, $destinationStorage) {
+            $path = "assets/{$name}";
 
-            if (! File::exists($path)) {
+            if (! $sourceStorage->exists($path)) {
                 return null;
             }
 
-            $dest = storage_path("app/public/{$folder}");
-            File::ensureDirectoryExists($dest);
+            if (! $destinationStorage->exists($folder)) {
+                $destinationStorage->makeDirectory($folder);
+            }
 
-            $ext = match (File::mimeType($path)) {
+            $ext = match ($sourceStorage->mimeType($path)) {
                 'image/jpeg' => 'jpeg',
                 'image/png' => 'png'
             };
 
             $fileName = Str::random(32).'.'.$ext;
 
-            File::copy($path, "{$dest}/$fileName");
+            $destinationStorage->writeStream("{$folder}/{$fileName}", $sourceStorage->readStream($path));
 
             return "{$folder}/{$fileName}";
         };
@@ -106,12 +113,12 @@ class ImportCourse extends Command
             $this->fail('The course does not have author.');
         }
 
-        $resolveVideoPath = function (string $id) use ($dir) {
-            $path = "{$dir}/videos/$id";
+        $resolveVideoPath = function (string $id) use ($sourceStorage) {
+            $path = "videos/$id";
 
-            if (File::exists("{$path}.mp4")) {
+            if ($sourceStorage->exists("{$path}.mp4")) {
                 return $path.'.mp4';
-            } elseif (File::exists("{$path}.webm")) {
+            } elseif ($sourceStorage->exists("{$path}.webm")) {
                 $this->fail('This video is webm type. Might be an issue tho');
             }
 
@@ -123,14 +130,15 @@ class ImportCourse extends Command
             $trailerPath = $resolveVideoPath($trailerVideoId);
         }
 
-        $uploadVideo = function (string $path) {
+        $uploadVideo = function (string $path) use ($sourceStorage, $destinationStorage) {
             $ext = File::extension($path);
             $name = Str::random(32).".{$ext}";
-            $dir = storage_path('app/public/course-videos');
-            File::ensureDirectoryExists($dir);
-            $dest = "{$dir}/{$name}";
 
-            File::copy($path, $dest);
+            if (! $destinationStorage->exists('course-videos')) {
+                $destinationStorage->makeDirectory('course-videos');
+            }
+
+            $destinationStorage->writeStream("course-videos/{$name}", $sourceStorage->readStream($path));
 
             return Video::create([
                 'file_path' => "course-videos/{$name}",
@@ -151,22 +159,23 @@ class ImportCourse extends Command
             'cover_image_file_path' => $storeImageAsset('cover_full', 'course-covers') ?: $storeImageAsset('cover', 'course-covers'),
         ]);
 
-        $resources = collect(Arr::get($manifest, 'attachments', []))->mapWithKeys(function (array $attachment) use ($course, $dir) {
-            $destDir = storage_path('app/public/course-resources');
-            File::ensureDirectoryExists($destDir);
+        $resources = collect(Arr::get($manifest, 'attachments', []))->mapWithKeys(function (array $attachment) use ($course, $sourceStorage, $destinationStorage) {
+            if (! $destinationStorage->exists('course-resources')) {
+                $destinationStorage->makeDirectory('course-resources');
+            }
 
-            $path = "{$dir}/attachments/{$attachment['id']}";
+            $path = "attachments/{$attachment['id']}";
 
-            if (! File::exists($path)) {
+            if (! $sourceStorage->exists($path)) {
                 $this->fail("Attachment {$attachment['id']} does not exist.");
             }
 
-            $mime = File::mimeType($path);
-            $size = File::size($path);
+            $mime = $sourceStorage->mimeType($path);
+            $size = $sourceStorage->size($path);
 
             $name = Str::random(32);
 
-            File::copy($path, "$destDir/{$name}");
+            $destinationStorage->writeStream("course-resources/{$name}", $sourceStorage->readStream($path));
 
             $resource = $course->resources()->create([
                 'file_path' => "course-resources/{$name}",

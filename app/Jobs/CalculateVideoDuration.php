@@ -23,7 +23,7 @@ class CalculateVideoDuration implements ShouldQueue
         }
 
         $this->video->update([
-            'duration_seconds' => FFMpeg::fromDisk('public')
+            'duration_seconds' => FFMpeg::fromDisk(config('filesystems.content_disk'))
                 ->open($this->video->file_path)
                 ->getDurationInSeconds(),
         ]);

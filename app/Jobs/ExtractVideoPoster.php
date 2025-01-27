@@ -25,11 +25,11 @@ class ExtractVideoPoster implements ShouldQueue
 
         $name = Str::random(32).'.jpeg';
 
-        FFMpeg::fromDisk('public')
+        FFMpeg::fromDisk(config('filesystems.content_disk'))
             ->open($this->video->file_path)
             ->getFrameFromSeconds(0)
             ->export()
-            ->toDisk('public')
+            ->toDisk(config('filesystems.content_disk'))
             ->save("video-posters/{$name}");
 
         $this->video->update(['poster_image_file_path' => "video-posters/{$name}"]);

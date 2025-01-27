@@ -2,6 +2,8 @@
 
 return [
 
+    'content_disk' => env('CONTENT_DISK', 'public'),
+
     /*
     |--------------------------------------------------------------------------
     | Default Filesystem Disk

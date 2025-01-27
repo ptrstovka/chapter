@@ -152,7 +152,7 @@ class Course extends Model
     public function getCoverImageUrl(): ?string
     {
         if ($this->cover_image_file_path) {
-            return Storage::disk('public')->url($this->cover_image_file_path);
+            return Storage::disk(config('filesystems.content_disk'))->url($this->cover_image_file_path);
         }
 
         return null;

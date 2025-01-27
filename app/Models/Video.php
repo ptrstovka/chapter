@@ -42,7 +42,7 @@ class Video extends Model
      */
     public function getUrl(): ?string
     {
-        return Storage::disk('public')->url($this->file_path);
+        return Storage::disk(config('filesystems.content_disk'))->url($this->file_path);
     }
 
     /**
@@ -51,7 +51,7 @@ class Video extends Model
     public function getPosterImageUrl(): ?string
     {
         if ($this->poster_image_file_path) {
-            return Storage::disk('public')->url($this->poster_image_file_path);
+            return Storage::disk(config('filesystems.content_disk'))->url($this->poster_image_file_path);
         }
 
         return null;

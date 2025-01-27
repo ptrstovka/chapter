@@ -25,7 +25,7 @@ class Author extends Model
     public function getAvatarUrl(): ?string
     {
         if ($this->avatar_file_path) {
-            return Storage::disk('public')->url($this->avatar_file_path);
+            return Storage::disk(config('filesystems.content_disk'))->url($this->avatar_file_path);
         }
 
         return null;
