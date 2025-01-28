@@ -1,6 +1,6 @@
 services:
     chapter:
-        build: .
+        image: ghcr.io/ptrstovka/chapter:latest
         environment:
             APP_URL: http://localhost:8080
             APP_KEY: ""
