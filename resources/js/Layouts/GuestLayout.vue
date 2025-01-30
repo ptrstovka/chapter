@@ -8,8 +8,10 @@
       </Link>
     </div>
 
-    <div class="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
-      <div class="absolute inset-0 bg-zinc-900" />
+    <div class="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex">
+      <div class="absolute inset-0 bg-blue-950 dark:bg-background/60">
+        <Particles class="w-full h-full" />
+      </div>
 
       <div class="relative z-20">
         <Link href="/" class="inline-flex items-center text-lg font-medium">
@@ -17,10 +19,6 @@
 
           Chapter
         </Link>
-      </div>
-
-      <div class="relative z-20 mt-auto">
-        <!-- ... -->
       </div>
     </div>
 
@@ -32,4 +30,5 @@
 <script setup lang="ts">
 import { Logo } from '@/Components/Logo'
 import { Link } from '@inertiajs/vue3'
+import { Particles } from '@/Components/Patterns'
 </script>
