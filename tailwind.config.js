@@ -1,5 +1,6 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import animate from 'tailwindcss-animate'
+import vidstack from 'vidstack/tailwind.cjs'
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -31,6 +32,7 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        player: "hsl(var(--player))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -92,5 +94,20 @@ export default {
       },
     },
   },
-  plugins: [animate],
+  plugins: [
+      animate,
+      vidstack({
+          prefix: 'media',
+          webComponents: true,
+      }),
+      mediaVariants,
+  ],
+}
+
+function mediaVariants({ addVariant, matchVariant }) {
+    // Strict version of `.group` to help with nesting.
+    matchVariant('parent-data', (value) => `.parent[data-${value}] > &`);
+
+    addVariant('hocus', ['&:hover', '&:focus-visible']);
+    addVariant('group-hocus', ['.group:hover &', '.group:focus-visible &']);
 }

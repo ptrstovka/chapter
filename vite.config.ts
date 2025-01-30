@@ -20,6 +20,8 @@ export default defineConfig({
         },
       }
     }),
-    vidstack()
+    vidstack({
+      include: /resources\/js\/Components\/Player\//
+    })
   ]
 })
