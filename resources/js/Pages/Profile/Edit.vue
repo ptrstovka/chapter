@@ -1,9 +1,9 @@
 <template>
-  <Head title="Profile" />
+  <Head :title="$t('Profile')" />
 
   <AuthenticatedLayout>
     <template #header>
-      <h2 class="font-semibold text-xl leading-tight">Profile</h2>
+      <h2 class="font-semibold text-xl leading-tight">{{ $t('Profile') }}</h2>
     </template>
 
     <div class="py-12">

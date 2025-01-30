@@ -1,12 +1,12 @@
 <template>
   <Card>
     <CardHeader>
-      <CardTitle>Update Password</CardTitle>
-      <CardDescription>Ensure your account is using a long, random password to stay secure.</CardDescription>
+      <CardTitle>{{ $t('Update Password') }}</CardTitle>
+      <CardDescription>{{ $t('Ensure your account is using a long, random password to stay secure.') }}</CardDescription>
     </CardHeader>
     <CardContent>
       <form @submit.prevent="updatePassword" class="flex flex-col items-start gap-6 max-w-xl">
-        <FormControl class="w-full" label="Current Password" for="current_password" :error="form.errors.current_password">
+        <FormControl class="w-full" :label="$t('Current Password')" for="current_password" :error="form.errors.current_password">
           <Input
             id="current_password"
             v-model="form.current_password"
@@ -15,7 +15,7 @@
           />
         </FormControl>
 
-        <FormControl class="w-full" label="New Password" for="password" :error="form.errors.password">
+        <FormControl class="w-full" :label="$t('New Password')" for="password" :error="form.errors.password">
           <Input
             id="password"
             v-model="form.password"
@@ -24,7 +24,7 @@
           />
         </FormControl>
 
-        <FormControl class="w-full" label="Confirm Password" for="password_confirmation" :error="form.errors.password_confirmation">
+        <FormControl class="w-full" :label="$t('Confirm Password')" for="password_confirmation" :error="form.errors.password_confirmation">
           <Input
             id="password_confirmation"
             v-model="form.password_confirmation"
@@ -33,7 +33,7 @@
           />
         </FormControl>
 
-        <Button :recently-successful="form.recentlySuccessful" :processing="form.processing">Save</Button>
+        <Button :recently-successful="form.recentlySuccessful" :processing="form.processing">{{ $t('Save') }}</Button>
       </form>
     </CardContent>
   </Card>

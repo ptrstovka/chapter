@@ -21,7 +21,7 @@
                       :href="route('home')"
                       :class="navigationMenuTriggerStyle()"
                       :active="route().current('home')"
-                    >Home</NavigationMenuLink>
+                    >{{ $t('Home') }}</NavigationMenuLink>
                   </NavigationMenuItem>
 
                   <NavigationMenuItem>
@@ -29,7 +29,7 @@
                       :href="route('courses')"
                       :class="navigationMenuTriggerStyle()"
                       :active="route().current('courses')"
-                    >Browse Courses</NavigationMenuLink>
+                    >{{ $t('Browse Courses') }}</NavigationMenuLink>
                   </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
@@ -46,18 +46,14 @@
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" class="w-48">
-                <DropdownMenuLink :href="route('profile.edit')">
-                  Profile
-                </DropdownMenuLink>
+                <DropdownMenuLink :href="route('profile.edit')">{{ $t('Profile') }}</DropdownMenuLink>
                 <DropdownMenuSeparator/>
-                <DropdownMenuLabel>Theme</DropdownMenuLabel>
-                <DropdownMenuCheckboxItem @select="mode = 'dark'" :checked="mode == 'dark'">Dark</DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem @select="mode = 'light'" :checked="mode == 'light'">Light</DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem @select="mode = 'system'" :checked="mode == 'system'">System</DropdownMenuCheckboxItem>
+                <DropdownMenuLabel>{{ $t('Theme') }}</DropdownMenuLabel>
+                <DropdownMenuCheckboxItem @select="mode = 'dark'" :checked="mode == 'dark'">{{ $t('Dark') }}</DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem @select="mode = 'light'" :checked="mode == 'light'">{{ $t('Light') }}</DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem @select="mode = 'system'" :checked="mode == 'system'">{{ $t('System') }}</DropdownMenuCheckboxItem>
                 <DropdownMenuSeparator/>
-                <DropdownMenuLink :href="route('logout')" method="post" as="button">
-                  Log Out
-                </DropdownMenuLink>
+                <DropdownMenuLink :href="route('logout')" method="post" as="button">{{ $t('Log Out') }}</DropdownMenuLink>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -79,11 +75,11 @@
       >
         <div class="pt-2 pb-3 flex flex-col gap-1 px-2">
           <Link :href="route('home')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('dashboard') || undefined">
-            Home
+            {{ $t('Home') }}
           </Link>
 
           <Link :href="route('courses')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('courses') || undefined">
-            Browse Course
+            {{ $t('Browse Course') }}
           </Link>
         </div>
 
@@ -98,11 +94,11 @@
 
           <div class="mt-3 flex flex-col gap-1 px-2">
             <Link :href="route('profile.edit')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('profile.edit') || undefined">
-              Profile
+              {{ $t('Profile') }}
             </Link>
 
             <Link :href="route('logout')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" method="post" as="button">
-              Log Out
+              {{ $t('Log Out') }}
             </Link>
           </div>
         </div>

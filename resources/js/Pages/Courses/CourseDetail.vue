@@ -16,8 +16,8 @@
 
             <Tabs :default-value="description ? 'description' : 'lessons'">
               <TabsList>
-                <TabsTrigger v-if="description" value="description">About Course</TabsTrigger>
-                <TabsTrigger value="lessons">Lessons</TabsTrigger>
+                <TabsTrigger v-if="description" value="description">{{ $t('About Course') }}</TabsTrigger>
+                <TabsTrigger value="lessons">{{ $t('Lessons') }}</TabsTrigger>
               </TabsList>
               <TabsContent v-if="description" value="description">
                 <div class="editor-content" v-html="description"></div>
@@ -53,18 +53,18 @@
                 <p v-if="author.bio" class="text-center text-muted-foreground text-sm mt-1">{{ author.bio }}</p>
 
                 <div class="mt-4" v-if="enrollment">
-                  <Badge variant="positive" v-if="enrollment.isCompleted">Course Completed!</Badge>
-                  <p class="text-sm text-muted-foreground" v-else>{{ enrollment.progress }}% completed</p>
+                  <Badge variant="positive" v-if="enrollment.isCompleted">{{ $t('Course Completed!') }}</Badge>
+                  <p class="text-sm text-muted-foreground" v-else>{{ $t(':value% completed', { value: `${enrollment.progress}` }) }}</p>
                 </div>
 
                 <div class="mt-4 flex flex-col w-full gap-2">
                   <LinkButton v-if="enrollment" :href="route('courses.begin', slug)">
-                    {{ enrollment.isCompleted ? 'Browse Lessons' : (enrollment.completedLessons === 0 ? 'Start Learning' : 'Continue Learning') }}
+                    {{ enrollment.isCompleted ? $t('Browse Lessons') : (enrollment.completedLessons === 0 ? $t('Start Learning') : $t('Continue Learning')) }}
                   </LinkButton>
-                  <Button v-else :processing="enrollForm.processing" @click="enroll">Enroll</Button>
+                  <Button v-else :processing="enrollForm.processing" @click="enroll">{{ $t('Enroll') }}</Button>
                 </div>
 
-                <Button @click="resetProgress" v-if="enrollment && enrollment.completedLessons > 0" class="w-full mt-3" variant="ghost">Start Over</Button>
+                <Button @click="resetProgress" v-if="enrollment && enrollment.completedLessons > 0" class="w-full mt-3" variant="ghost">{{ $t('Start Over') }}</Button>
               </CardContent>
             </Card>
           </div>
@@ -82,6 +82,7 @@ import { asyncRouter } from '@/Utils'
 import { Head, useForm } from '@inertiajs/vue3'
 import { Card, CardContent } from '@/Components/Card'
 import { Player } from '@/Components/Player'
+import { trans } from 'laravel-vue-i18n'
 import { ContactIcon } from 'lucide-vue-next'
 import { Avatar, AvatarImage, AvatarFallback } from '@/Components/Avatar'
 import { Button, LinkButton } from '@/Components/Button'
@@ -127,12 +128,12 @@ const enroll = () => {
 
 const { confirm } = useConfirmable()
 
-const resetProgress = () => confirm('Are you sure you want to restart this course? Your current progress will be reset, and you’ll begin from the very first lesson. This action cannot be undone.', async () => {
+const resetProgress = () => confirm(trans('Are you sure you want to restart this course? Your current progress will be reset, and you’ll begin from the very first lesson. This action cannot be undone.'), async () => {
   await asyncRouter.post(route('courses.reset-progress', props.slug))
 }, {
-  title: 'Start Over?',
+  title: trans('Start Over?'),
   destructive: true,
-  cancelLabel: 'Keep Progress',
-  confirmLabel: 'Start Over',
+  cancelLabel: trans('Keep Progress'),
+  confirmLabel: trans('Start Over'),
 })
 </script>

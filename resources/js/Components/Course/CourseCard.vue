@@ -10,9 +10,9 @@
 
           <Badge v-if="course.enrollment && course.enrollment.isCompleted" class="absolute top-2 left-2 gap-0.5 pl-1.5" variant="positive">
             <CheckIcon class="w-4 h-4 mt-px" />
-            Completed
+            {{ $t('Completed') }}
           </Badge>
-          <Badge v-if="course.enrollment && !course.enrollment.isCompleted" class="absolute top-2 left-2">{{ course.enrollment.progress }}% In Progress</Badge>
+          <Badge v-if="course.enrollment && !course.enrollment.isCompleted" class="absolute top-2 left-2">{{ $t(':value% In Progress', { value: `${course.enrollment.progress}` }) }}</Badge>
         </div>
         <div class="border-t px-2 py-3">
           <p class="font-semibold">{{ course.title }}</p>

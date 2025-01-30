@@ -6,7 +6,7 @@
     <Button class="px-2" :as="paginator.prevPageUrl ? Link : undefined" :disabled="!paginator.prevPageUrl" :href="paginator.prevPageUrl || undefined" variant="outline">
       <ChevronLeftIcon class="w-4 h-4" />
     </Button>
-    <span class="px-2 text-sm font-semibold">{{ paginator.currentPage }} <span class="text-foreground/60 font-normal">of</span> {{ paginator.lastPage }}</span>
+    <span class="px-2 text-sm font-semibold">{{ paginator.currentPage }} <span class="text-foreground/60 font-normal">{{ $t('of') }}</span> {{ paginator.lastPage }}</span>
     <Button class="px-2" :as="paginator.nextPageUrl ? Link : undefined" :disabled="!paginator.nextPageUrl" :href="paginator.nextPageUrl || undefined" variant="outline">
       <ChevronRightIcon class="w-4 h-4" />
     </Button>

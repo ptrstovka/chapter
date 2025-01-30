@@ -1,22 +1,20 @@
 <template>
   <Card>
     <CardHeader>
-      <CardTitle>Delete Account</CardTitle>
+      <CardTitle>{{ $t('Delete Account') }}</CardTitle>
       <CardDescription>
-        Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting
-        your account, please download any data or information that you wish to retain.
+        {{ $t('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
       </CardDescription>
     </CardHeader>
     <CardContent>
-      <Button @click="confirmModal.activate" variant="destructive">Delete Account</Button>
+      <Button @click="confirmModal.activate" variant="destructive">{{ $t('Delete Account') }}</Button>
 
       <AlertDialog :control="confirmModal">
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to delete your account?</AlertDialogTitle>
+            <AlertDialogTitle>{{ $t('Are you sure you want to delete your account?') }}</AlertDialogTitle>
             <AlertDialogDescription>
-              Once your account is deleted, all of its resources and data will be permanently deleted. Please
-              enter your password to confirm you would like to permanently delete your account.
+              {{ $t('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
             </AlertDialogDescription>
           </AlertDialogHeader>
 
@@ -25,15 +23,15 @@
               id="password"
               v-model="form.password"
               type="password"
-              placeholder="Password"
+              :placeholder="$t('Password')"
               @keyup.enter="deleteUser"
             />
           </FormControl>
 
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{{ $t('Cancel') }}</AlertDialogCancel>
 
-            <Button @click="deleteUser" variant="destructive" :processing="form.processing">Delete Account</Button>
+            <Button @click="deleteUser" variant="destructive" :processing="form.processing">{{ $t('Delete Account') }}</Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

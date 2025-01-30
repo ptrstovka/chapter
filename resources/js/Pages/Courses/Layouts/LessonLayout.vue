@@ -9,14 +9,14 @@
         </div>
 
         <div class="inline-flex absolute right-0">
-          <Badge v-if="courseCompleted" variant="positive">Course completed!</Badge>
+          <Badge v-if="courseCompleted" variant="positive">{{ $t('Course completed!') }}</Badge>
           <CircularProgressBar v-else :value="progress" class="w-8 h-8 text-xs" />
         </div>
 
         <div class="inline-flex absolute left-0">
           <LinkButton :href="route('courses.show', courseSlug)" variant="outline" class="gap-2">
             <XIcon class="w-4 h-4" />
-            Leave Course
+            {{ $t('Leave Course') }}
           </LinkButton>
         </div>
       </div>
@@ -50,7 +50,7 @@
                     <div class="flex flex-1 flex-col px-2">
                       <p class="text-xs font-medium" :title="item.lesson.title">{{ item.lesson.title }}</p>
                       <div class="inline-flex flex-row gap-2 mt-0.5">
-                        <p class="text-xs text-muted-foreground">Lesson {{ item.lesson.no }}</p>
+                        <p class="text-xs text-muted-foreground">{{ $t('Lesson :value', { value: `${item.lesson.no}` }) }}</p>
 
                         <div v-if="item.lesson.duration" class="inline-flex flex-row gap-1 items-center text-muted-foreground">
                           <TimerIcon class="w-3 h-3" />

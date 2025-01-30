@@ -1,27 +1,26 @@
 <template>
-  <Head title="Email Verification" />
+  <Head :title="$t('Email Verification')" />
 
   <GuestLayout>
     <LinkButton method="post" as="button" :href="route('logout')" variant="ghost" class="absolute right-4 top-4 md:right-8 md:top-8">
-      Log Out
+      {{ $t('Log Out') }}
     </LinkButton>
 
     <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
       <Alert v-if="verificationLinkSent" variant="positive">
         <AlertDescription>
-          A new verification link has been sent to the email address you provided during registration.
+          {{ $t('A new verification link has been sent to the email address you provided during registration.') }}
         </AlertDescription>
       </Alert>
 
       <div class="flex flex-col space-y-2 text-center">
         <p class="text-sm text-muted-foreground">
-          Thanks for signing up! Before getting started, could you verify your email address by clicking on
-          the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
+          {{ $t("Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.") }}
         </p>
       </div>
 
       <form @submit.prevent="submit" class="flex justify-center">
-        <Button :processing="form.processing">Resend Verification Email</Button>
+        <Button :processing="form.processing">{{ $t('Resend Verification Email') }}</Button>
       </form>
     </div>
   </GuestLayout>

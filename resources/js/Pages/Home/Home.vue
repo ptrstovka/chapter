@@ -1,46 +1,46 @@
 <template>
-  <Head title="Home" />
+  <Head :title="$t('Home')" />
 
   <AuthenticatedLayout class="bg-background">
     <div class="py-8">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-10">
         <EmptyState
           v-if="isEmpty"
-          title="Nothing to Show Here"
-          message="It looks like there are no courses in this section right now. Check back later or explore other categories to find something new!"
+          :title="$t('Nothing to Show Here')"
+          :message="$t('It looks like there are no courses in this section right now. Check back later or explore other categories to find something new!')"
         />
 
         <CourseRow
           v-if="inProgress.length > 0"
-          title="Pick Up Where You Left Off"
-          description="Continue learning with your ongoing courses. Dive back in and keep making progress toward your goals."
+          :title="$t('Pick Up Where You Left Off')"
+          :description="$t('Continue learning with your ongoing courses. Dive back in and keep making progress toward your goals.')"
           :courses="inProgress"
         />
 
         <CourseRow
           v-if="latest.length > 0"
-          title="New Courses, Fresh Opportunities"
-          description="Explore the latest courses added to our library. Stay updated with cutting-edge content and trending topics."
+          :title="$t('New Courses, Fresh Opportunities')"
+          :description="$t('Explore the latest courses added to our library. Stay updated with cutting-edge content and trending topics.')"
           :courses="latest"
-          action="Browse Latest Courses"
+          :action="$t('Browse Latest Courses')"
           :url="route('courses', { _query: { sort: 'latest' } })"
         />
 
         <CourseRow
           v-if="popular.length > 0"
-          title="Most-Loved by Learners"
-          description="Discover the courses that everyone is talking about. Join the crowd and explore what’s making waves."
+          :title="$t('Most-Loved by Learners')"
+          :description="$t('Discover the courses that everyone is talking about. Join the crowd and explore what’s making waves.')"
           :courses="popular"
-          action="Browse Popular Courses"
+          :action="$t('Browse Popular Courses')"
           :url="route('courses', { _query: { sort: 'popular', hideCompleted: 'true' } })"
         />
 
         <CourseRow
           v-if="discover.length > 0"
-          title="Feeling Adventurous?"
-          description="Browse a surprise selection of courses. Who knows? You might stumble upon your next passion."
+          :title="$t('Feeling Adventurous?')"
+          :description="$t('Browse a surprise selection of courses. Who knows? You might stumble upon your next passion.')"
           :courses="discover"
-          action="Browse All Courses"
+          :action="$t('Browse All Courses')"
           :url="route('courses')"
         />
       </div>

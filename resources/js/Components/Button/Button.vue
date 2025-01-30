@@ -20,6 +20,7 @@
 </template>
 
 <script setup lang="ts">
+import { trans } from 'laravel-vue-i18n'
 import { Primitive } from 'radix-vue'
 import { type ButtonProps, buttonVariants } from './'
 import { cn } from '@/Utils'
@@ -33,7 +34,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   plain: false,
 })
 
-const recentlySuccessfulLocalizedLabel = computed(() => props.recentlySuccessfulLabel || 'Saved.')
+const recentlySuccessfulLocalizedLabel = computed(() => props.recentlySuccessfulLabel || trans('Saved.'))
 
 const showProcessing = computed(() => props.processing)
 const showRecentlySuccessful = computed(() => props.recentlySuccessful)

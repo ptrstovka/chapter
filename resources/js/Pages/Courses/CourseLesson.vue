@@ -30,30 +30,30 @@
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" class="w-56" side="top">
-          <DropdownMenuCheckboxItem @select="shouldAutoPlay = !shouldAutoPlay" :checked="shouldAutoPlay">Start playing automatically</DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem @select="shouldPlayNextLesson = !shouldPlayNextLesson" :checked="shouldPlayNextLesson">Start next lesson automatically</DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem @select="shouldAutoPlay = !shouldAutoPlay" :checked="shouldAutoPlay">{{ $t('Start playing automatically') }}</DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem @select="shouldPlayNextLesson = !shouldPlayNextLesson" :checked="shouldPlayNextLesson">{{ $t('Start next lesson automatically') }}</DropdownMenuCheckboxItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
       <template v-if="! courseCompleted">
         <Button v-if="isCompleted" variant="positive" :processing="markCompletedForm.processing" @click="markNotCompleted">
-          <CheckIcon class="w-4 h-4" /> Completed
+          <CheckIcon class="w-4 h-4" /> {{ $t('Lesson Completed') }}
         </Button>
         <Button v-else-if="!isCompleted && remainingLessons > 1" :processing="markCompletedForm.processing" @click="markCompleted" variant="outline">
-          <CheckIcon class="w-4 h-4" /> Mark Completed
+          <CheckIcon class="w-4 h-4" /> {{ $t('Mark Completed') }}
         </Button>
       </template>
 
       <LinkButton v-if="prevLesson" :href="prevLesson.url" class="gap-2" variant="outline">
         <RewindIcon class="w-4 h-4" />
-        Previous Lesson
+        {{ $t('Previous Lesson') }}
       </LinkButton>
       <Button v-if="remainingLessons == 1 && !isCompleted" @click="finish">
         <CheckIcon class="w-4 h-4" />
-        Finish Course
+        {{ $t('Finish Course') }}
       </Button>
       <Button v-else-if="nextLesson" @click="navigateToNextLesson">
-        Next Lesson
+        {{ $t('Next Lesson') }}
         <FastForwardIcon class="w-4 h-4" />
       </Button>
     </div>
@@ -61,8 +61,8 @@
 
   <Tabs v-if="description || resources.length > 0" :default-value="description ? 'description' : 'resources'">
     <TabsList class="mt-6">
-      <TabsTrigger v-if="description" value="description">Description</TabsTrigger>
-      <TabsTrigger v-if="resources.length > 0" value="resources">Resources</TabsTrigger>
+      <TabsTrigger v-if="description" value="description">{{ $t('Description') }}</TabsTrigger>
+      <TabsTrigger v-if="resources.length > 0" value="resources">{{ $t('Resources') }}</TabsTrigger>
     </TabsList>
     <TabsContent value="description" v-if="description">
       <div class="editor-content" v-html="description"></div>
@@ -75,12 +75,12 @@
   <Dialog :control="completeDialog">
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Congratulations! 🎉</DialogTitle>
+        <DialogTitle>{{ $t('Congratulations!') }} 🎉</DialogTitle>
       </DialogHeader>
-      <p>You did it! You’ve officially completed the course.</p>
-      <p>Taking the time and effort to learn something new is no small feat, and you should be proud of yourself for making it through to the end.</p>
+      <p>{{ $t("You did it! You’ve officially completed the course.") }}</p>
+      <p>{{ $t('Taking the time and effort to learn something new is no small feat, and you should be proud of yourself for making it through to the end.') }}</p>
       <DialogFooter>
-        <Button @click="exit">Continue</Button>
+        <Button @click="exit">{{ $t('Continue') }}</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
