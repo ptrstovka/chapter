@@ -1,5 +1,5 @@
 <template>
-  <PlayerSubmenu label="Captions">
+  <PlayerSubmenu :label="$t('Captions')">
     <template #icon>
       <CaptionsIcon class="size-5" />
     </template>

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-background z-50 border rounded-md flex flex-col items-center justify-center">
+  <div class="bg-background z-50 border rounded-xl flex flex-col items-center justify-center">
     <BlurReveal :delay="0" :duration="0.5" class="flex flex-col items-center justify-center gap-4">
       <p class="text-2xl font-medium">{{ next ? $t('Lesson completed!') : $t('Course completed!') }}</p>
       <Button @click="onNextLesson" v-if="next">

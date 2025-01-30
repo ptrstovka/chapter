@@ -8,8 +8,8 @@
         </Button>
       </TooltipTrigger>
       <TooltipContent align="center" side="top" :side-offset="32">
-        <span class="media-captions:block hidden">Closed-Captions Off</span>
-        <span class="media-captions:hidden">Closed-Captions On</span>
+        <span class="media-captions:block hidden">{{ $t('Closed-Captions Off') }}</span>
+        <span class="media-captions:hidden">{{ $t('Closed-Captions On') }}</span>
       </TooltipContent>
     </Tooltip>
   </TooltipProvider>

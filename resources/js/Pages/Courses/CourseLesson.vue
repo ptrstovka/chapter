@@ -9,7 +9,7 @@
 
     <LessonCompleted
       v-if="showLessonCompleted"
-      class="absolute inset-0 z-50 border rounded-md"
+      class="absolute inset-0 z-50"
       v-motion
       :initial="{ opacity: 0 }"
       :enter="{ opacity: 1, transition: { duration: 300, easing: 'easeInOut', delay: 0 } }"

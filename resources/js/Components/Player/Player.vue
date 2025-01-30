@@ -1,5 +1,15 @@
 <template>
-  <media-player :class="cn('relative w-full aspect-video bg-secondary overflow-hidden rounded-xl ring-ring data-[focus]:ring-1', $attrs.class || '')" :src="src" crossOrigin playsInline @ended="onPlaybackEnded" :autoplay="autoplay">
+  <media-player
+      :class="cn('relative w-full aspect-video bg-secondary overflow-hidden rounded-xl ring-ring data-[focus]:ring-1', $attrs.class || '')"
+      :src="src"
+      crossOrigin
+      playsInline
+      @ended="onPlaybackEnded"
+      @rate-change="onPlaybackRateChanged"
+      :autoplay="autoplay"
+      :playback-rate="playbackRate"
+      ref="$player"
+  >
     <media-provider>
       <media-poster
         v-if="poster"
@@ -10,9 +20,7 @@
 
     <PlayerGestures />
     <PlayerCaptions v-if="captions" />
-    <media-controls
-        class="media-controls:opacity-100 absolute inset-0 z-10 flex h-full w-full flex-col bg-gradient-to-t from-black/10 to-transparent opacity-0 transition-opacity"
-    >
+    <media-controls class="media-controls:opacity-100 absolute inset-0 z-10 flex h-full w-full flex-col bg-gradient-to-t from-black/10 to-transparent opacity-0 transition-opacity">
       <div class="flex-1" />
       <media-controls-group class="flex w-full items-center px-2">
         <PlayerTimeSlider :thumbnails="playbackThumbnails" />
@@ -35,7 +43,7 @@
             <slot name="settings" />
           </template>
           <template #tooltip-content>
-            <span>Settings</span>
+            <span>{{ $t('Settings') }}</span>
           </template>
         </PlayerMenu>
         <PlayerPIPButton />
@@ -50,8 +58,10 @@ import 'vidstack/player/styles/base.css';
 import 'vidstack/player';
 import 'vidstack/player/ui';
 import { cn } from '@/Utils'
+import { useLocalStorage } from '@vueuse/core'
 import { SettingsIcon } from 'lucide-vue-next'
-import { computed, useSlots } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useSlots } from 'vue'
+import type { MediaPlayerElement } from 'vidstack/elements';
 import PlayerGestures from './PlayerGestures.vue'
 import PlayerCaptions from './PlayerCaptions.vue'
 import PlayerTimeSlider from './PlayerTimeSlider.vue'
@@ -81,8 +91,18 @@ const props = withDefaults(defineProps<{
   speed: true,
 })
 
+const $player = ref<MediaPlayerElement>()
+
 const onPlaybackEnded = () => {
   emit('ended')
+}
+
+const playbackRate = useLocalStorage('PlayerPlaybackRate', 1)
+const onPlaybackRateChanged = (e: any) => {
+  const player = $player.value
+  if (player) {
+    playbackRate.value = player.playbackRate
+  }
 }
 
 const slots = useSlots()

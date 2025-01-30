@@ -8,8 +8,8 @@
         </Button>
       </TooltipTrigger>
       <TooltipContent align="start" side="top" :side-offset="32">
-        <span class="media-paused:block hidden">Play</span>
-        <span class="media-paused:hidden">Pause</span>
+        <span class="media-paused:block hidden">{{ $t('Play') }}</span>
+        <span class="media-paused:hidden">{{ $t('Pause') }}</span>
       </TooltipContent>
     </Tooltip>
   </TooltipProvider>

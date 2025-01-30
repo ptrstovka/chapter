@@ -14,7 +14,7 @@
     </TooltipProvider>
 
     <media-menu-items
-      class="z-50 rounded-md shadow-md border bg-popover text-popover-foreground outline-none p-1 flex flex-col overflow-y-auto overscroll-y-contain animate-out fade-out slide-out-to-bottom-2 data-[open]:animate-in data-[open]:fade-in data-[open]:slide-in-from-bottom-4 h-[var(&#45;&#45;menu-height)] max-h-[400px] min-w-[260px] transition-[height] will-change-[height] data-[resizing]:overflow-hidden"
+      class="z-50 rounded-md shadow-md border bg-popover text-popover-foreground outline-none p-1 flex flex-col overflow-y-auto overscroll-y-contain animate-out fade-out slide-out-to-bottom-2 data-[open]:animate-in data-[open]:fade-in data-[open]:slide-in-from-bottom-4 max-h-52 min-w-72"
       placement="top end"
     >
       <slot name="content" />

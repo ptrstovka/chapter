@@ -9,8 +9,8 @@
         </Button>
       </TooltipTrigger>
       <TooltipContent align="center" side="top" :side-offset="32">
-        <span class="media-muted:hidden">Mute</span>
-        <span class="media-muted:block hidden">Unmute</span>
+        <span class="media-muted:hidden">{{ $t('Mute') }}</span>
+        <span class="media-muted:block hidden">{{ $t('Unmute') }}</span>
       </TooltipContent>
     </Tooltip>
   </TooltipProvider>

@@ -6,7 +6,7 @@
     <div class="contents parent-data-[open]:hidden">
       <slot name="icon" />
     </div>
-    <span class="ml-2 text-foreground parent-data-[open]:ml-1">{{ label }}</span>
+    <span class="ml-2 mr-4 text-foreground parent-data-[open]:ml-1">{{ label }}</span>
     <span class="ml-auto text-sm text-muted-foreground" data-part="hint"></span>
     <ChevronRight class="parent-data-[open]:invisible ml-2 size-4" />
   </media-menu-button>
