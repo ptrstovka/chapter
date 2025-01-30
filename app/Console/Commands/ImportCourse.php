@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 
 class ImportCourse extends Command
 {
-    protected $signature = 'course:import {dir} {--publish}';
+    protected $signature = 'course:import {dir} {--skip-publish}';
 
     protected $description = 'Import course from folder';
 
@@ -15,7 +15,7 @@ class ImportCourse extends Command
     {
         dispatch(new ImportJob(
             folder: $this->argument('dir'),
-            publish: $this->option('publish')
+            publish: !$this->option('skip-publish')
         ));
 
         return Command::SUCCESS;
