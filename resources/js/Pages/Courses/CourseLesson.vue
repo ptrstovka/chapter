@@ -4,8 +4,34 @@
       :src="video.url"
       :poster="video.posterImageUrl"
       @ended="onPlaybackEnded"
-      :autoplay="shouldAutoPlay"
-    />
+      :autoplay="shouldAutoPlay === 'on'"
+    >
+      <template #settings>
+        <PlayerSubmenu :label="$t('Autoplay')" :hint="shouldAutoPlay ? $t('On') : $t('Off')">
+          <template #icon>
+            <PlayCircleIcon class="size-5" />
+          </template>
+          <template #content>
+            <PlayerMenuRadioGroup v-model="shouldAutoPlay">
+              <PlayerMenuRadioItem value="on">{{ $t('On') }}</PlayerMenuRadioItem>
+              <PlayerMenuRadioItem value="off">{{ $t('Off') }}</PlayerMenuRadioItem>
+            </PlayerMenuRadioGroup>
+          </template>
+        </PlayerSubmenu>
+
+        <PlayerSubmenu :label="$t('Auto next lesson')" :hint="shouldPlayNextLesson ? $t('On') : $t('Off')">
+          <template #icon>
+            <SkipForwardIcon class="size-5" />
+          </template>
+          <template #content>
+            <PlayerMenuRadioGroup v-model="shouldPlayNextLesson">
+              <PlayerMenuRadioItem value="on">{{ $t('On') }}</PlayerMenuRadioItem>
+              <PlayerMenuRadioItem value="off">{{ $t('Off') }}</PlayerMenuRadioItem>
+            </PlayerMenuRadioGroup>
+          </template>
+        </PlayerSubmenu>
+      </template>
+    </Player>
 
     <LessonCompleted
       v-if="showLessonCompleted"
@@ -13,7 +39,7 @@
       v-motion
       :initial="{ opacity: 0 }"
       :enter="{ opacity: 1, transition: { duration: 300, easing: 'easeInOut', delay: 0 } }"
-      :auto="shouldPlayNextLesson"
+      :auto="shouldPlayNextLesson == 'on'"
       :next="remainingLessons == 1 && !isCompleted ? false : !!nextLesson"
       @next="navigateToNextLesson"
     />
@@ -23,18 +49,6 @@
     <h2 class="font-semibold text-xl leading-tight">{{ lessonTitle }}</h2>
 
     <div class="inline-flex flex-row gap-3">
-      <DropdownMenu>
-        <DropdownMenuTrigger as-child>
-          <Button variant="outline" size="icon">
-            <SettingsIcon class="w-4 h-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" class="w-56" side="top">
-          <DropdownMenuCheckboxItem @select="shouldAutoPlay = !shouldAutoPlay" :checked="shouldAutoPlay">{{ $t('Start playing automatically') }}</DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem @select="shouldPlayNextLesson = !shouldPlayNextLesson" :checked="shouldPlayNextLesson">{{ $t('Start next lesson automatically') }}</DropdownMenuCheckboxItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
       <template v-if="! courseCompleted">
         <Button v-if="isCompleted" variant="positive" :processing="markCompletedForm.processing" @click="markNotCompleted">
           <CheckIcon class="w-4 h-4" /> {{ $t('Lesson Completed') }}
@@ -87,13 +101,13 @@
 </template>
 
 <script setup lang="ts">
-import { Player } from '@/Components/Player'
+import { Player, PlayerSubmenu, PlayerMenuRadioItem, PlayerMenuRadioGroup } from '@/Components/Player'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/Tabs'
 import type { VideoSource } from '@/Types'
 import { router, useForm } from '@inertiajs/vue3'
 import { Button, LinkButton } from '@/Components/Button'
 import { useLocalStorage } from '@vueuse/core'
-import { CheckIcon, RewindIcon, FastForwardIcon, SettingsIcon } from 'lucide-vue-next'
+import { CheckIcon, RewindIcon, FastForwardIcon, PlayCircleIcon, SkipForwardIcon } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
 import sortBy from "lodash/sortBy"
 import { RootLayout } from '@/Layouts'
@@ -102,7 +116,6 @@ import confetti from "canvas-confetti"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/Components/Dialog'
 import { useToggle } from '@/Composables'
 import LessonCompleted from './Components/LessonCompleted.vue'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuCheckboxItem } from '@/Components/DropdownMenu'
 
 interface Lesson {
   slugId: string
@@ -141,8 +154,8 @@ watch(() => props.id, () => {
   showLessonCompleted.value = false
 })
 
-const shouldAutoPlay = useLocalStorage('PreferenceAutoPlay', true)
-const shouldPlayNextLesson = useLocalStorage('PreferenceNextLesson', true)
+const shouldAutoPlay = useLocalStorage('PlayerAutoPlay', 'on')
+const shouldPlayNextLesson = useLocalStorage('PlayNextLesson', 'on')
 
 const lessons = computed<Array<Lesson>>(() => sortBy(props.chapters.map(it => it.lessons).flatMap(it => it), it => it.no))
 

@@ -1,6 +1,6 @@
 <template>
   <media-menu>
-    <PlayerSubmenuButton :label="label">
+    <PlayerSubmenuButton :label="label" :hint="hint">
       <template #icon>
         <slot name="icon" />
       </template>
@@ -16,5 +16,6 @@ import PlayerSubmenuButton from './PlayerSubmenuButton.vue'
 
 defineProps<{
   label: string
+  hint?: string | undefined
 }>()
 </script>

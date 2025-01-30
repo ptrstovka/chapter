@@ -5,9 +5,7 @@
     </template>
     <template #content>
       <media-captions-radio-group class="w-full flex flex-col">
-        <template>
-          <PlayerMenuRadio />
-        </template>
+        <PlayerMenuRadio />
       </media-captions-radio-group>
     </template>
   </PlayerSubmenu>

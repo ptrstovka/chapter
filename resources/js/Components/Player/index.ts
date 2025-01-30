@@ -22,3 +22,5 @@ export { default as PlayerSubmenu } from './PlayerSubmenu.vue'
 export { default as PlayerSubmenuButton } from './PlayerSubmenuButton.vue'
 
 export { default as PlayerSpeedSubmenu } from './PlayerSpeedSubmenu.vue'
+export { default as PlayerMenuRadioGroup } from './PlayerMenuRadioGroup.vue'
+export { default as PlayerMenuRadioItem } from './PlayerMenuRadioItem.vue'
