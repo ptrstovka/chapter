@@ -66,7 +66,7 @@
         </div>
 
         <div class="flex-1 relative" style="height: calc(100vh - 4rem)">
-          <div class="absolute inset-0 flex flex-col overflow-y-auto py-6 px-4 sm:px-6 lg:px-8">
+          <div class="absolute inset-0 flex flex-col py-6 px-4 sm:px-6 lg:px-8 overflow-y-scroll">
             <slot />
           </div>
         </div>
@@ -81,7 +81,7 @@ import { AuthenticatedLayout } from '@/Layouts'
 import { cn } from '@/Utils'
 import { Head, Link } from '@inertiajs/vue3'
 import { LinkButton } from '@/Components/Button'
-import { PlayIcon, TimerIcon, HourglassIcon, CheckIcon, XIcon } from 'lucide-vue-next'
+import { PlayIcon, TimerIcon, HourglassIcon, CheckIcon, XIcon, FileIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { Badge } from '@/Components/Badge'
 

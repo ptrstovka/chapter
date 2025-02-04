@@ -79,10 +79,12 @@
       <TabsTrigger v-if="resources.length > 0" value="resources">{{ $t('Resources') }}</TabsTrigger>
     </TabsList>
     <TabsContent value="description" v-if="description">
-      <div class="editor-content" v-html="description"></div>
+      <div class="editor-content mt-4" v-html="description"></div>
     </TabsContent>
     <TabsContent value="resources">
-      <p>resources</p>
+      <ul class="max-w-xs flex flex-col gap-2 mt-4">
+        <ResourceItem v-for="resource in resources" :resource="resource" />
+      </ul>
     </TabsContent>
   </Tabs>
 
@@ -116,6 +118,8 @@ import confetti from "canvas-confetti"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/Components/Dialog'
 import { useToggle } from '@/Composables'
 import LessonCompleted from './Components/LessonCompleted.vue'
+import ResourceItem from './Components/ResourceItem.vue'
+import { type Resource } from '.'
 
 interface Lesson {
   slugId: string
@@ -141,7 +145,7 @@ const props = defineProps<{
   video: VideoSource | null
   description: string | null
   remainingLessons: number
-  resources: Array<{}>
+  resources: Array<Resource>
   chapters: Array<{
     no: number
     title: string

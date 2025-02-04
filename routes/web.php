@@ -9,6 +9,7 @@ use App\Http\Controllers\LessonController;
 use App\Http\Controllers\NextLessonController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResetProgressController;
+use App\Http\Controllers\ResourceController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
@@ -28,6 +29,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/completed-lessons/{lesson:uuid}', [CompletedLessonController::class, 'store'])->name('completed-lessons.store');
     Route::delete('/completed-lessons/{lesson:uuid}', [CompletedLessonController::class, 'destroy'])->name('completed-lessons.destroy');
+
+    Route::get('/courses/{course:slug}/resources/{resource:uuid}', [ResourceController::class, 'show'])->name('resources.show');
 });
 
 require __DIR__.'/auth.php';

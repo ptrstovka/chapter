@@ -6,10 +6,12 @@ use App\Models\Chapter;
 use App\Models\CompletedLesson;
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\Resource;
 use App\View\Models\VideoSource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Number;
 use Inertia\Inertia;
 
 class LessonController
@@ -73,7 +75,11 @@ class LessonController
             'lessonTitle' => $lesson->title,
             'video' => VideoSource::for($lesson->video),
             'description' => $lesson->description,
-            'resources' => [], // TODO: Add resources
+            'resources' => $lesson->resources->map(fn (Resource $resource) => [
+                'name' => $resource->client_file_name,
+                'url' => route('resources.show', [$course->slug, $resource->uuid]),
+                'size' => Number::fileSize($resource->size),
+            ]),
             'chapters' => $chapters,
         ]);
     }
