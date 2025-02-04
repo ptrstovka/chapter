@@ -24,8 +24,8 @@
 
     <div>
       <div class="flex flex-row">
-        <div class="w-96 flex-shrink-0 border-x relative" style="height: calc(100vh - 4rem)">
-          <div class="absolute inset-0 flex flex-col overflow-y-auto bg-background" ref="itemsWrapper">
+        <div class="w-96 flex-shrink-0 border-x relative bg-background" style="height: calc(100vh - 4rem)">
+          <div class="absolute inset-0 flex flex-col overflow-y-auto " ref="itemsWrapper">
             <ul class="divide-y">
               <li v-for="item in flattenItems" ref="items">
                 <template v-if="item.type === 'chapter'">
