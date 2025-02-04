@@ -7,7 +7,7 @@
       :autoplay="shouldAutoPlay === 'on'"
     >
       <template #settings>
-        <PlayerSubmenu :label="$t('Autoplay')" :hint="shouldAutoPlay ? $t('On') : $t('Off')">
+        <PlayerSubmenu :label="$t('Autoplay')" :hint="shouldAutoPlay === 'on' ? $t('On') : $t('Off')">
           <template #icon>
             <PlayCircleIcon class="size-5" />
           </template>
@@ -19,7 +19,7 @@
           </template>
         </PlayerSubmenu>
 
-        <PlayerSubmenu :label="$t('Auto next lesson')" :hint="shouldPlayNextLesson ? $t('On') : $t('Off')">
+        <PlayerSubmenu :label="$t('Auto next lesson')" :hint="shouldPlayNextLesson === 'on' ? $t('On') : $t('Off')">
           <template #icon>
             <SkipForwardIcon class="size-5" />
           </template>
