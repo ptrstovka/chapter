@@ -9,8 +9,7 @@ RUN composer install \
   --optimize-autoloader \
   --apcu-autoloader \
   --ansi \
-  --no-scripts \
-  --audit
+  --no-scripts
 
 FROM node:20 AS nodemodules
 WORKDIR /var/www/html
