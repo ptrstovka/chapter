@@ -32,7 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && mkdir -p /data/public \
     && mkdir -p /data/private \
     && chown -R www-data /data \
-    && install-php-extensions bcmath \
+    && install-php-extensions bcmath intl \
     && touch /etc/s6-overlay/s6-rc.d/user/contents.d/queue
 
 USER www-data
