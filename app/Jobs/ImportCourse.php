@@ -151,12 +151,14 @@ class ImportCourse implements ShouldQueue
 
         $trailerVideo = $trailerPath ? $uploadVideo($trailerPath) : null;
 
+        $slug = basename($this->folder);
+
         /** @var Course $course */
         $course = Course::create([
             'status' => CourseStatus::Draft,
             'author_id' => $author->id,
             'title' => $title,
-            'slug' => Str::slug($title),
+            'slug' => $slug, // Str::slug($title),
             'description' => Arr::get($manifest, 'description'),
             'category_id' => $category->id,
             'trailer_id' => $trailerVideo?->id,
