@@ -15,6 +15,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class ImportCourse implements ShouldQueue
 {
@@ -31,10 +32,12 @@ class ImportCourse implements ShouldQueue
     {
         if (! File::exists($this->folder)) {
             $this->fail("The folder [$this->folder] does not exist.");
+            return;
         }
 
         if (! File::isDirectory($this->folder)) {
             $this->fail("The [$this->folder] is not a directory.");
+            return;
         }
 
         $sourceStorage = Storage::build([
@@ -46,6 +49,7 @@ class ImportCourse implements ShouldQueue
 
         if (! $sourceStorage->exists('manifest.json')) {
             $this->fail('The manifest file does not exist.');
+            return;
         }
 
         $manifest = json_decode($sourceStorage->get('manifest.json'), true);
@@ -54,11 +58,13 @@ class ImportCourse implements ShouldQueue
 
         if (! $title) {
             $this->fail('The course does not have a title.');
+            return;
         }
 
         $chapters = collect(Arr::get($manifest, 'chapters', []));
         if ($chapters->isEmpty()) {
             $this->fail('No chapters in the course.');
+            return;
         }
 
         $categoryTitle = collect(Arr::get($manifest, 'stats', []))->firstWhere('name', 'Kategória');
@@ -66,6 +72,7 @@ class ImportCourse implements ShouldQueue
 
         if (! $categoryTitle) {
             $this->fail('No category specified.');
+            return;
         }
 
         $category = Category::query()->firstWhere('title', $categoryTitle) ?: Category::create([
@@ -88,7 +95,8 @@ class ImportCourse implements ShouldQueue
 
             $ext = match ($sourceStorage->mimeType($path)) {
                 'image/jpeg' => 'jpeg',
-                'image/png' => 'png'
+                'image/png' => 'png',
+                'image/svg+xml' => 'svg',
             };
 
             $fileName = Str::random(32).'.'.$ext;
@@ -102,6 +110,7 @@ class ImportCourse implements ShouldQueue
             $name = Arr::get($authorSource, 'name');
             if (! $name) {
                 $this->fail('Author name could not be resolved');
+                return;
             }
 
             $author = Author::query()->firstWhere('name', $name);
@@ -115,6 +124,7 @@ class ImportCourse implements ShouldQueue
             }
         } else {
             $this->fail('The course does not have author.');
+            return;
         }
 
         $resolveVideoPath = function (string $id) use ($sourceStorage) {
@@ -123,10 +133,10 @@ class ImportCourse implements ShouldQueue
             if ($sourceStorage->exists("{$path}.mp4")) {
                 return $path.'.mp4';
             } elseif ($sourceStorage->exists("{$path}.webm")) {
-                $this->fail('This video is webm type. Might be an issue tho');
+                throw new InvalidArgumentException('This video is webm type. Might be an issue tho');
             }
 
-            $this->fail("Unable to find video file for id {$id}");
+            throw new InvalidArgumentException("Unable to find video file for id {$id}");
         };
 
         $trailerPath = null;
@@ -173,7 +183,7 @@ class ImportCourse implements ShouldQueue
             $path = "attachments/{$attachment['id']}";
 
             if (! $sourceStorage->exists($path)) {
-                $this->fail("Attachment {$attachment['id']} does not exist.");
+                throw new InvalidArgumentException("Attachment {$attachment['id']} does not exist.");
             }
 
             $mime = $sourceStorage->mimeType($path);
