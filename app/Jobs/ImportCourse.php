@@ -128,6 +128,10 @@ class ImportCourse implements ShouldQueue
         }
 
         $resolveVideoPath = function (string $id) use ($sourceStorage) {
+            if (in_array($id, ['872538016', '229241381', '928468405'])) {
+                return null;
+            }
+
             $path = "videos/$id";
 
             if ($sourceStorage->exists("{$path}.mp4")) {
@@ -217,9 +221,9 @@ class ImportCourse implements ShouldQueue
             collect(Arr::get($chapterSource, 'episodes', []))->sortBy('position')->values()->each(function (array $episodeSource) use ($chapter, $resolveVideoPath, $uploadVideo, $resources, $course, &$lessonPosition) {
                 $video = null;
                 if ($videoId = Arr::get($episodeSource, 'video_id')) {
-                    $path = $resolveVideoPath($videoId);
-
-                    $video = $uploadVideo($path);
+                    if ($path = $resolveVideoPath($videoId)) {
+                        $video = $uploadVideo($path);
+                    }
                 }
 
                 $title = Arr::get($episodeSource, 'title');
