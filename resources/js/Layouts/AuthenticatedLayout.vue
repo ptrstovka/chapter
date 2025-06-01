@@ -116,6 +116,8 @@
     <main>
       <slot />
     </main>
+
+    <SearchDialog />
   </div>
 </template>
 
@@ -130,6 +132,7 @@ import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuL
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLink, DropdownMenuSeparator, DropdownMenuCheckboxItem, DropdownMenuLabel } from '@/Components/DropdownMenu'
 import { Button } from '@/Components/Button'
 import { Logo } from '@/Components/Logo'
+import { SearchDialog } from '@/Components/Search'
 
 const showingNavigationDropdown = ref(false)
 
