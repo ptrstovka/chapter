@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\CourseStatus;
 use App\Models\Course;
 use App\View\Models\CourseCard;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -15,16 +16,14 @@ class HomeController
 {
     public function __invoke()
     {
-        // <!-- TODO: Continue where you left off (pokračovanie rozrobenych kurzov) -->
-        // <!-- TODO: Latest courses (naposledy pridane nove kurzy) -->
-        // <!-- TODO: Popular courses (kurzy zoradenie podľa najvyššieho počtu enrollmentov) -->
-        // <!-- TODO: Discover (random kurzy) -->
-
         $user = Auth::user();
 
         // Courses In Progress
         $inProgress = Course::query()
             ->with(['author'])
+            ->withExists([
+                'favoritedBy' => fn (Builder $builder) => $builder->where('id', $user->id),
+            ])
             ->select('courses.*')
             ->join('course_enrollments', function (JoinClause $join) use ($user) {
                 $join->on('course_enrollments.course_id', 'courses.id')
@@ -39,6 +38,9 @@ class HomeController
         // Latest Courses
         $latest = Course::query()
             ->with(['author'])
+            ->withExists([
+                'favoritedBy' => fn (Builder $builder) => $builder->where('id', $user->id),
+            ])
             ->where('status', CourseStatus::Published)
             ->whereNotIn('id', $inProgress->pluck('id'))
             ->latest()
@@ -48,6 +50,9 @@ class HomeController
         // Popular Courses
         $popular = Course::query()
             ->with(['author'])
+            ->withExists([
+                'favoritedBy' => fn (Builder $builder) => $builder->where('id', $user->id),
+            ])
             ->select('courses.*')
             ->where('status', CourseStatus::Published)
             ->whereNotIn('courses.id', [
@@ -91,6 +96,9 @@ class HomeController
         if ($discoverIds->isNotEmpty()) {
             $discover = Course::query()
                 ->with(['author'])
+                ->withExists([
+                    'favoritedBy' => fn (Builder $builder) => $builder->where('id', $user->id),
+                ])
                 ->where('status', CourseStatus::Published)
                 ->whereIn('id', $discoverIds)
                 ->get();
