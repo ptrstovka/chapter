@@ -10,6 +10,7 @@ use App\Http\Controllers\NextLessonController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResetProgressController;
 use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
@@ -31,6 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/completed-lessons/{lesson:uuid}', [CompletedLessonController::class, 'destroy'])->name('completed-lessons.destroy');
 
     Route::get('/courses/{course:slug}/resources/{resource:uuid}', [ResourceController::class, 'show'])->name('resources.show');
+
+    Route::get('/search', SearchController::class)->name('search');
 });
 
 require __DIR__.'/auth.php';
