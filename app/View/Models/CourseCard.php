@@ -15,6 +15,7 @@ class CourseCard extends Model
     public function toView(): array
     {
         return [
+            'slug' => $this->course->slug,
             'title' => $this->course->title,
             'url' => route('courses.show', $this->course->slug),
             'coverImageUrl' => $this->course->getCoverImageUrl(),
@@ -26,6 +27,7 @@ class CourseCard extends Model
                 'isCompleted' => $this->enrollment->isCompleted(),
                 'progress' => $this->enrollment->progress,
             ] : null,
+            'isFavorite' => $this->course->favorited_by_exists,
         ];
     }
 }

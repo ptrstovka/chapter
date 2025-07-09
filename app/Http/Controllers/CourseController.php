@@ -40,6 +40,9 @@ class CourseController
         $builder = Course::query()
             ->select('courses.*')
             ->with(['author'])
+            ->withExists([
+                'favoritedBy' => fn (Builder $builder) => $builder->where('id', $user->id),
+            ])
             ->when($category, function (Builder $builder, Category $category) {
                 $builder->whereBelongsTo($category);
             })

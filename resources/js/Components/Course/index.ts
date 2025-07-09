@@ -1,6 +1,7 @@
 export { default as CourseCard } from './CourseCard.vue'
 
 export interface Course {
+  slug: string
   title: string
   url: string
   coverImageUrl: string | null
@@ -12,4 +13,5 @@ export interface Course {
     isCompleted: boolean
     progress: number
   } | null
+  isFavorite: boolean
 }

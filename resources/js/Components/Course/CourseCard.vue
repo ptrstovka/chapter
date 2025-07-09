@@ -13,6 +13,8 @@
             {{ $t('Completed') }}
           </Badge>
           <Badge v-if="course.enrollment && !course.enrollment.isCompleted" class="absolute top-2 left-2">{{ $t(':value% In Progress', { value: `${course.enrollment.progress}` }) }}</Badge>
+
+          <CourseFavoriteButton class="absolute bottom-0 left-0" :slug="course.slug" :is-favorite="course.isFavorite" />
         </div>
         <div class="border-t px-2 py-3">
           <p class="font-semibold">{{ course.title }}</p>
@@ -39,6 +41,7 @@ import { Card, CardContent } from '@/Components/Card'
 import { Link } from '@inertiajs/vue3'
 import { CheckIcon, ContactIcon, ImageOffIcon, TimerIcon } from 'lucide-vue-next'
 import type { Course } from '.'
+import CourseFavoriteButton from './CourseFavoriteButton.vue'
 
 defineProps<{
   course: Course

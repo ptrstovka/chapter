@@ -4,6 +4,7 @@ use App\Http\Controllers\BeginCourseController;
 use App\Http\Controllers\CompletedLessonController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollCourseController;
+use App\Http\Controllers\FavoriteCourseController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\NextLessonController;
@@ -25,6 +26,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/courses/{course:uuid}/enroll', EnrollCourseController::class)->name('courses.enroll');
     Route::get('/courses/{course:slug}/begin', BeginCourseController::class)->name('courses.begin');
     Route::post('/courses/{course:slug}/reset', ResetProgressController::class)->name('courses.reset-progress');
+    Route::post('/courses/{course:slug}/favorite', [FavoriteCourseController::class, 'store'])->name('courses.favorite');
+    Route::delete('/courses/{course:slug}/favorite', [FavoriteCourseController::class, 'destroy'])->name('courses.unfavorite');
     Route::post('/courses/{course:slug}/lessons/next', NextLessonController::class)->name('lessons.next');
     Route::get('/courses/{course:slug}/{lesson:slugid}', [LessonController::class, 'show'])->name('lessons.show');
 
