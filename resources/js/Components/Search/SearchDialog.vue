@@ -1,12 +1,12 @@
 <template>
-  <Dialog :control="dialog">
+  <Dialog :control="control || dialog">
     <DialogContent class="overflow-hidden p-0 shadow-lg">
       <VisuallyHidden>
         <DialogTitle>{{ $t('Search') }}</DialogTitle>
       </VisuallyHidden>
 
       <ComboboxRoot :ignore-filter="true">
-        <div class="flex items-center border-b px-3 mt-1">
+        <div class="flex items-center px-3 mt-1 pb-1">
           <ComboboxInput
             class="border-none focus:ring-0 flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
             :placeholder="$t('Search…')"
@@ -14,12 +14,12 @@
           />
         </div>
 
-        <ComboboxContent>
+        <ComboboxContent class="p-1 -mt-3" v-if="showContent">
           <div v-if="isError" class="py-6 text-center text-sm">
             {{ $t('Oops, something went wrong…') }}
           </div>
           <div v-else-if="isEmpty" class="py-6 text-center text-sm">
-            {{ $t('No courses matching your search criteria.') }}
+            {{ $t('No courses found matching your search criteria.') }}
           </div>
 
           <ComboboxGroup v-if="result.length > 0">
@@ -35,7 +35,7 @@
                 <div class="inline-flex">
                   <span class="text-xs text-muted-foreground">{{ item.author }}</span>
                   <template v-if="item.duration">
-                    <DotIcon class="size-4 mt-px" />
+                    <DotIcon class="size-4 mt-px text-muted-foreground" />
                     <span class="text-xs text-muted-foreground">{{ item.duration }}</span>
                   </template>
                 </div>
@@ -52,9 +52,9 @@
 import { router } from '@inertiajs/vue3'
 import { useMagicKeys, watchDebounced } from '@vueuse/core'
 import axios from 'axios'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Dialog, DialogContent, DialogTitle } from '@/Components/Dialog'
-import { useToggle } from '@/Composables'
+import { type Toggle, useToggle } from '@/Composables'
 import {
   ComboboxContent,
   ComboboxInput,
@@ -65,6 +65,10 @@ import {
   VisuallyHidden,
 } from 'reka-ui'
 import { DotIcon } from 'lucide-vue-next'
+
+const props = defineProps<{
+  control?: Toggle
+}>()
 
 const dialog = useToggle()
 
@@ -80,8 +84,10 @@ const result = ref<Array<ResultItem>>([])
 const isEmpty = ref(false)
 const isError = ref(false)
 
+const showContent = computed(() => result.value.length > 0 || isEmpty.value || isEmpty.value)
+
 const onSelected = (item: ResultItem) => {
-  dialog.deactivate()
+  (props.control || dialog).deactivate()
   router.visit(item.url)
 }
 
@@ -140,11 +146,13 @@ const { Meta_K, Ctrl_K } = useMagicKeys({
 })
 
 watch([Meta_K, Ctrl_K], (v) => {
+  const dialogToggle = props.control || dialog
+
   if (v[0] || v[1]) {
-    if (dialog.active.value) {
-      dialog.deactivate()
+    if (dialogToggle.active.value) {
+      dialogToggle.deactivate()
     } else {
-      dialog.activate()
+      dialogToggle.activate()
     }
   }
 })

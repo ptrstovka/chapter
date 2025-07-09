@@ -37,6 +37,10 @@
           </div>
 
           <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <Button @click="search.activate" variant="ghost" size="icon">
+              <SearchIcon class="size-4" />
+            </Button>
+
             <!-- Settings Dropdown -->
             <DropdownMenu>
               <DropdownMenuTrigger>
@@ -117,15 +121,15 @@
       <slot />
     </main>
 
-    <SearchDialog />
+    <SearchDialog :control="search" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { useDarkMode } from '@/Composables'
+import { useDarkMode, useToggle } from '@/Composables'
 import { ref } from 'vue'
 import { navigationMenuTriggerStyle } from '@/Components/NavigationMenu'
-import { ChevronDownIcon, MenuIcon, XIcon } from 'lucide-vue-next'
+import { ChevronDownIcon, MenuIcon, XIcon, SearchIcon } from 'lucide-vue-next'
 import { cn } from '@/Utils'
 import { Link } from '@inertiajs/vue3'
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from '@/Components/NavigationMenu'
@@ -137,6 +141,8 @@ import { SearchDialog } from '@/Components/Search'
 const showingNavigationDropdown = ref(false)
 
 const { mode } = useDarkMode()
+
+const search = useToggle()
 
 withDefaults(defineProps<{
   header?: boolean
