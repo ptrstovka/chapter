@@ -22,6 +22,7 @@ const toggle = () => {
 
   const options = {
     showProgress: false,
+    preserveScroll: true,
   }
 
   if (props.isFavorite) {

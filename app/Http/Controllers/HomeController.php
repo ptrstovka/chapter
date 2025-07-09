@@ -21,10 +21,10 @@ class HomeController
         // Courses In Progress
         $inProgress = Course::query()
             ->with(['author'])
+            ->select('courses.*')
             ->withExists([
                 'favoritedBy' => fn (Builder $builder) => $builder->where('id', $user->id),
             ])
-            ->select('courses.*')
             ->join('course_enrollments', function (JoinClause $join) use ($user) {
                 $join->on('course_enrollments.course_id', 'courses.id')
                     ->where('course_enrollments.user_id', $user->id);
@@ -50,10 +50,10 @@ class HomeController
         // Popular Courses
         $popular = Course::query()
             ->with(['author'])
+            ->select('courses.*')
             ->withExists([
                 'favoritedBy' => fn (Builder $builder) => $builder->where('id', $user->id),
             ])
-            ->select('courses.*')
             ->where('status', CourseStatus::Published)
             ->whereNotIn('courses.id', [
                 ...$latest->pluck('id')->all(),
