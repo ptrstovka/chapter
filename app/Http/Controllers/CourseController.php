@@ -61,7 +61,7 @@ class CourseController
         };
 
         $courses = $builder
-            ->paginate(12)
+            ->paginate(36)
             ->withQueryString();
 
         $enrollments = collect();
