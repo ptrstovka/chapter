@@ -36,7 +36,7 @@
                     <NavigationMenuLink
                       :href="route('mycourses')"
                       :class="navigationMenuTriggerStyle()"
-                      :active="route().current('mycourses')"
+                      :active="route().current('mycourses') || route().current('mycourses.favorite') || route().current('mycourses.completed')"
                     >{{ $t('MyCourses') }}</NavigationMenuLink>
                   </NavigationMenuItem>
                 </NavigationMenuList>

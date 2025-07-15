@@ -6,7 +6,7 @@ import { Head } from '@inertiajs/vue3';
 </script>
 
 <template>
-    <Head :title="$t('Favorite')" />
+    <Head :title="$t('Completed')" />
 
     <AuthenticatedLayout class="bg-background">
         <div class="py-8">
@@ -19,7 +19,7 @@ import { Head } from '@inertiajs/vue3';
                     <div class="w-full">
                         <div class="flex gap-1.5">
                             <TabsLinkList class="flex gap-1">
-                                <TabsLink :href="route('mycourses')">{{ $t('InProgress') }}</TabsLink>
+                                <TabsLink :href="route('mycourses')">{{ $t('In progress') }}</TabsLink>
                                 <TabsLink :href="route('mycourses.favorite')">{{ $t('Favorite') }}</TabsLink>
                                 <TabsLink :href="route('mycourses.completed')">{{ $t('Completed') }}</TabsLink>
                             </TabsLinkList>

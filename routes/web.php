@@ -6,8 +6,11 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollCourseController;
 use App\Http\Controllers\FavoriteCourseController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InProgressController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\MyCompletedCourses;
+use App\Http\Controllers\MyCourses\CompletedController;
+use App\Http\Controllers\MyCourses\FavoriteController;
 use App\Http\Controllers\MyCoursesController;
 use App\Http\Controllers\MyFavoriteCourses;
 use App\Http\Controllers\NextLessonController;
@@ -41,9 +44,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/search', SearchController::class)->name('search');
 
-    Route::get('/my-courses', [MyCoursesController::class, 'index'])->name('mycourses');
-    Route::get('/my-courses/favorites', [MyFavoriteCourses::class, 'index'])->name('mycourses.favorite');
-    Route::get('/my-courses/completed', [MyCompletedCourses::class, 'index'])->name('mycourses.completed');
+    Route::get('/my-courses', [InProgressController::class, 'index'])->name('mycourses');
+    Route::get('/my-courses/favorites', [FavoriteController::class, 'index'])->name('mycourses.favorite');
+    Route::get('/my-courses/completed', [CompletedController::class, 'index'])->name('mycourses.completed');
 });
 
 require __DIR__.'/auth.php';

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { EmptyState } from '@/Components/EmptyState';
 import { TabsLink, TabsLinkList } from '@/Components/Tabs';
 import { AuthenticatedLayout } from '@/Layouts';
 import { Head } from '@inertiajs/vue3';
@@ -6,7 +7,7 @@ import { Head } from '@inertiajs/vue3';
 </script>
 
 <template>
-    <Head :title="$t('Completed')" />
+    <Head :title="$t('In progress')" />
 
     <AuthenticatedLayout class="bg-background">
         <div class="py-8">
@@ -19,11 +20,12 @@ import { Head } from '@inertiajs/vue3';
                     <div class="w-full">
                         <div class="flex gap-1.5">
                             <TabsLinkList class="flex gap-1">
-                                <TabsLink :href="route('mycourses')">{{ $t('InProgress') }}</TabsLink>
+                                <TabsLink :href="route('mycourses')">{{ $t('In progress') }}</TabsLink>
                                 <TabsLink :href="route('mycourses.favorite')">{{ $t('Favorite') }}</TabsLink>
                                 <TabsLink :href="route('mycourses.completed')">{{ $t('Completed') }}</TabsLink>
                             </TabsLinkList>
                         </div>
+
                     </div>
                 </div>
             </div>
