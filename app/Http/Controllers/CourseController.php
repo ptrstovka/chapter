@@ -54,9 +54,10 @@ class CourseController
                     })
                     ->whereNull('course_enrollments.completed_at');
             })
-            ->when($request->boolean('onlyFavorite'), function (Builder $builder) use ($user) {
-                $builder->whereHas('favoritedBy', fn (Builder $builder) => $builder->where('id', $user->id));
-            })
+            ->when(
+                $request->boolean('onlyFavorite'),
+                fn (Builder $builder) => $builder->whereHas('favoritedBy', fn (Builder $builder) => $builder->where('id', $user->id))
+            )
             ->where('status', CourseStatus::Published);
 
         match ($request->input('sort')) {
