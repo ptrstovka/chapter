@@ -3,7 +3,7 @@
 
   <AuthenticatedLayout class="bg-background">
     <div class="py-8">
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-10">
+      <div class="flex flex-col gap-10 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <EmptyState
           v-if="isEmpty"
           :title="$t('Nothing to Show Here')"

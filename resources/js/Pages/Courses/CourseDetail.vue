@@ -3,11 +3,11 @@
 
   <AuthenticatedLayout class="bg-background">
     <div class="py-8">
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <h1 class="font-semibold text-2xl leading-tight">{{ title }}</h1>
+      <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <h1 class="text-2xl font-semibold leading-tight">{{ title }}</h1>
 
         <div class="flex flex-row gap-8 mt-6">
-          <div class="w-full flex flex-col gap-6">
+          <div class="flex flex-col w-full gap-6">
             <Player
               v-if="trailer"
               :src="trailer.url"
@@ -28,9 +28,9 @@
                     <AccordionTrigger>{{ chapter.title }}</AccordionTrigger>
                     <AccordionContent>
                       <ul class="flex flex-col gap-2">
-                        <li v-for="lesson in chapter.lessons" class="flex flex-row justify-between bg-background rounded-md border p-4 text-sm">
+                        <li v-for="lesson in chapter.lessons" class="flex flex-row justify-between p-4 text-sm border rounded-md bg-background">
                           <p class="font-medium">{{ lesson.title }}</p>
-                          <p class="tabular-nums text-muted-foreground font-mono" v-if="lesson.duration">{{ lesson.duration }}</p>
+                          <p class="font-mono tabular-nums text-muted-foreground" v-if="lesson.duration">{{ lesson.duration }}</p>
                         </li>
                       </ul>
                     </AccordionContent>
@@ -40,7 +40,7 @@
             </Tabs>
           </div>
 
-          <div class="w-96 flex-shrink-0">
+          <div class="flex-shrink-0 w-96">
             <Card class="w-full">
               <CardContent class="flex flex-col items-center p-6">
                 <Avatar size="base" shape="square">
@@ -49,15 +49,15 @@
                     <ContactIcon class="w-6 h-6" />
                   </AvatarFallback>
                 </Avatar>
-                <h3 class="text-lg font-semibold mt-4">{{ author.name }}</h3>
-                <p v-if="author.bio" class="text-center text-muted-foreground text-sm mt-1">{{ author.bio }}</p>
+                <h3 class="mt-4 text-lg font-semibold">{{ author.name }}</h3>
+                <p v-if="author.bio" class="mt-1 text-sm text-center text-muted-foreground">{{ author.bio }}</p>
 
                 <div class="mt-4" v-if="enrollment">
                   <Badge variant="positive" v-if="enrollment.isCompleted">{{ $t('Course Completed!') }}</Badge>
                   <p class="text-sm text-muted-foreground" v-else>{{ $t(':value% completed', { value: `${enrollment.progress}` }) }}</p>
                 </div>
 
-                <div class="mt-4 flex flex-col w-full gap-2">
+                <div class="flex flex-col w-full gap-2 mt-4">
                   <LinkButton v-if="enrollment" :href="route('courses.begin', slug)">
                     {{ enrollment.isCompleted ? $t('Browse Lessons') : (enrollment.completedLessons === 0 ? $t('Start Learning') : $t('Continue Learning')) }}
                   </LinkButton>

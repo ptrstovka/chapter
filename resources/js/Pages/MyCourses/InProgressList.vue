@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { EmptyState } from '@/Components/EmptyState';
-import { TabsLink, TabsLinkList } from '@/Components/Tabs';
-import { AuthenticatedLayout } from '@/Layouts';
-import { Head } from '@inertiajs/vue3';
-
-</script>
-
 <template>
     <Head :title="$t('In progress')" />
 
@@ -26,9 +18,39 @@ import { Head } from '@inertiajs/vue3';
                             </TabsLinkList>
                         </div>
 
+                        <EmptyState
+                            v-if="inProgress.total === 0"
+                            :title="$t('No courses in progress')"
+                            :message="$t('There are currently no courses in progress.')"
+                            class="mt-12"
+                        />
+
+                        <div class="grid grid-cols-4 gap-4 mt-4">
+                            <CourseCard v-for="course in inProgress.data" :course="course" />
+                        </div>
+
+                        <div class="flex flex-row justify-end w-full mt-6" v-if="inProgress.total > 0">
+                            <SimplePagination :paginator="inProgress" />
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </AuthenticatedLayout>
 </template>
+
+<script setup lang="ts">
+import type { Course } from '@/Components/Course'
+import { CourseCard } from '@/Components/Course'
+import { EmptyState } from '@/Components/EmptyState';
+import { SimplePagination } from '@/Components/Pagination';
+import { TabsLink, TabsLinkList } from '@/Components/Tabs';
+import { AuthenticatedLayout } from '@/Layouts';
+import { Paginator } from '@/Types';
+import { Head } from '@inertiajs/vue3';
+
+const props = defineProps<{
+    inProgress: Paginator<Course>;
+}>()
+</script>

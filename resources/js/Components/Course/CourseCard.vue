@@ -2,9 +2,9 @@
   <Card class="p-0 overflow-hidden">
     <CardContent class="p-0">
       <Link :href="course.url">
-        <div class="h-44 relative">
-          <img :class="{ 'grayscale': course.enrollment && course.enrollment.isCompleted }" class="w-full h-full object-cover" v-if="course.coverImageUrl" :src="course.coverImageUrl" :alt="`Cover image of ${course.title} course`">
-          <div v-else class="w-full h-full bg-stone-50 dark:bg-background flex items-center justify-center">
+        <div class="relative h-44">
+          <img :class="{ 'grayscale': course.enrollment && course.enrollment.isCompleted }" class="object-cover w-full h-full" v-if="course.coverImageUrl" :src="course.coverImageUrl" :alt="`Cover image of ${course.title} course`">
+          <div v-else class="flex items-center justify-center w-full h-full bg-stone-50 dark:bg-background">
             <ImageOffIcon class="w-5 h-5 text-stone-400" />
           </div>
 
@@ -16,15 +16,15 @@
 
           <CourseFavoriteButton class="absolute bottom-0 left-0" :slug="course.slug" :is-favorite="course.isFavorite" />
         </div>
-        <div class="border-t px-2 py-3">
+        <div class="px-2 py-3 border-t">
           <p class="font-semibold">{{ course.title }}</p>
 
-          <div class="flex flex-row mt-2 gap-2">
-            <p class="text-xs font-medium text-muted-foreground inline-flex items-center gap-1">
+          <div class="flex flex-row gap-2 mt-2">
+            <p class="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground">
               <ContactIcon class="w-4 h-4" />
               {{ course.author.name }}
             </p>
-            <p v-if="course.duration" class="text-xs font-medium text-muted-foreground inline-flex tabular-nums items-center gap-1">
+            <p v-if="course.duration" class="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground tabular-nums">
               <TimerIcon class="w-4 h-4" />
               {{ course.duration }}
             </p>
