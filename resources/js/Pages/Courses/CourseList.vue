@@ -24,9 +24,12 @@
 
             <h2 class="font-semibold text-xl leading-tight mt-8 block">{{ $t('Filter') }}</h2>
 
-            <ul class="mt-4">
+            <ul class="mt-4 gap-2 flex flex-col">
               <li>
                 <CheckboxControl v-model="filter.hideCompleted">{{ $t('Hide Completed') }}</CheckboxControl>
+              </li>
+              <li>
+                <CheckboxControl v-model="filter.onlyFavorite">{{ $t('Only Favorite') }}</CheckboxControl>
               </li>
             </ul>
           </div>
@@ -94,5 +97,6 @@ const filter = useFilter(() => ({
   category: null as string | null,
   sort: 'latest',
   hideCompleted: false,
+  onlyFavorite: false,
 }))
 </script>
