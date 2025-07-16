@@ -3,16 +3,16 @@
         <Head :title="pageTitle" />
 
         <div class="py-8">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="flex flex-col gap-4">
-                    <div class="w-72">
+                    <div>
                         <h2 class="text-xl font-semibold leading-tight">{{ $t('My Courses') }}</h2>
                     </div>
 
                     <div class="w-full">
-                        <div class="flex gap-1 5">
-                            <TabsLinkList class="flex gap-1">
-                                <TabsLink :href="route('mycourses')" :active="activeTab === 'inProgress'">
+                        <div class="flex flex-wrap items-center gap-4 sm:gap-4">
+                            <TabsLinkList class="flex flex-wrap gap-2">
+                                <TabsLink :href="route('mycourses.inprogress')" :active="activeTab === 'inProgress'">
                                     {{ $t('In progress') }}
                                 </TabsLink>
                                 <TabsLink :href="route('mycourses.favorite')" :active="activeTab === 'favorite'">

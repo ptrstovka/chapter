@@ -7,11 +7,11 @@
             class="mt-12"
         />
 
-        <div v-else class="grid grid-cols-4 gap-4 mt-4">
+        <div v-else class="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             <CourseCard v-for="course in completed.data" :course="course" />
         </div>
 
-        <div class="flex flex-row justify-end w-full mt-6" v-if="completed.total > 0">
+        <div v-if="completed.total > 0" class="flex flex-row justify-end w-full mt-6">
             <SimplePagination :paginator="completed" />
         </div>
     </CoursesLayout>
@@ -24,7 +24,7 @@ import { SimplePagination } from '@/Components/Pagination';
 import type { Paginator } from '@/Types';
 import CoursesLayout from './Layouts/CoursesLayout.vue';
 
-const props = defineProps<{
+defineProps<{
     completed: Paginator<Course>,
 }>();
 
