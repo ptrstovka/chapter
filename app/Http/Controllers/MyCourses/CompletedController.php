@@ -8,14 +8,13 @@ use App\Models\Course;
 use App\View\Models\CourseCard;
 use Auth;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Database\Eloquent\Builder;
 use App\View\Models\Paginator;
 
 class CompletedController extends Controller
 {
-    public function index(Request $request) 
+    public function __invoke() 
     {
         $user = Auth::user();
 
