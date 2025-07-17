@@ -11,7 +11,7 @@
             <CourseCard v-for="course in inProgress.data" :course="course" />
         </div>
 
-        <div v-if="inProgress.total > 0" class="flex flex-row justify-end w-full mt-6">
+        <div v-if="inProgress.total > 0" class="flex flex-row justify-center w-full mt-6 xl:justify-end">
             <SimplePagination :paginator="inProgress" />
         </div>
     </CoursesLayout>

@@ -11,7 +11,7 @@
             <CourseCard v-for="course in favorites.data" :course="course" />
         </div>
 
-        <div v-if="favorites.total > 0" class="flex flex-row justify-end w-full mt-6">
+        <div v-if="favorites.total > 0" class="flex flex-row justify-center w-full mt-6 xl:justify-end">
             <SimplePagination :paginator="favorites" />
         </div>
     </CoursesLayout>
