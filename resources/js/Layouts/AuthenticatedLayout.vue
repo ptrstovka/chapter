@@ -39,6 +39,14 @@
                       :active="route().current('mycourses.inprogress') || route().current('mycourses.favorite') || route().current('mycourses.completed')"
                     >{{ $t('My Courses') }}</NavigationMenuLink>
                   </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <NavigationMenuLink
+                      :href="route('studio.index')"
+                      :class="navigationMenuTriggerStyle()"
+                      :active="route().current('studio.index') || route().current('studio.index') || route().current('studio.index')"
+                    >{{ $t('My Studio') }}</NavigationMenuLink>
+                  </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
             </div>

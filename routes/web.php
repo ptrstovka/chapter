@@ -15,6 +15,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResetProgressController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\StudioController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
@@ -44,6 +45,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-courses', InProgressController::class)->name('mycourses.inprogress');
     Route::get('/my-courses/favorites', FavoriteController::class)->name('mycourses.favorite');
     Route::get('/my-courses/completed', CompletedController::class)->name('mycourses.completed');
+
+    Route::get('/studio', [StudioController::class, 'index'])->name('studio.index');
+    Route::post('/studio/course/create', [StudioController::class, 'create'])->name('studio.course.create');
+    Route::get('/studio/course/{id}/edit', [StudioController::class, 'edit'])->name('studio.course.edit');
+    Route::patch('/studio/course/{id}/update', [StudioController::class, 'update'])->name('studio.course.update');
 });
 
 require __DIR__.'/auth.php';
