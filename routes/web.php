@@ -41,7 +41,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/search', SearchController::class)->name('search');
 
-    Route::get('/my-courses',InProgressController::class)->name('mycourses.inprogress');
+    Route::get('/my-courses', InProgressController::class)->name('mycourses.inprogress');
     Route::get('/my-courses/favorites', FavoriteController::class)->name('mycourses.favorite');
     Route::get('/my-courses/completed', CompletedController::class)->name('mycourses.completed');
 });

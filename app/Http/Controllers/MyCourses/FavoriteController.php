@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\View\Models\CourseCard;
 use Auth;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Inertia\Inertia;
 use Illuminate\Database\Eloquent\Builder;
 use App\View\Models\Paginator;
@@ -18,7 +19,10 @@ class FavoriteController extends Controller
         $user = Auth::user();
 
         $favorites = Course::query()
-            ->with(['author'])
+            ->with([
+                'author',
+                'enrollments' => fn (HasMany $query) => $query->where('user_id', $user->id)
+            ])
             ->withExists([
                 'favoritedBy' => fn (Builder $builder) => $builder->where('id', $user->id),
             ])
@@ -27,20 +31,10 @@ class FavoriteController extends Controller
             })
             ->where('status', CourseStatus::Published)
             ->paginate(16);
-
-        $enrollments = collect();
-
-        if ($favorites->isNotEmpty()) {
-            $enrollments = $user
-                ->enrolledCourses()
-                ->whereIn('course_id', $favorites->pluck('id'))
-                ->get()
-                ->keyBy('course_id');
-        }
     
         return Inertia::render('MyCourses/FavoriteList', [
             'favorites' => Paginator::make(
-                $favorites->through(fn (Course $course) => new CourseCard($course, $enrollments->get($course->id)))
+                $favorites->through(fn (Course $course) => new CourseCard($course, $course->enrollments->first()))
             ),
         ]);
     }

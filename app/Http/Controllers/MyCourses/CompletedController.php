@@ -5,8 +5,11 @@ namespace App\Http\Controllers\MyCourses;
 use App\Enums\CourseStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\CourseEnrollment;
+use App\Models\User;
 use App\View\Models\CourseCard;
 use Auth;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\JoinClause;
 use Inertia\Inertia;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,7 +22,10 @@ class CompletedController extends Controller
         $user = Auth::user();
 
         $completed = Course::query()
-            ->with(['author'])
+            ->with([
+                'author',
+                'enrollments' => fn (HasMany $query) => $query->where('user_id', $user->id)
+            ])
             ->withExists([
                 'favoritedBy' => fn (Builder $builder) => $builder->where('id', $user->id),
             ])
@@ -29,23 +35,14 @@ class CompletedController extends Controller
                     ->whereNotNull('course_enrollments.completed_at');
             })
             ->where('status', CourseStatus::Published)
-            ->latest('courses.updated_at')
+            ->orderByDesc('completed_at')
             ->paginate(16);
 
-        $enrollments = collect();
-
-        if ($completed->isNotEmpty()) {
-            $enrollments = $user
-                ->enrolledCourses()
-                ->whereIn('course_id', $completed->pluck('id'))
-                ->get()
-                ->keyBy('course_id');
-        }
     
-        return Inertia::render('MyCourses/CompletedList', [
+        return Inertia::render('MyCourses/CompletedList', [ 
             'completed' => Paginator::make(
-                $completed->through(fn (Course $course) => new CourseCard($course, $enrollments->get($course->id)))
-            ),
+                $completed->through(fn (Course $course) => new CourseCard($course, $course->enrollments->first()))
+            )
         ]);
     }
 }

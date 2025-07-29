@@ -1,5 +1,5 @@
 <template>
-    <CoursesLayout :page-title="$t('In progress')" active-tab="inProgress">
+    <CoursesLayout :page-title="$t('In progress')">
         <EmptyState
             v-if="inProgress.total === 0"
             :title="$t('No courses in progress')"

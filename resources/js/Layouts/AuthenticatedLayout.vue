@@ -37,7 +37,7 @@
                       :href="route('mycourses.inprogress')"
                       :class="navigationMenuTriggerStyle()"
                       :active="route().current('mycourses.inprogress') || route().current('mycourses.favorite') || route().current('mycourses.completed')"
-                    >{{ $t('MyCourses') }}</NavigationMenuLink>
+                    >{{ $t('My Courses') }}</NavigationMenuLink>
                   </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>

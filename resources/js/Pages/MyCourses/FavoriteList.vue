@@ -1,5 +1,5 @@
 <template>
-    <CoursesLayout :page-title="$t('Favorite')" active-tab="favorite">
+    <CoursesLayout :page-title="$t('Favorite')">
         <EmptyState
             v-if="favorites.total === 0"
             :title="$t('No favorite courses')"
