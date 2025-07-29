@@ -3,17 +3,17 @@
 
   <AuthenticatedLayout :header="false" fluid>
     <template #header>
-      <div class="flex flex-row items-center justify-center w-full relative">
+      <div class="relative flex flex-row items-center justify-center w-full">
         <div class="inline-flex items-center gap-4">
-          <h2 class="font-semibold text-xl leading-tight">{{ courseTitle }}</h2>
+          <h2 class="text-xl font-semibold leading-tight">{{ courseTitle }}</h2>
         </div>
 
-        <div class="inline-flex absolute right-0">
-          <Badge v-if="courseCompleted" variant="positive">{{ $t('Course completed!') }}</Badge>
+        <div class="absolute right-0 inline-flex">
+          <Badge v-if="courseCompleted" variant="positive">{{ $t('Course Completed!') }}</Badge>
           <CircularProgressBar v-else :value="progress" class="w-8 h-8 text-xs" />
         </div>
 
-        <div class="inline-flex absolute left-0">
+        <div class="absolute left-0 inline-flex">
           <LinkButton :href="route('courses.show', courseSlug)" variant="outline" class="gap-2">
             <XIcon class="w-4 h-4" />
             {{ $t('Leave Course') }}
@@ -24,7 +24,7 @@
 
     <div>
       <div class="flex flex-row">
-        <div class="w-96 flex-shrink-0 border-x relative bg-background" style="height: calc(100vh - 4rem)">
+        <div class="relative flex-shrink-0 w-96 border-x bg-background" style="height: calc(100vh - 4rem)">
           <div class="absolute inset-0 flex flex-col overflow-y-auto " ref="itemsWrapper">
             <ul class="divide-y">
               <li v-for="item in flattenItems" ref="items">
@@ -34,7 +34,7 @@
                   </div>
                 </template>
                 <template v-else-if="item.type === 'lesson'">
-                  <Link preserve-state :href="item.lesson.url" class="flex flex-row cursor-pointer py-3 px-4 sm:px-6 lg:px-8 transition-colors" :class="{ 'bg-accent': item.lesson.isCurrent, 'hover:bg-accent': !item.lesson.isCurrent }">
+                  <Link preserve-state :href="item.lesson.url" class="flex flex-row px-4 py-3 transition-colors cursor-pointer sm:px-6 lg:px-8" :class="{ 'bg-accent': item.lesson.isCurrent, 'hover:bg-accent': !item.lesson.isCurrent }">
                     <div
                       :class="cn('w-8 h-8 flex-shrink-0 bg-secondary text-secondary-foreground rounded-full inline-flex items-center justify-center', {
                           'bg-primary text-primary-foreground': item.lesson.isCurrent,
@@ -47,12 +47,12 @@
                         <HourglassIcon v-else class="w-4 h-4" />
                       </template>
                     </div>
-                    <div class="flex flex-1 flex-col px-2">
+                    <div class="flex flex-col flex-1 px-2">
                       <p class="text-xs font-medium" :title="item.lesson.title">{{ item.lesson.title }}</p>
                       <div class="inline-flex flex-row gap-2 mt-0.5">
                         <p class="text-xs text-muted-foreground">{{ $t('Lesson :value', { value: `${item.lesson.no}` }) }}</p>
 
-                        <div v-if="item.lesson.duration" class="inline-flex flex-row gap-1 items-center text-muted-foreground">
+                        <div v-if="item.lesson.duration" class="inline-flex flex-row items-center gap-1 text-muted-foreground">
                           <TimerIcon class="w-3 h-3" />
                           <p class="text-xs">{{ item.lesson.duration }}</p>
                         </div>
@@ -65,8 +65,8 @@
           </div>
         </div>
 
-        <div class="flex-1 relative" style="height: calc(100vh - 4rem)">
-          <div class="absolute inset-0 flex flex-col py-6 px-4 sm:px-6 lg:px-8 overflow-y-scroll">
+        <div class="relative flex-1" style="height: calc(100vh - 4rem)">
+          <div class="absolute inset-0 flex flex-col px-4 py-6 overflow-y-scroll sm:px-6 lg:px-8">
             <slot />
           </div>
         </div>

@@ -7,6 +7,9 @@ use App\Http\Controllers\EnrollCourseController;
 use App\Http\Controllers\FavoriteCourseController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\MyCourses\CompletedController;
+use App\Http\Controllers\MyCourses\FavoriteController;
+use App\Http\Controllers\MyCourses\InProgressController;
 use App\Http\Controllers\NextLessonController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResetProgressController;
@@ -37,6 +40,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/courses/{course:slug}/resources/{resource:uuid}', [ResourceController::class, 'show'])->name('resources.show');
 
     Route::get('/search', SearchController::class)->name('search');
+
+    Route::get('/my-courses', InProgressController::class)->name('mycourses.inprogress');
+    Route::get('/my-courses/favorites', FavoriteController::class)->name('mycourses.favorite');
+    Route::get('/my-courses/completed', CompletedController::class)->name('mycourses.completed');
 });
 
 require __DIR__.'/auth.php';
