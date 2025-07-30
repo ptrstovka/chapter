@@ -9,31 +9,45 @@
     </div>
 
     <form @submit.prevent="submit">
-      <div class="mb-4">
-        <label for="title">Title:</label>
-        <input id="title" type="text" v-model="form.title" class="w-full p-2 border" />
-        <div v-if="form.errors.title" class="text-sm text-red-500">{{ form.errors.title }}</div>
-      </div>
+        <Tabs default-value="informations">
+            <TabsList >
+                <TabsTrigger value="informations">
+                    Basic Informations
+                </TabsTrigger>
+                <TabsTrigger value="lessons">
+                    Manage Lessons
+                </TabsTrigger>
+            </TabsList>
+            <TabsContent value="informations">
+                <div class="mb-4">
+                    <label for="title">Title:</label>
+                    <input id="title" type="text" v-model="form.title" class="w-full p-2 border" />
+                    <div v-if="form.errors.title" class="text-sm text-red-500">{{ form.errors.title }}</div>
+                </div>
 
-      <div class="mb-4">
-        <label for="description">Description:</label>
-        <textarea id="description" v-model="form.description" class="w-full p-2 border"></textarea>
-        <div v-if="form.errors.description" class="text-sm text-red-500">{{ form.errors.description }}</div>
-      </div>
+                <div class="mb-4">
+                    <label for="description">Description:</label>
+                    <textarea id="description" v-model="form.description" class="w-full p-2 border"></textarea>
+                    <div v-if="form.errors.description" class="text-sm text-red-500">{{ form.errors.description }}</div>
+                </div>
 
-      <div class="mb-4">
-        <label for="cover">Cover Image:</label>
-        <input type="file" @change="uploadFile" />
-      </div>
+                <div class="mb-4">
+                    <label for="cover">Cover Image:</label>
+                    <input type="file" @change="uploadFile" />
+                </div>
 
-      <div class="mb-4">
-        <label for="cover">Thrailer video:</label>
-        <input type="file" @change="uploadVideo" />
-      </div>
+                <div class="mb-4">
+                    <label for="cover">Thrailer video:</label>
+                    <input type="file" @change="uploadVideo" />
+                </div>
 
-      <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded">
-        Save
-      </button>
+                <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded">
+                    Save
+                </button>
+            </TabsContent>
+        </Tabs>
+
+
     </form>
   </div>
 </template>
@@ -41,6 +55,12 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
 import axios from 'axios';
+import {    
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger
+} from "@/Components/Tabs";
 
 interface Course {
   id: number;
