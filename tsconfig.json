@@ -1,29 +1,14 @@
 {
+    "files": [],
+    "references": [
+        { "path": "./tsconfig.app.json" },
+        { "path": "./tsconfig.node.json" }
+    ],
     "compilerOptions": {
-        "allowJs": true,
-        "module": "ESNext",
-        "moduleResolution": "bundler",
-        "jsx": "preserve",
-        "strict": true,
-        "isolatedModules": true,
-        "target": "ESNext",
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "noEmit": true,
-        "skipLibCheck": true,
+        "baseUrl": ".",
         "paths": {
-            "@/*": [
-                "./resources/js/*"
-            ],
-            "ziggy-js": [
-                "./vendor/tightenco/ziggy"
-            ]
-        },
-        "types": ["vidstack/vue"]
-    },
-    "include": [
-        "resources/js/**/*.ts",
-        "resources/js/**/*.d.ts",
-        "resources/js/**/*.vue"
-    ]
+            "@/*": ["./resources/js/*"],
+            "@stacktrace/ui": ["./vendor/stacktrace/ui"]
+        }
+    }
 }
