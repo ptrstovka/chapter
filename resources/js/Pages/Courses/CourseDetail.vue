@@ -43,10 +43,10 @@
           <div class="flex-shrink-0 w-96">
             <Card class="w-full">
               <CardContent class="flex flex-col items-center p-6">
-                <Avatar size="base" shape="square">
+                <Avatar class="size-12">
                   <AvatarImage v-if="author.avatarUrl" :src="author.avatarUrl" />
                   <AvatarFallback>
-                    <ContactIcon class="w-6 h-6" />
+                    <ContactIcon />
                   </AvatarFallback>
                 </Avatar>
                 <h3 class="mt-4 text-lg font-semibold">{{ author.name }}</h3>
