@@ -46,7 +46,7 @@ import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, A
 import { FormControl } from "@/Components/Form"
 import { Input } from "@/Components/Input"
 import { useForm } from '@inertiajs/vue3'
-import { useToggle } from '@/Composables'
+import { useToggle } from '@stacktrace/ui'
 
 const confirmModal = useToggle()
 

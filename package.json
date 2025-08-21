@@ -2,19 +2,24 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "dev": "vite"
+        "build": "vue-tsc -b && vite build",
+        "build:ssr": "vue-tsc -b && vite build && vite build --ssr",
+        "dev": "vite",
+        "format": "prettier --write resources/",
+        "format:check": "prettier --check resources/",
+        "lint": "eslint . --fix"
     },
     "devDependencies": {
         "@eslint/js": "^9.19.0",
         "@inertiajs/vue3": "^2.0.3",
         "@internationalized/date": "^3.8.2",
-        "@tailwindcss/vite": "^4.1.11",
+        "@tailwindcss/vite": "^4.1.12",
         "@types/canvas-confetti": "^1.9.0",
         "@types/lodash": "^4.17.20",
         "@types/node": "^24.0.12",
         "@vitejs/plugin-vue": "^6.0.1",
         "@vue/eslint-config-typescript": "^14.3.0",
+        "@vue/tsconfig": "^0.7.0",
         "@vueuse/core": "^13.7.0",
         "@vueuse/motion": "^2.2.6",
         "axios": "^1.11.0",

@@ -10,15 +10,15 @@
 </template>
 
 <script setup lang="ts">
-import { type Option } from '@/Types'
-import type { SelectRootEmits, SelectRootProps } from 'radix-vue'
-import { useForwardProps } from 'radix-vue'
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '.'
+import { type SelectOption } from '@stacktrace/ui'
+import type { SelectRootEmits, SelectRootProps } from 'reka-ui'
+import { useForwardProps } from 'reka-ui'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Components/Select'
 import { computed, type HTMLAttributes } from "vue";
 import { useVModel } from "@vueuse/core";
 
 const props = defineProps<SelectRootProps & {
-  options: Array<Option>
+  options: Array<SelectOption>
   placeholder?: string | undefined
   class?: HTMLAttributes['class']
   modelValue?: string | number | undefined

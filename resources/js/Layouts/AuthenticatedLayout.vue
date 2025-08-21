@@ -134,7 +134,8 @@
 </template>
 
 <script setup lang="ts">
-import { useDarkMode, useToggle } from '@/Composables'
+import { useDarkMode } from '@/Composables'
+import { useToggle } from '@stacktrace/ui'
 import { ref } from 'vue'
 import { navigationMenuTriggerStyle } from '@/Components/NavigationMenu'
 import { ChevronDownIcon, MenuIcon, XIcon, SearchIcon } from 'lucide-vue-next'

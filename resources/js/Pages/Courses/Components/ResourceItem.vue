@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import type { Resource } from '../'
-import { Primitive } from 'radix-vue'
+import { Primitive } from 'reka-ui'
 import { FileIcon, DownloadIcon } from 'lucide-vue-next'
 
 defineProps<{

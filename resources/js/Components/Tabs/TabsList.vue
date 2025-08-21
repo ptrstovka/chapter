@@ -1,25 +1,29 @@
-<script setup lang="ts">
-import { cn } from '@/Utils'
-import { TabsList, type TabsListProps } from 'radix-vue'
-import { computed, type HTMLAttributes } from 'vue'
-
-const props = defineProps<TabsListProps & { class?: HTMLAttributes['class'] }>()
-
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props
-
-  return delegated
-})
-</script>
-
 <template>
   <TabsList
+    data-slot="tabs-list"
     v-bind="delegatedProps"
     :class="cn(
-      'inline-flex items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground',
+      tabsListVariants({
+        variant: context?.variant || 'default',
+        orientation: context?.orientation || 'horizontal',
+      }),
       props.class,
     )"
   >
     <slot />
   </TabsList>
 </template>
+
+<script setup lang="ts">
+import type { HTMLAttributes } from 'vue'
+import { reactiveOmit } from '@vueuse/core'
+import { TabsList, type TabsListProps } from 'reka-ui'
+import { cn } from '@/Utils'
+import { injectTabsContext, tabsListVariants } from '.'
+
+const props = defineProps<TabsListProps & { class?: HTMLAttributes['class'] }>()
+
+const delegatedProps = reactiveOmit(props, 'class')
+
+const context = injectTabsContext()
+</script>

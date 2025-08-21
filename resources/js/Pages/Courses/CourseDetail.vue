@@ -78,7 +78,7 @@
 import { useConfirmable } from '@/Components/ConfirmationDialog'
 import { AuthenticatedLayout } from '@/Layouts'
 import type { VideoSource } from '@/Types'
-import { asyncRouter } from '@/Utils'
+import { asyncRouter } from '@stacktrace/ui'
 import { Head, useForm } from '@inertiajs/vue3'
 import { Card, CardContent } from '@/Components/Card'
 import { Player } from '@/Components/Player'

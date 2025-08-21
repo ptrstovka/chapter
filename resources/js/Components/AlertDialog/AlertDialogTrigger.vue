@@ -1,11 +1,11 @@
-<script setup lang="ts">
-import { AlertDialogTrigger, type AlertDialogTriggerProps } from 'radix-vue'
-
-const props = defineProps<AlertDialogTriggerProps>()
-</script>
-
 <template>
-  <AlertDialogTrigger v-bind="props">
+  <AlertDialogTrigger data-slot="alert-dialog-trigger" v-bind="props">
     <slot />
   </AlertDialogTrigger>
 </template>
+
+<script setup lang="ts">
+import { AlertDialogTrigger, type AlertDialogTriggerProps } from 'reka-ui'
+
+const props = defineProps<AlertDialogTriggerProps>()
+</script>

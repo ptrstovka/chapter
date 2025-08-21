@@ -1,18 +1,3 @@
-<script setup lang="ts">
-import { buttonVariants } from '@/Components/Button'
-import { cn } from '@/Utils'
-import { AlertDialogCancel, type AlertDialogCancelProps } from 'radix-vue'
-import { computed, type HTMLAttributes } from 'vue'
-
-const props = defineProps<AlertDialogCancelProps & { class?: HTMLAttributes['class'] }>()
-
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props
-
-  return delegated
-})
-</script>
-
 <template>
   <AlertDialogCancel
     v-bind="delegatedProps"
@@ -25,3 +10,15 @@ const delegatedProps = computed(() => {
     <slot />
   </AlertDialogCancel>
 </template>
+
+<script setup lang="ts">
+import type { HTMLAttributes } from 'vue'
+import { reactiveOmit } from '@vueuse/core'
+import { AlertDialogCancel, type AlertDialogCancelProps } from 'reka-ui'
+import { cn } from '@/Utils'
+import { buttonVariants } from '@/Components/Button'
+
+const props = defineProps<AlertDialogCancelProps & { class?: HTMLAttributes['class'] }>()
+
+const delegatedProps = reactiveOmit(props, 'class')
+</script>

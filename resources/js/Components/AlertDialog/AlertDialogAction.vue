@@ -1,20 +1,17 @@
-<script setup lang="ts">
-import { buttonVariants } from '@/Components/Button'
-import { cn } from '@/Utils'
-import { AlertDialogAction, type AlertDialogActionProps } from 'radix-vue'
-import { computed, type HTMLAttributes } from 'vue'
-
-const props = defineProps<AlertDialogActionProps & { class?: HTMLAttributes['class'] }>()
-
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props
-
-  return delegated
-})
-</script>
-
 <template>
   <AlertDialogAction v-bind="delegatedProps" :class="cn(buttonVariants(), props.class)">
     <slot />
   </AlertDialogAction>
 </template>
+
+<script setup lang="ts">
+import type { HTMLAttributes } from 'vue'
+import { reactiveOmit } from '@vueuse/core'
+import { AlertDialogAction, type AlertDialogActionProps } from 'reka-ui'
+import { cn } from '@/Utils'
+import { buttonVariants } from '@/Components/Button'
+
+const props = defineProps<AlertDialogActionProps & { class?: HTMLAttributes['class'] }>()
+
+const delegatedProps = reactiveOmit(props, 'class')
+</script>
