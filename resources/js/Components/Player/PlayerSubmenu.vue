@@ -1,5 +1,5 @@
 <template>
-  <media-menu>
+  <media-menu class="group/submenu">
     <PlayerSubmenuButton :label="label" :hint="hint">
       <template #icon>
         <slot name="icon" />

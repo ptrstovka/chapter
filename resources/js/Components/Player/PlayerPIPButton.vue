@@ -7,8 +7,8 @@
         </Button>
       </TooltipTrigger>
       <TooltipContent align="center" side="top" :side-offset="32">
-        <span class="media-pip:hidden">{{ $t('Enter PIP') }}</span>
-        <span class="media-pip:block hidden">{{ $t('Exit PIP') }}</span>
+        <span class="group-data-[pip]/media:hidden">{{ $t('Enter PIP') }}</span>
+        <span class="group-data-[pip]/media:block hidden">{{ $t('Exit PIP') }}</span>
       </TooltipContent>
     </Tooltip>
   </TooltipProvider>

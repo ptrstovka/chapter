@@ -1,6 +1,6 @@
 <template>
   <media-captions
-    class="captions media-preview:opacity-0 media-controls:bottom-[85px] media-captions:opacity-100 absolute inset-0 bottom-2 z-10 select-none break-words opacity-0 transition-[opacity,bottom] duration-300"
+    class="captions group-data-[preview]/media:opacity-0 group-data-[controls]/media:bottom-[85px] group-data-[captions]/media:opacity-100 absolute inset-0 bottom-2 z-10 select-none break-words opacity-0 transition-[opacity,bottom] duration-300"
   />
 </template>
 <style scoped>
