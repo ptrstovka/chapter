@@ -1,6 +1,14 @@
-import { AppPageProps } from '@/Types';
+import { AppPageProps } from '@/Types'
+import { trans, transChoice } from 'laravel-vue-i18n'
+import AxiosClient from 'axios'
 
 // Extend ImportMeta interface for Vite...
+declare global {
+  interface Window {
+    axios: typeof AxiosClient;
+  }
+}
+
 declare module 'vite/client' {
   interface ImportMetaEnv {
     readonly VITE_APP_NAME: string;
@@ -24,5 +32,7 @@ declare module '@vue/runtime-core' {
     $inertia: typeof Router;
     $page: Page;
     $headManager: ReturnType<typeof createHeadManager>;
+    $t: typeof trans;
+    $tChoice: typeof transChoice;
   }
 }

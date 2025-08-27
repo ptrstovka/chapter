@@ -60,7 +60,7 @@ import 'vidstack/player/ui';
 import { cn } from '@/Utils'
 import { useLocalStorage } from '@vueuse/core'
 import { SettingsIcon } from 'lucide-vue-next'
-import { computed, onBeforeUnmount, onMounted, ref, useSlots } from 'vue'
+import { computed, ref, useSlots } from 'vue'
 import type { MediaPlayerElement } from 'vidstack/elements';
 import PlayerGestures from './PlayerGestures.vue'
 import PlayerCaptions from './PlayerCaptions.vue'
@@ -98,7 +98,7 @@ const onPlaybackEnded = () => {
 }
 
 const playbackRate = useLocalStorage('PlayerPlaybackRate', 1)
-const onPlaybackRateChanged = (e: any) => {
+const onPlaybackRateChanged = () => {
   const player = $player.value
   if (player) {
     playbackRate.value = player.playbackRate

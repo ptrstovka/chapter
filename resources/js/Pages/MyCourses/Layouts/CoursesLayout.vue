@@ -1,7 +1,7 @@
 <template>
     <Head :title="pageTitle" />
     <AuthenticatedLayout class="bg-background">
-        
+
         <div class="py-8">
             <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="flex flex-col gap-4">
@@ -36,7 +36,6 @@
 import { TabsLink, TabsLinkList } from '@/Components/Tabs';
 import { AuthenticatedLayout } from '@/Layouts';
 import { Head } from '@inertiajs/vue3';
-import { Route } from 'lucide-vue-next';
 
 defineProps<{
     pageTitle: string,
