@@ -2,13 +2,12 @@ name: Tests
 
 on:
   push:
-#  push:
-#    branches:
-#      - master
-#      - '*.x'
-#  pull_request:
-#  schedule:
-#    - cron: '0 0 * * *'
+    branches:
+      - master
+      - '*.x'
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
 
 permissions:
   contents: read
