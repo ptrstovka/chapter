@@ -81,7 +81,7 @@ import { AuthenticatedLayout } from '@/Layouts'
 import { cn } from '@/Utils'
 import { Head, Link } from '@inertiajs/vue3'
 import { LinkButton } from '@/Components/Button'
-import { PlayIcon, TimerIcon, HourglassIcon, CheckIcon, XIcon, FileIcon } from 'lucide-vue-next'
+import { PlayIcon, TimerIcon, HourglassIcon, CheckIcon, XIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { Badge } from '@/Components/Badge'
 

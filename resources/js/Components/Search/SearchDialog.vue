@@ -54,7 +54,7 @@ import { useMagicKeys, watchDebounced } from '@vueuse/core'
 import axios from 'axios'
 import { computed, ref, watch } from 'vue'
 import { Dialog, DialogContent, DialogTitle } from '@/Components/Dialog'
-import { type Toggle, useToggle } from '@/Composables'
+import { type Toggle, useToggle } from '@stacktrace/ui'
 import {
   ComboboxContent,
   ComboboxInput,

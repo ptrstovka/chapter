@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import type { Course } from '@/Components/Course'
 import { CourseCard } from '@/Components/Course'
-import { Paginator } from '@/Types';
+import { type Paginator } from '@/Types';
 import { SimplePagination } from '@/Components/Pagination';
 import { EmptyState } from '@/Components/EmptyState';
 import CoursesLayout from './Layouts/CoursesLayout.vue';

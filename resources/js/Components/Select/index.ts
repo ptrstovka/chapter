@@ -1,4 +1,3 @@
-export { default as OptionSelect } from './OptionSelect.vue'
 export { default as Select } from './Select.vue'
 export { default as SelectContent } from './SelectContent.vue'
 export { default as SelectGroup } from './SelectGroup.vue'

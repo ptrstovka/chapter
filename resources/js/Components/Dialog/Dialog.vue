@@ -1,6 +1,15 @@
+<template>
+  <DialogRoot v-if="control" data-slot="dialog" v-bind="forwarded" v-model:open="control.active.value">
+    <slot />
+  </DialogRoot>
+  <DialogRoot v-else data-slot="dialog" v-bind="forwarded">
+    <slot />
+  </DialogRoot>
+</template>
+
 <script setup lang="ts">
-import { DialogRoot, type DialogRootEmits, type DialogRootProps, useForwardPropsEmits } from 'radix-vue'
-import type { Toggle } from "@/Composables";
+import { DialogRoot, type DialogRootEmits, type DialogRootProps, useForwardPropsEmits } from 'reka-ui'
+import { type Toggle } from '@stacktrace/ui'
 
 const props = defineProps<DialogRootProps & {
   control?: Toggle
@@ -9,12 +18,3 @@ const emits = defineEmits<DialogRootEmits>()
 
 const forwarded = useForwardPropsEmits(props, emits)
 </script>
-
-<template>
-  <DialogRoot v-if="control" v-bind="forwarded" v-model:open="control.active.value">
-    <slot />
-  </DialogRoot>
-  <DialogRoot v-else v-bind="forwarded">
-    <slot />
-  </DialogRoot>
-</template>

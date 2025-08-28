@@ -1,6 +1,6 @@
 <template>
   <media-player
-      :class="cn('relative w-full aspect-video bg-secondary overflow-hidden rounded-xl ring-ring data-[focus]:ring-1', $attrs.class || '')"
+      :class="cn('group/media relative w-full aspect-video bg-secondary overflow-hidden rounded-xl ring-ring data-[focus]:ring-1', $attrs.class || '')"
       :src="src"
       crossOrigin
       playsInline
@@ -20,7 +20,7 @@
 
     <PlayerGestures />
     <PlayerCaptions v-if="captions" />
-    <media-controls class="media-controls:opacity-100 absolute inset-0 z-10 flex h-full w-full flex-col bg-gradient-to-t from-black/10 to-transparent opacity-0 transition-opacity">
+    <media-controls class="group-data-[controls]/media:opacity-100 absolute inset-0 z-10 flex h-full w-full flex-col bg-gradient-to-t from-black/10 to-transparent opacity-0 transition-opacity">
       <div class="flex-1" />
       <media-controls-group class="flex w-full items-center px-2">
         <PlayerTimeSlider :thumbnails="playbackThumbnails" />
@@ -60,7 +60,7 @@ import 'vidstack/player/ui';
 import { cn } from '@/Utils'
 import { useLocalStorage } from '@vueuse/core'
 import { SettingsIcon } from 'lucide-vue-next'
-import { computed, onBeforeUnmount, onMounted, ref, useSlots } from 'vue'
+import { computed, ref, useSlots } from 'vue'
 import type { MediaPlayerElement } from 'vidstack/elements';
 import PlayerGestures from './PlayerGestures.vue'
 import PlayerCaptions from './PlayerCaptions.vue'
@@ -98,7 +98,7 @@ const onPlaybackEnded = () => {
 }
 
 const playbackRate = useLocalStorage('PlayerPlaybackRate', 1)
-const onPlaybackRateChanged = (e: any) => {
+const onPlaybackRateChanged = () => {
   const player = $player.value
   if (player) {
     playbackRate.value = player.playbackRate

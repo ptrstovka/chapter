@@ -12,7 +12,7 @@ import { useVModel } from "@vueuse/core";
 import { cn } from "@/Utils";
 import { Label } from "@/Components/Label";
 import { Checkbox } from ".";
-import { useId } from "radix-vue";
+import { useId } from "reka-ui";
 
 const emit = defineEmits(['update:modelValue'])
 

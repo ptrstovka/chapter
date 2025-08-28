@@ -116,7 +116,7 @@ import { RootLayout } from '@/Layouts'
 import LessonLayout from './Layouts/LessonLayout.vue'
 import confetti from "canvas-confetti"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/Components/Dialog'
-import { useToggle } from '@/Composables'
+import { useToggle } from '@stacktrace/ui'
 import LessonCompleted from './Components/LessonCompleted.vue'
 import ResourceItem from './Components/ResourceItem.vue'
 import { type Resource } from '.'

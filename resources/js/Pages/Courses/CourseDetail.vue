@@ -43,10 +43,10 @@
           <div class="flex-shrink-0 w-96">
             <Card class="w-full">
               <CardContent class="flex flex-col items-center p-6">
-                <Avatar size="base" shape="square">
+                <Avatar class="size-12">
                   <AvatarImage v-if="author.avatarUrl" :src="author.avatarUrl" />
                   <AvatarFallback>
-                    <ContactIcon class="w-6 h-6" />
+                    <ContactIcon />
                   </AvatarFallback>
                 </Avatar>
                 <h3 class="mt-4 text-lg font-semibold">{{ author.name }}</h3>
@@ -78,7 +78,7 @@
 import { useConfirmable } from '@/Components/ConfirmationDialog'
 import { AuthenticatedLayout } from '@/Layouts'
 import type { VideoSource } from '@/Types'
-import { asyncRouter } from '@/Utils'
+import { asyncRouter } from '@stacktrace/ui'
 import { Head, useForm } from '@inertiajs/vue3'
 import { Card, CardContent } from '@/Components/Card'
 import { Player } from '@/Components/Player'

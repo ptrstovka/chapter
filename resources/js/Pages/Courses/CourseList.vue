@@ -38,7 +38,7 @@
             <div class="flex flex-row justify-between">
               <h2 class="font-semibold text-xl leading-tight">{{ category || $t('All Courses') }}</h2>
 
-              <OptionSelect v-if="courses.total > 0" class="w-32" :options="sortOptions" v-model="filter.sort" />
+              <FormSelect v-if="courses.total > 0" class="w-32" :options="sortOptions" v-model="filter.sort" />
             </div>
 
             <EmptyState
@@ -64,14 +64,15 @@
 
 <script setup lang="ts">
 import { EmptyState } from '@/Components/EmptyState'
-import { useFilter } from '@/Composables'
+import { useFilter } from '@stacktrace/ui'
 import { Head } from '@inertiajs/vue3'
 import { AuthenticatedLayout } from '@/Layouts'
 import { Button } from '@/Components/Button'
-import type { Option, Paginator } from '@/Types'
+import type { Paginator } from '@/Types'
+import type { SelectOption } from '@stacktrace/ui'
 import { trans } from 'laravel-vue-i18n'
 import { computed } from 'vue'
-import { OptionSelect } from '@/Components/Select'
+import { FormSelect } from '@/Components/Form'
 import { SimplePagination } from '@/Components/Pagination'
 import { CheckboxControl } from '@/Components/Checkbox'
 import type { Course } from '@/Components/Course'
@@ -86,7 +87,7 @@ defineProps<{
   courses: Paginator<Course>
 }>()
 
-const sortOptions = computed<Array<Option>>(() => [
+const sortOptions = computed<Array<SelectOption>>(() => [
   { value: 'latest', label: trans('Latest') },
   { value: 'popular', label: trans('Popular') },
   { value: 'title-asc', label: trans('A-Z') },

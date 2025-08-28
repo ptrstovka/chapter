@@ -61,9 +61,9 @@
                 <DropdownMenuLink :href="route('profile.edit')">{{ $t('Profile') }}</DropdownMenuLink>
                 <DropdownMenuSeparator/>
                 <DropdownMenuLabel>{{ $t('Theme') }}</DropdownMenuLabel>
-                <DropdownMenuCheckboxItem @select="mode = 'dark'" :checked="mode == 'dark'">{{ $t('Dark') }}</DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem @select="mode = 'light'" :checked="mode == 'light'">{{ $t('Light') }}</DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem @select="mode = 'system'" :checked="mode == 'system'">{{ $t('System') }}</DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem @select="mode = 'dark'" :model-value="mode == 'dark'">{{ $t('Dark') }}</DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem @select="mode = 'light'" :model-value="mode == 'light'">{{ $t('Light') }}</DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem @select="mode = 'system'" :model-value="mode == 'system'">{{ $t('System') }}</DropdownMenuCheckboxItem>
                 <DropdownMenuSeparator/>
                 <DropdownMenuLink :href="route('logout')" method="post" as="button">{{ $t('Log Out') }}</DropdownMenuLink>
               </DropdownMenuContent>
@@ -134,7 +134,8 @@
 </template>
 
 <script setup lang="ts">
-import { useDarkMode, useToggle } from '@/Composables'
+import { useDarkMode } from '@/Composables'
+import { useToggle } from '@stacktrace/ui'
 import { ref } from 'vue'
 import { navigationMenuTriggerStyle } from '@/Components/NavigationMenu'
 import { ChevronDownIcon, MenuIcon, XIcon, SearchIcon } from 'lucide-vue-next'

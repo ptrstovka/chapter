@@ -3,13 +3,13 @@
     <Tooltip>
       <TooltipTrigger as-child>
         <Button as="media-play-button" variant="ghost" size="icon" class="text-player">
-          <PlayIcon class="media-paused:block hidden size-6" />
-          <PauseIcon class="media-paused:hidden size-6" />
+          <PlayIcon class="group-data-[paused]/media:block hidden size-6" />
+          <PauseIcon class="group-data-[paused]/media:hidden size-6" />
         </Button>
       </TooltipTrigger>
       <TooltipContent align="start" side="top" :side-offset="32">
-        <span class="media-paused:block hidden">{{ $t('Play') }}</span>
-        <span class="media-paused:hidden">{{ $t('Pause') }}</span>
+        <span class="group-data-[paused]/media:block hidden">{{ $t('Play') }}</span>
+        <span class="group-data-[paused]/media:hidden">{{ $t('Pause') }}</span>
       </TooltipContent>
     </Tooltip>
   </TooltipProvider>

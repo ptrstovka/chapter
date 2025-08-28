@@ -1,5 +1,5 @@
 <template>
-  <Primitive :as="as" :as-child="asChild" :class="cn(buttonVariants({ variant, size }), props.class)">
+  <Primitive data-slot="button" :as="as" :as-child="asChild" :class="cn(buttonVariants({ variant, size }), props.class)">
     <slot v-if="plain" />
     <span v-else class="relative flex w-full">
       <span :class="cn('flex w-full justify-center flex-row items-center gap-1.5 leading-none', { 'invisible': showProcessing }, contentClass || '')">
@@ -20,8 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { trans } from 'laravel-vue-i18n'
-import { Primitive } from 'radix-vue'
+import { Primitive } from 'reka-ui'
 import { type ButtonProps, buttonVariants } from './'
 import { cn } from '@/Utils'
 import { computed } from 'vue'
@@ -34,7 +33,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   plain: false,
 })
 
-const recentlySuccessfulLocalizedLabel = computed(() => props.recentlySuccessfulLabel || trans('Saved.'))
+const recentlySuccessfulLocalizedLabel = computed(() => props.recentlySuccessfulLabel || 'Uložené.')
 
 const showProcessing = computed(() => props.processing)
 const showRecentlySuccessful = computed(() => props.recentlySuccessful)
