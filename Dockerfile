@@ -11,7 +11,7 @@ RUN composer install \
   --ansi \
   --no-scripts
 
-FROM node:20 AS nodemodules
+FROM node:24 AS nodemodules
 WORKDIR /var/www/html
 COPY . .
 COPY --from=vendor /var/www/html/vendor vendor
@@ -39,7 +39,7 @@ USER www-data
 COPY --chown=www-data:www-data . .
 COPY --chown=www-data:www-data --from=vendor /var/www/html/vendor vendor
 COPY --chown=www-data:www-data --from=nodemodules /var/www/html/public/build public/build
-RUN rm composer.lock package-lock.json vite.config.ts tsconfig.json tailwind.config.js postcss.config.js .dockerignore
+RUN rm composer.lock package-lock.json vite.config.ts tsconfig* .dockerignore
 ENV APP_DEBUG=false
 ENV APP_LOCALE=en
 ENV APP_FALLBACK_LOCALE=en
