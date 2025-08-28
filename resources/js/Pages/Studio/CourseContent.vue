@@ -1,6 +1,6 @@
 <template>
-  <CourseLayout :title="$t('General')">
-    <p>general</p>
+  <CourseLayout :title="$t('Content')">
+    <p>content</p>
   </CourseLayout>
 </template>
 

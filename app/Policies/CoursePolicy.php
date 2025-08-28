@@ -9,36 +9,38 @@ class CoursePolicy
 {
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->isAuthor();
     }
 
     public function view(User $user, Course $course): bool
     {
-        return true;
+        if ($author = $user->author) {
+            return $course->author->is($author);
+        }
+
+        return false;
     }
 
     public function create(User $user): bool
     {
-        return false;
+        return $user->isAuthor();
     }
 
     public function update(User $user, Course $course): bool
     {
+        if ($author = $user->author) {
+            return $course->author->is($author);
+        }
+
         return false;
     }
 
     public function delete(User $user, Course $course): bool
     {
-        return false;
-    }
+        if ($author = $user->author) {
+            return $course->author->is($author);
+        }
 
-    public function restore(User $user, Course $course): bool
-    {
-        return false;
-    }
-
-    public function forceDelete(User $user, Course $course): bool
-    {
         return false;
     }
 

@@ -82,4 +82,12 @@ class User extends Authenticatable
     {
         return $this->enrolledCourses()->whereBelongsTo($course)->exists();
     }
+
+    /**
+     * Determine whether user is a course author.
+     */
+    public function isAuthor(): bool
+    {
+        return $this->author != null;
+    }
 }

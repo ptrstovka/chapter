@@ -85,8 +85,8 @@ class StudioLayout extends Layout
     /**
      * Create a new layout instance.
      */
-    public static function make(array $props): static
+    public static function make(): static
     {
-        return new static($props);
+        return new static(...func_get_args());
     }
 }
