@@ -3,8 +3,9 @@
 namespace App\View\Models;
 
 use Illuminate\Pagination\LengthAwarePaginator;
+use StackTrace\Ui\ViewModel;
 
-class Paginator extends Model
+class Paginator extends ViewModel
 {
     public function __construct(
         protected LengthAwarePaginator $paginator

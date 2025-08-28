@@ -58,6 +58,9 @@
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" class="w-48">
+                <template v-if="$page.props.auth.user.can.accessStudio">
+                  <DropdownMenuLink :href="route('studio')">{{ $t('My Studio') }}</DropdownMenuLink>
+                </template>
                 <DropdownMenuLink :href="route('profile.edit')">{{ $t('Profile') }}</DropdownMenuLink>
                 <DropdownMenuSeparator/>
                 <DropdownMenuLabel>{{ $t('Theme') }}</DropdownMenuLabel>

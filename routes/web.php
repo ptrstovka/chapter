@@ -15,7 +15,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResetProgressController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SearchController;
+use App\Http\Middleware\StudioMiddleware;
 use Illuminate\Support\Facades\Route;
+use \App\Http\Controllers\Studio;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', HomeController::class)->name('home');
@@ -44,6 +46,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-courses', InProgressController::class)->name('mycourses.inprogress');
     Route::get('/my-courses/favorites', FavoriteController::class)->name('mycourses.favorite');
     Route::get('/my-courses/completed', CompletedController::class)->name('mycourses.completed');
+
+    Route::group(['prefix' => 'studio'], function () {
+        Route::get('/', Studio\StudioController::class)->name('studio');
+
+        Route::name('studio.')->group(function () {
+            Route::get('/overview', Studio\OverviewController::class)->name('overview');
+
+            Route::get('/courses', [Studio\CourseController::class, 'index'])->name('courses');
+            Route::get('/courses/{course:uuid}', [Studio\CourseController::class, 'show'])->name('courses.show');
+
+            Route::get('/profile', [Studio\ProfileController::class, 'show'])->name('profile');
+        });
+    })->middleware(StudioMiddleware::class);
 });
 
 require __DIR__.'/auth.php';
