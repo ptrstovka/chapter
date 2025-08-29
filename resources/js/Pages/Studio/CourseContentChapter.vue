@@ -33,6 +33,7 @@
             :label="$t('Save')"
             @click="save"
             :processing="form.processing"
+            :recently-successful="form.recentlySuccessful"
           />
         </div>
       </div>
@@ -43,7 +44,6 @@
 <script setup lang="ts">
 import {
   Breadcrumb,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
 } from "@/Components/Breadcrumb";

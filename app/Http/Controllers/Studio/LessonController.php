@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Studio;
 
 
+use App\Enums\TextContentType;
 use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\Lesson;
@@ -11,6 +12,7 @@ use App\View\Layouts\CourseContentLayout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class LessonController
@@ -21,6 +23,7 @@ class LessonController
 
         $lesson = new Lesson([
             'position' => $position,
+            'description_type' => $course->author->getDefaultTextContentType(),
         ]);
         $lesson->chapter()->associate($chapter);
         $lesson->course()->associate($course);
@@ -41,6 +44,8 @@ class LessonController
                 'id' => $lesson->uuid,
                 'title' => $lesson->title,
                 'fallbackTitle' => $lesson->getFallbackTitle(),
+                'description' => $lesson->description,
+                'descriptionType' => $lesson->description_type,
             ],
         ]));
     }
@@ -49,7 +54,12 @@ class LessonController
     {
         $request->validate([
             'title' => ['nullable', 'string', 'max:191'],
+            'description' => ['nullable', 'string', 'max:5000'],
+            'description_type' => ['required', 'string', Rule::enum(TextContentType::class)],
         ]);
+
+        $lesson->description = $request->input('description');
+        $lesson->description_type = $request->enum('description_type', TextContentType::class);
 
         if ($title = $request->input('title')) {
             $lesson->title = $title;

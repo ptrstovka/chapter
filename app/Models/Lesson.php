@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TextContentType;
 use App\Models\Concerns\HasSlugId;
 use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string $slug
  * @property string $title
  * @property string|null $description
+ * @property \App\Enums\TextContentType $description_type
  * @property \App\Models\Video|null $video
  * @property int $position
  * @property \App\Models\Chapter $chapter
@@ -26,6 +28,13 @@ class Lesson extends Model
     use HasFactory, HasSlugId, HasUuid;
 
     protected $guarded = false;
+
+    protected function casts(): array
+    {
+        return [
+            'description_type' => TextContentType::class,
+        ];
+    }
 
     public function video(): BelongsTo
     {

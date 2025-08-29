@@ -22,6 +22,7 @@ class ChapterController
             if ($request->has('lesson')) {
                 $lesson = new Lesson([
                     'position' => 1,
+                    'description_type' => $course->author->getDefaultTextContentType(),
                 ]);
                 $lesson->course()->associate($course);
                 $lesson->chapter()->associate($chapter);

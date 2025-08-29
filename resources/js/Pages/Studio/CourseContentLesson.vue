@@ -31,12 +31,17 @@
           <Input v-model="form.title" :placeholder="lesson.fallbackTitle" />
         </FormControl>
 
+        <FormControl :label="$t('Description')" :error="form.errors.description || form.errors.description_type">
+          <TextEditor v-model:content="form.description" v-model:content-type="form.description_type" />
+        </FormControl>
+
         <div>
           <Button
             :icon="SaveIcon"
             :label="$t('Save')"
             @click="save"
             :processing="form.processing"
+            :recently-successful="form.recentlySuccessful"
           />
         </div>
       </div>
@@ -57,6 +62,8 @@ import { useConfirmable } from "@/Components/ConfirmationDialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from "@/Components/DropdownMenu";
 import { FormControl } from "@/Components/Form";
 import { Input } from "@/Components/Input";
+import { TextEditor } from "@/Components/TextEditor";
+import type { TextContentType } from "@/Types";
 import { useForm } from "@inertiajs/vue3";
 import { asyncRouter } from "@stacktrace/ui";
 import { trans } from "laravel-vue-i18n";
@@ -74,11 +81,15 @@ const props = defineProps<{
     id: string
     title: string | null
     fallbackTitle: string
+    description: string | null
+    descriptionType: TextContentType
   }
 }>()
 
 const form = useForm(() => ({
   title: props.lesson.title || '',
+  description: props.lesson.description || '',
+  description_type: props.lesson.descriptionType,
 }))
 const save = () => {
   form.patch(route('studio.course.lessons.update', [props.id, props.chapter.id, props.lesson.id]), {
