@@ -58,6 +58,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/courses', [Studio\CourseController::class, 'store'])->name('courses.store');
             Route::get('/courses/{course:uuid}', [Studio\CourseController::class, 'show'])->name('courses.show');
             Route::patch('/courses/{course:uuid}', [Studio\CourseController::class, 'update'])->name('courses.update');
+            Route::delete('/courses/{course:uuid}', [Studio\CourseController::class, 'destroy'])->name('courses.destroy');
             Route::get('/courses/{course:uuid}/content', Studio\CourseContentController::class)->name('courses.content');
             Route::post('/courses/{course:uuid}/chapters', [Studio\ChapterController::class, 'store'])->name('course.chapters.store');
             Route::get('/courses/{course:uuid}/chapters/{chapter:uuid}', [Studio\ChapterController::class, 'show'])->name('course.chapters.show');

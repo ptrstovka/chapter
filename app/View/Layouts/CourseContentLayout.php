@@ -7,15 +7,12 @@ namespace App\View\Layouts;
 use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\Lesson;
-use StackTrace\Ui\Breadcrumbs\BreadcrumbItem;
 
 class CourseContentLayout extends CourseLayout
 {
     public function __construct(Course $course, array $props = [])
     {
         parent::__construct($course, $props);
-
-        $this->breadcrumb(BreadcrumbItem::make(__('Content')));
     }
 
     public function toLayout(): array

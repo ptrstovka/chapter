@@ -23,6 +23,17 @@ class Resource extends Model
 
     protected $guarded = false;
 
+    protected static function booted(): void
+    {
+        static::deleted(function (Resource $resource) {
+            $disk = config('filesystems.content_disk');
+
+            if (Storage::disk($disk)->exists($resource->file_path)) {
+                Storage::disk($disk)->delete($resource->file_path);
+            }
+        });
+    }
+
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);

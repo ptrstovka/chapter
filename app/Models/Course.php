@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use LogicException;
@@ -38,7 +39,9 @@ use Throwable;
  */
 class Course extends Model
 {
-    use HasFactory, HasUuid;
+    use HasFactory, HasUuid, SoftDeletes;
+
+    // TODO: Add prunable to delete soft deleted courses.
 
     protected $guarded = false;
 

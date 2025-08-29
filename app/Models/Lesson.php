@@ -36,6 +36,17 @@ class Lesson extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::deleting(function (Lesson $lesson) {
+            $video = $lesson->video;
+            $lesson->video()->disassociate()->save();
+            $video?->delete();
+
+            $lesson->resources->each->delete();
+        });
+    }
+
     public function video(): BelongsTo
     {
         return $this->belongsTo(Video::class);

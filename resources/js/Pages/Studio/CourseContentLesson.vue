@@ -31,6 +31,21 @@
           <Input v-model="form.title" :placeholder="lesson.fallbackTitle" />
         </FormControl>
 
+        <FormControl :label="$t('Video')" :error="form.errors.video">
+          <TemporaryFileInput
+            class="aspect-video"
+            scope="CourseVideo"
+            :source="lesson.video"
+            v-model:remove="form.remove_video"
+            v-model:file="form.video"
+            drag-label="Drag & drop a video"
+            pick-label="select a video"
+            v-slot="{ preview }"
+          >
+            <Player :src="preview" class="w-full h-full rounded-none" />
+          </TemporaryFileInput>
+        </FormControl>
+
         <FormControl :label="$t('Description')" :error="form.errors.description || form.errors.description_type">
           <TextEditor v-model:content="form.description" v-model:content-type="form.description_type" />
         </FormControl>
@@ -62,6 +77,8 @@ import { useConfirmable } from "@/Components/ConfirmationDialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from "@/Components/DropdownMenu";
 import { FormControl } from "@/Components/Form";
 import { Input } from "@/Components/Input";
+import { Player } from "@/Components/Player";
+import { TemporaryFileInput } from "@/Components/TemporaryFileInput";
 import { TextEditor } from "@/Components/TextEditor";
 import type { TextContentType } from "@/Types";
 import { useForm } from "@inertiajs/vue3";
@@ -83,6 +100,7 @@ const props = defineProps<{
     fallbackTitle: string
     description: string | null
     descriptionType: TextContentType
+    video: string | null
   }
 }>()
 
@@ -90,6 +108,8 @@ const form = useForm(() => ({
   title: props.lesson.title || '',
   description: props.lesson.description || '',
   description_type: props.lesson.descriptionType,
+  video: null,
+  remove_video: false,
 }))
 const save = () => {
   form.patch(route('studio.course.lessons.update', [props.id, props.chapter.id, props.lesson.id]), {

@@ -1,6 +1,6 @@
 <template>
   <CourseLayout :title="$t('Content')">
-    <div class="relative h-[calc(100vh_-_11rem)] overflow-hidden flex flex-row">
+    <div class="relative h-[calc(100vh_-_8.5rem)] overflow-hidden flex flex-row">
       <div v-if="page.props.chapters.length > 0" class="w-80 shrink-0 overflow-y-auto [scrollbar-width:thin] border-r" scroll-region="">
         <div class="flex flex-col divide-y border-b border-dashed">
           <CourseChapter

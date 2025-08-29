@@ -64,7 +64,7 @@ class CourseController
                 ->map(fn (Category $category) => new SelectOption($category->title, $category->id))
                 ->sortBy('label')
                 ->values(),
-        ])->breadcrumb(BreadcrumbItem::make(__('General'))));
+        ]));
     }
 
     public function update(Request $request, Course $course)
@@ -151,5 +151,12 @@ class CourseController
         });
 
         return back();
+    }
+
+    public function destroy(Course $course)
+    {
+        DB::transaction(fn () => $course->delete());
+
+        return to_route('studio.courses');
     }
 }

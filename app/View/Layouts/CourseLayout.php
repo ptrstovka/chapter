@@ -27,6 +27,7 @@ class CourseLayout extends StudioLayout
             'id' => $this->course->uuid,
             'title' => $this->course->title,
             'slug' => $this->course->slug,
+            'status' => $this->course->status,
         ];
     }
 }
