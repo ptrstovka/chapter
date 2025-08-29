@@ -56,6 +56,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/courses', [Studio\CourseController::class, 'index'])->name('courses');
             Route::post('/courses', [Studio\CourseController::class, 'store'])->name('courses.store');
             Route::get('/courses/{course:uuid}', [Studio\CourseController::class, 'show'])->name('courses.show');
+            Route::patch('/courses/{course:uuid}', [Studio\CourseController::class, 'update'])->name('courses.update');
             Route::get('/courses/{course:uuid}/content', Studio\CourseContentController::class)->name('courses.content');
 
             Route::get('/profile', [Studio\ProfileController::class, 'show'])->name('profile');

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\CourseStatus;
+use App\Enums\TextContentType;
 use App\Jobs\CalculateCourseDuration;
 use App\Jobs\PublishCourse;
 use App\Models\Concerns\HasUuid;
@@ -26,6 +27,7 @@ use Throwable;
  * @property \App\Models\Author $author
  * @property \App\Models\Video|null $trailer
  * @property \App\Models\Category $category
+ * @property \App\Enums\TextContentType $description_type
  * @property string $slug
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chapter> $chapters
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Resource> $resources
@@ -44,6 +46,7 @@ class Course extends Model
     {
         return [
             'status' => CourseStatus::class,
+            'description_type' => TextContentType::class,
         ];
     }
 

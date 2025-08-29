@@ -42,3 +42,5 @@ export interface VideoSource {
   url: string
   posterImageUrl: string | null
 }
+
+export type TextContentType = 'html' | 'markdown'
