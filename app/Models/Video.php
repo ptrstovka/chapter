@@ -17,6 +17,21 @@ class Video extends Model
 {
     protected $guarded = false;
 
+    protected static function booted(): void
+    {
+        static::deleted(function (Video $video) {
+            if (Storage::disk('public')->exists($video->file_path)) {
+                Storage::disk('public')->delete($video->file_path);
+            }
+
+            if ($poster = $video->poster_image_file_path) {
+                if (Storage::disk('public')->exists($poster)) {
+                    Storage::disk('public')->delete($poster);
+                }
+            }
+        });
+    }
+
     /**
      * Retrieve list of jobs which should be executed for this video prior to publishing.
      * All jobs must implement Batchable trait. The order of execution is not guaranteed,

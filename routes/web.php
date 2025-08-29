@@ -15,6 +15,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResetProgressController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\TemporaryUploadController;
 use App\Http\Middleware\StudioMiddleware;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Studio;
@@ -62,6 +63,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/profile', [Studio\ProfileController::class, 'show'])->name('profile');
         });
     });
+
+    Route::post('/files', [TemporaryUploadController::class, 'store'])->name('files.store');
 });
 
 require __DIR__.'/auth.php';

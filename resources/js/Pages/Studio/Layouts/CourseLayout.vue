@@ -1,6 +1,6 @@
 <template>
   <StudioLayout>
-    <div class="p-4">
+    <div class="p-4 max-w-7xl">
       <div class="flex flex-row justify-between items-end">
         <h4 class="text-base font-semibold mb-4">{{ page.props.title || $t('New Draft') }}</h4>
 

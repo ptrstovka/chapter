@@ -18,6 +18,38 @@
         />
       </FormControl>
 
+      <div class="grid lg:grid-cols-2 gap-4">
+        <FormControl :label="$t('Trailer')">
+          <TemporaryFileInput
+            class="aspect-video"
+            scope="CourseTrailerVideo"
+            :source="trailer"
+            v-model:remove="form.remove_trailer"
+            v-model:file="form.trailer"
+            drag-label="Drag & drop a video"
+            pick-label="select a video"
+            v-slot="{ preview }"
+          >
+            <Player :src="preview" class="w-full h-full rounded-none" />
+          </TemporaryFileInput>
+        </FormControl>
+
+        <FormControl :label="$t('Cover Image')">
+          <TemporaryFileInput
+            class="aspect-video"
+            scope="CourseCoverImage"
+            :source="coverImage"
+            v-model:remove="form.remove_cover_image"
+            v-model:file="form.cover_image"
+            drag-label="Drag & drop an image"
+            pick-label="select an image"
+            v-slot="{ preview }"
+          >
+            <img class="w-full h-full object-contain object-center" :src="preview" alt="">
+          </TemporaryFileInput>
+        </FormControl>
+      </div>
+
       <Button
         class="self-start"
         :icon="SaveIcon"
@@ -38,6 +70,8 @@ import { TextEditor } from "@/Components/TextEditor";
 import type { TextContentType } from "@/Types";
 import { useForm } from "@inertiajs/vue3";
 import { SaveIcon } from 'lucide-vue-next'
+import { TemporaryFileInput } from '@/Components/TemporaryFileInput'
+import { Player } from '@/Components/Player'
 import CourseLayout from "./Layouts/CourseLayout.vue"
 
 const props = defineProps<{
@@ -46,6 +80,8 @@ const props = defineProps<{
   slug: string | null
   description: string | null
   descriptionType: TextContentType
+  coverImage: string | null
+  trailer: string | null
 }>()
 
 const form = useForm(() => ({
@@ -53,6 +89,10 @@ const form = useForm(() => ({
   slug: props.slug || '',
   description: props.description || '',
   description_type: props.descriptionType,
+  cover_image: null,
+  remove_cover_image: false,
+  trailer: null,
+  remove_trailer: false,
 }))
 
 const save = () => {
