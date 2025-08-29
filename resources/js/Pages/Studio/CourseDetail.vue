@@ -1,13 +1,26 @@
 <template>
   <CourseLayout :title="$t('General')">
-    <div class="flex flex-col gap-4">
-      <div class="grid md:grid-cols-2 gap-4">
+    <div class="flex flex-col gap-4 xl:gap-6">
+      <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 xl:gap-6">
         <FormControl :label="$t('Title')" :error="form.errors.title">
           <Input v-model="form.title" />
         </FormControl>
 
         <FormControl :label="$t('URL Slug')" :error="form.errors.slug" v-if="title || slug">
           <Input v-model="form.slug" />
+        </FormControl>
+      </div>
+
+      <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 xl:gap-6">
+        <FormControl :label="$t('Category')" :error="form.errors.category">
+          <FormCombobox
+            class="w-full"
+            :options="categories"
+            v-model="form.category"
+            :placeholder="$t('Select category…')"
+            :search-label="$t('Search category…')"
+            :not-found-label="$t('No category found.')"
+          />
         </FormControl>
       </div>
 
@@ -18,7 +31,7 @@
         />
       </FormControl>
 
-      <div class="grid lg:grid-cols-2 gap-4">
+      <div class="grid lg:grid-cols-2 gap-4 xl:gap-6">
         <FormControl :label="$t('Trailer')">
           <TemporaryFileInput
             class="aspect-video"
@@ -64,11 +77,12 @@
 
 <script setup lang="ts">
 import { Button } from "@/Components/Button";
-import { FormControl } from "@/Components/Form";
+import { FormCombobox, FormControl } from "@/Components/Form";
 import { Input } from "@/Components/Input";
 import { TextEditor } from "@/Components/TextEditor";
 import type { TextContentType } from "@/Types";
 import { useForm } from "@inertiajs/vue3";
+import type { SelectOption } from "@stacktrace/ui";
 import { SaveIcon } from 'lucide-vue-next'
 import { TemporaryFileInput } from '@/Components/TemporaryFileInput'
 import { Player } from '@/Components/Player'
@@ -82,6 +96,8 @@ const props = defineProps<{
   descriptionType: TextContentType
   coverImage: string | null
   trailer: string | null
+  categories: Array<SelectOption<number>>
+  category: number | null
 }>()
 
 const form = useForm(() => ({
@@ -93,6 +109,7 @@ const form = useForm(() => ({
   remove_cover_image: false,
   trailer: null,
   remove_trailer: false,
+  category: props.category,
 }))
 
 const save = () => {

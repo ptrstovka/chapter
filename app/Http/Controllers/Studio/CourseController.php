@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Studio;
 
 use App\Enums\CourseStatus;
 use App\Enums\TextContentType;
+use App\Models\Category;
 use App\Models\Course;
 use App\Models\TemporaryUpload;
 use App\Models\Video;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use StackTrace\Ui\Breadcrumbs\BreadcrumbItem;
+use StackTrace\Ui\SelectOption;
 
 class CourseController
 {
@@ -56,6 +58,12 @@ class CourseController
             'descriptionType' => $course->description_type,
             'coverImage' => $course->getCoverImageUrl(),
             'trailer' => $course->trailer?->getUrl(),
+            'category' => $course->category?->id,
+            'categories' => Category::query()
+                ->get()
+                ->map(fn (Category $category) => new SelectOption($category->title, $category->id))
+                ->sortBy('label')
+                ->values(),
         ])->breadcrumb(BreadcrumbItem::make(__('General'))));
     }
 
@@ -72,11 +80,14 @@ class CourseController
             'remove_cover_image' => 'boolean',
             'trailer' => TemporaryUploadRule::scope('CourseTrailerVideo'),
             'remove_trailer' => 'boolean',
+            'category' => ['required', 'numeric', Rule::exists(Category::class, 'id')],
         ]);
 
         DB::transaction(function () use ($course, $request) {
             $title = $request->input('title');
             $slug = $request->input('slug');
+
+            $course->category()->associate($request->input('category'));
 
             if ($slug != $course->slug) {
                 $course->slug = $slug;

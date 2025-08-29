@@ -26,9 +26,9 @@ use Throwable;
  * @property string|null $cover_image_file_path
  * @property \App\Models\Author $author
  * @property \App\Models\Video|null $trailer
- * @property \App\Models\Category $category
+ * @property \App\Models\Category|null $category
  * @property \App\Enums\TextContentType $description_type
- * @property string $slug
+ * @property string|null $slug
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chapter> $chapters
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Resource> $resources
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Lesson> $lessons
