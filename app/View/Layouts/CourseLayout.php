@@ -10,7 +10,7 @@ use StackTrace\Ui\Link;
 
 class CourseLayout extends StudioLayout
 {
-    public function __construct(protected Course $course, array $props)
+    public function __construct(protected Course $course, array $props = [])
     {
         parent::__construct($props);
 

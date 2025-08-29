@@ -59,6 +59,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/courses/{course:uuid}', [Studio\CourseController::class, 'show'])->name('courses.show');
             Route::patch('/courses/{course:uuid}', [Studio\CourseController::class, 'update'])->name('courses.update');
             Route::get('/courses/{course:uuid}/content', Studio\CourseContentController::class)->name('courses.content');
+            Route::post('/courses/{course:uuid}/chapters', [Studio\ChapterController::class, 'store'])->name('course.chapters.store');
+            Route::get('/courses/{course:uuid}/chapters/{chapter:uuid}', [Studio\ChapterController::class, 'show'])->name('course.chapters.show');
+            Route::patch('/courses/{course:uuid}/chapters/{chapter:uuid}', [Studio\ChapterController::class, 'update'])->name('course.chapters.update');
+            Route::post('/courses/{course:uuid}/chapters/{chapter:uuid}/lessons', [Studio\LessonController::class, 'store'])->name('course.lessons.store');
+            Route::delete('/courses/{course:uuid}/chapters/{chapter:uuid}', [Studio\ChapterController::class, 'destroy'])->name('course.chapters.destroy');
+            Route::get('/courses/{course:uuid}/chapters/{chapter:uuid}/lessons/{lesson:uuid}', [Studio\LessonController::class, 'show'])->name('course.lessons.show');
+            Route::patch('/courses/{course:uuid}/chapters/{chapter:uuid}/lessons/{lesson:uuid}', [Studio\LessonController::class, 'update'])->name('course.lessons.update');
+            Route::delete('/courses/{course:uuid}/chapters/{chapter:uuid}/lessons/{lesson:uuid}', [Studio\LessonController::class, 'destroy'])->name('course.lessons.destroy');
 
             Route::get('/profile', [Studio\ProfileController::class, 'show'])->name('profile');
         });

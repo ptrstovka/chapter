@@ -59,4 +59,12 @@ class Lesson extends Model
 
         return $completion;
     }
+
+    /**
+     * Get the lesson fallback title.
+     */
+    public function getFallbackTitle(): string
+    {
+        return __('Lesson :value', ['value' => $this->position]);
+    }
 }

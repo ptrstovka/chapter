@@ -9,6 +9,8 @@
 
       <p class="font-semibold text-center">{{ title }}</p>
       <p class="max-w-md text-center text-muted-foreground text-sm mt-1">{{ message }}</p>
+
+      <slot />
     </div>
   </div>
 </template>

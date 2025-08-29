@@ -1,6 +1,6 @@
 <template>
   <CourseLayout :title="$t('General')">
-    <div class="flex flex-col gap-4 xl:gap-6">
+    <div class="flex flex-col gap-4 xl:gap-6 p-4">
       <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 xl:gap-6">
         <FormControl :label="$t('Title')" :error="form.errors.title">
           <Input v-model="form.title" />

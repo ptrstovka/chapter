@@ -1,15 +1,17 @@
 <template>
   <StudioLayout>
-    <div class="p-4 max-w-7xl">
-      <div class="flex flex-row justify-between items-end">
-        <h4 class="text-base font-semibold mb-4">{{ page.props.title || $t('New Draft') }}</h4>
+    <div class="flex flex-1 flex-col">
+      <div class="h-24 flex flex-col items-start justify-center px-4 relative pb-3 border-b">
+        <div class="flex flex-row justify-between items-center flex-1">
+          <h4 class="text-lg font-semibold">{{ page.props.title || $t('New Draft') }}</h4>
+        </div>
 
-        <div class="inline-flex flex-row">
+        <TabsNavigation :menu="menu" />
+
+        <div class="inline-flex flex-row absolute bottom-3 right-4">
           <Button>{{ $t('Publish') }}</Button>
         </div>
       </div>
-
-      <TabsNavigation :menu="menu" class="mb-4" />
 
       <slot />
     </div>
@@ -41,7 +43,12 @@ const menu = useNavigation(computed(() => [
   },
   {
     title: contentTitle.value,
-    action: { route: 'studio.courses.content', params: [page.props.id] }
+    action: { route: 'studio.courses.content', params: [page.props.id] },
+    active: [
+      { route: 'studio.courses.content' },
+      { route: 'studio.course.lessons*' },
+      { route: 'studio.course.chapters*' },
+    ]
   },
 ]))
 </script>

@@ -19,7 +19,7 @@ class StudioLayout extends Layout
      */
     protected BreadcrumbList $breadcrumbs;
 
-    public function __construct(array $props)
+    public function __construct(array $props = [])
     {
         parent::__construct($props);
 
