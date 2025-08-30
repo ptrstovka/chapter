@@ -27,11 +27,11 @@
       </div>
 
       <div class="flex flex-col gap-4 p-3">
-        <FormControl :label="$t('Title')" :error="form.errors.title">
+        <FormControl :label="$t('Title')" :error="form.errors.title" class="max-w-lg">
           <Input v-model="form.title" :placeholder="lesson.fallbackTitle" />
         </FormControl>
 
-        <FormControl :label="$t('Video')" :error="form.errors.video">
+        <FormControl :label="$t('Video')" :error="form.errors.video" class="max-w-lg">
           <TemporaryFileInput
             class="aspect-video"
             scope="CourseVideo"
@@ -49,18 +49,20 @@
         <FormControl :label="$t('Description')" :error="form.errors.description || form.errors.description_type">
           <TextEditor v-model:content="form.description" v-model:content-type="form.description_type" />
         </FormControl>
-
-        <div>
-          <Button
-            :icon="SaveIcon"
-            :label="$t('Save')"
-            @click="save"
-            :processing="form.processing"
-            :recently-successful="form.recentlySuccessful"
-          />
-        </div>
       </div>
     </div>
+
+    <template #footer>
+      <div class="flex-1 flex flex-row justify-end items-center">
+        <Button
+          :icon="SaveIcon"
+          :label="$t('Save')"
+          @click="save"
+          :processing="form.processing"
+          :recently-successful="form.recentlySuccessful"
+        />
+      </div>
+    </template>
   </CourseContentLayout>
 </template>
 

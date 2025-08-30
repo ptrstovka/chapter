@@ -35,8 +35,14 @@
         </div>
       </div>
 
-      <div class="flex-1 relative">
-        <slot />
+      <div class="flex-1 flex flex-col">
+        <div class="flex-1 overflow-y-auto  [scrollbar-width:thin]">
+          <slot />
+        </div>
+
+        <div v-if="$slots.footer" class="h-12 w-full flex px-3 items-center border-t">
+          <slot name="footer" />
+        </div>
       </div>
     </div>
   </CourseLayout>

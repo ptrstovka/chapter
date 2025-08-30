@@ -1,7 +1,7 @@
 <template>
   <StudioLayout>
     <div class="flex flex-1 flex-col">
-      <div class="h-14 flex flex-row items-center justify-between px-4 relative border-b">
+      <div class="h-14 flex flex-row items-center justify-between px-3 relative border-b">
         <TabsNavigation :menu="menu" />
 
         <div class="inline-flex flex-row  bottom-3 right-4 gap-4">

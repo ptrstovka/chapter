@@ -23,21 +23,21 @@
       </div>
 
       <div class="flex flex-col gap-4 p-3">
-        <FormControl :label="$t('Title')" :error="form.errors.title">
+        <FormControl :label="$t('Title')" :error="form.errors.title" class="max-w-lg">
           <Input v-model="form.title" :placeholder="chapter.fallbackTitle" />
         </FormControl>
-
-        <div>
-          <Button
-            :icon="SaveIcon"
-            :label="$t('Save')"
-            @click="save"
-            :processing="form.processing"
-            :recently-successful="form.recentlySuccessful"
-          />
-        </div>
       </div>
     </div>
+
+    <template #footer>
+      <Button
+        :icon="SaveIcon"
+        :label="$t('Save')"
+        @click="save"
+        :processing="form.processing"
+        :recently-successful="form.recentlySuccessful"
+      />
+    </template>
   </CourseContentLayout>
 </template>
 
