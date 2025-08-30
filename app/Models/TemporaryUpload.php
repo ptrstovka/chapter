@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -16,17 +18,20 @@ use Illuminate\Validation\Rule;
  * @property string $disk
  * @property string $path
  * @property string $scope
+ * @property string $mime_type
+ * @property string $client_file_name
+ * @property int $size
  * @property \App\Models\User|null $user
  */
 class TemporaryUpload extends Model
 {
-    use HasUuid, Prunable;
+    use HasUuid, Prunable, SoftDeletes;
 
     protected $guarded = false;
 
     protected static function booted(): void
     {
-        static::deleted(function (TemporaryUpload $upload) {
+        static::forceDeleted(function (TemporaryUpload $upload) {
             if (Storage::disk($upload->disk)->exists($upload->path)) {
                 Storage::disk($upload->disk)->delete($upload->path);
             }
@@ -85,6 +90,14 @@ class TemporaryUpload extends Model
     }
 
     /**
+     * Get the human-readable file size.
+     */
+    public function getHumanReadableSize(): string
+    {
+        return Number::fileSize($this->size);
+    }
+
+    /**
      * List of available temporary file scopes.
      */
     public static function scopes(): array
@@ -108,6 +121,10 @@ class TemporaryUpload extends Model
                 Rule::file()
                     ->max(2 * 1024 * 1024) // 2 GB
                     ->extensions(['mp4']),
+            ],
+            'CourseResource' => [
+                Rule::file()
+                    ->max(2 * 1024 * 1024), // 2 GB
             ],
         ];
     }

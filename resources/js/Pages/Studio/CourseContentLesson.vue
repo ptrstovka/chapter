@@ -49,6 +49,16 @@
         <FormControl :label="$t('Description')" :error="form.errors.description || form.errors.description_type">
           <TextEditor v-model:content="form.description" v-model:content-type="form.description_type" />
         </FormControl>
+
+        <FormControl :label="$t('Resources')" :error="form.errors.resources" class="max-w-lg">
+          <FileListInput
+            class="data-[empty]:aspect-video data-[empty]:p-0"
+            scope="CourseResource"
+            v-model="form.resources"
+            :drag-label="$t('Drag and drop files')"
+            :pick-label="$t('select files')"
+          />
+        </FormControl>
       </div>
     </div>
 
@@ -77,6 +87,7 @@ import {
 import { Button } from "@/Components/Button";
 import { useConfirmable } from "@/Components/ConfirmationDialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from "@/Components/DropdownMenu";
+import { FileListInput, type FileListItem } from "@/Components/FileListInput";
 import { FormControl } from "@/Components/Form";
 import { Input } from "@/Components/Input";
 import { Player } from "@/Components/Player";
@@ -103,6 +114,7 @@ const props = defineProps<{
     description: string | null
     descriptionType: TextContentType
     video: string | null
+    resources: Array<FileListItem>
   }
 }>()
 
@@ -112,10 +124,14 @@ const form = useForm(() => ({
   description_type: props.lesson.descriptionType,
   video: null,
   remove_video: false,
+  resources: props.lesson.resources.map(it => ({...it})),
 }))
 const save = () => {
   form.patch(route('studio.course.lessons.update', [props.id, props.chapter.id, props.lesson.id]), {
     preserveScroll: true,
+    onSuccess: () => {
+      form.reset()
+    }
   })
 }
 

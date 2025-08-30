@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Adapters\LessonResourceFileListAdapter;
 use App\Enums\TextContentType;
 use App\Models\Concerns\HasSlugId;
 use App\Models\Concerns\HasUuid;
+use App\Support\FileList;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * @property string $slug
@@ -65,6 +68,14 @@ class Lesson extends Model
     public function resources(): BelongsToMany
     {
         return $this->belongsToMany(Resource::class);
+    }
+
+    /**
+     * Create a file list for lesson resources.
+     */
+    public function resourceFiles(): FileList
+    {
+        return new FileList(new LessonResourceFileListAdapter($this));
     }
 
     /**

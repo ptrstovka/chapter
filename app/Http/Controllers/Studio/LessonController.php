@@ -4,13 +4,17 @@
 namespace App\Http\Controllers\Studio;
 
 
+use App\Adapters\LessonResourceFileListAdapter;
 use App\Enums\TextContentType;
 use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\TemporaryUpload;
 use App\Models\Video;
+use App\Repositories\LessonResourcesFileRepository;
+use App\Rules\FileListRule;
 use App\Rules\TemporaryUploadRule;
+use App\Support\FileList;
 use App\View\Layouts\CourseContentLayout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -50,21 +54,25 @@ class LessonController
                 'description' => $lesson->description,
                 'descriptionType' => $lesson->description_type,
                 'video' => $lesson->video?->getUrl(),
+                'resources' => $lesson->resourceFiles()->all(),
             ],
         ]));
     }
 
     public function update(Request $request, Course $course, Chapter $chapter, Lesson $lesson)
     {
+        $resourceFiles = $lesson->resourceFiles();
+
         $request->validate([
             'title' => ['nullable', 'string', 'max:191'],
             'description' => ['nullable', 'string', 'max:5000'],
             'description_type' => ['required', 'string', Rule::enum(TextContentType::class)],
             'video' => TemporaryUploadRule::scope('CourseVideo'),
             'remove_video' => 'boolean',
+            'resources' => FileListRule::make('CourseResource', $resourceFiles->getAdapter()),
         ]);
 
-        DB::transaction(function () use ($request, $lesson) {
+        DB::transaction(function () use ($request, $lesson, $resourceFiles) {
             $lesson->description = $request->input('description');
             $lesson->description_type = $request->enum('description_type', TextContentType::class);
 
@@ -101,6 +109,8 @@ class LessonController
 
             $videoToRemove?->delete();
             $videoUploadToRemove?->delete();
+
+            $resourceFiles->syncFromRequest('resources');
         });
 
         return back();

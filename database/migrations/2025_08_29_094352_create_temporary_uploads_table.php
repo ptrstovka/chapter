@@ -15,7 +15,11 @@ return new class extends Migration
             $table->string('disk');
             $table->string('path');
             $table->string('scope');
+            $table->string('mime_type');
+            $table->string('client_file_name');
+            $table->unsignedBigInteger('size');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
