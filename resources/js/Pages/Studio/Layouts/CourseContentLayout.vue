@@ -40,7 +40,7 @@
           <slot />
         </div>
 
-        <div v-if="$slots.footer" class="h-12 w-full flex px-3 items-center border-t">
+        <div v-if="$slots.footer" class="h-12 w-full bg-secondary/30 flex px-3 items-center border-t">
           <slot name="footer" />
         </div>
       </div>

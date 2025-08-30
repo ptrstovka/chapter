@@ -68,7 +68,7 @@
           </div>
         </div>
 
-        <div class="h-12 w-full flex px-3 justify-end items-center border-t">
+        <div class="h-12 w-full flex px-3 justify-end items-center border-t bg-secondary/30">
           <Button
             :icon="SaveIcon"
             :processing="form.processing"

@@ -1,7 +1,7 @@
 <template>
   <div ref="zoneEl" :class="cn(
-    'relative flex flex-col w-full items-center justify-center text-sm border overflow-hidden border-2 border-dashed rounded-md py-8 px-3 transition-colors',
-    isOverDropZone && !disabled ? 'border-primary' : 'border-input',
+    'relative flex flex-col w-full items-center justify-center text-sm border overflow-hidden border-2 border-dashed rounded-md py-8 px-3 transition-all',
+    isOverDropZone && !disabled ? 'border-ring' : 'border-input',
     { 'opacity-80 cursor-not-allowed text-muted-foreground': disabled },
     $attrs.class || ''
   )">

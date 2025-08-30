@@ -30,13 +30,15 @@
     </div>
 
     <template #footer>
-      <Button
-        :icon="SaveIcon"
-        :label="$t('Save')"
-        @click="save"
-        :processing="form.processing"
-        :recently-successful="form.recentlySuccessful"
-      />
+      <div class="flex-1 flex flex-row justify-end items-center">
+        <Button
+          :icon="SaveIcon"
+          :label="$t('Save')"
+          @click="save"
+          :processing="form.processing"
+          :recently-successful="form.recentlySuccessful"
+        />
+      </div>
     </template>
   </CourseContentLayout>
 </template>
