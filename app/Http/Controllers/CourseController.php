@@ -15,15 +15,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class CourseController
 {
     public function index(Request $request)
     {
-        Gate::authorize('viewAny', Course::class);
-
         $categories = Category::all()->map(fn (Category $category) => [
             'value' => $category->slug,
             'title' => $category->title,
@@ -92,8 +89,6 @@ class CourseController
 
     public function show(Course $course)
     {
-        Gate::authorize('view', $course);
-
         $course->load('chapters.lessons.video');
 
         $user = Auth::user();

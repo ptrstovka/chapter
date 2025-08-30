@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\CourseStatus;
+use App\Enums\TextContentType;
 use App\Jobs\CalculateCourseDuration;
 use App\Jobs\PublishCourse;
 use App\Models\Concerns\HasUuid;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use LogicException;
@@ -25,8 +27,9 @@ use Throwable;
  * @property string|null $cover_image_file_path
  * @property \App\Models\Author $author
  * @property \App\Models\Video|null $trailer
- * @property \App\Models\Category $category
- * @property string $slug
+ * @property \App\Models\Category|null $category
+ * @property \App\Enums\TextContentType $description_type
+ * @property string|null $slug
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chapter> $chapters
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Resource> $resources
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Lesson> $lessons
@@ -36,7 +39,9 @@ use Throwable;
  */
 class Course extends Model
 {
-    use HasFactory, HasUuid;
+    use HasFactory, HasUuid, SoftDeletes;
+
+    // TODO: Add prunable to delete soft deleted courses.
 
     protected $guarded = false;
 
@@ -44,6 +49,7 @@ class Course extends Model
     {
         return [
             'status' => CourseStatus::class,
+            'description_type' => TextContentType::class,
         ];
     }
 

@@ -1,10 +1,13 @@
-import type { Config } from 'ziggy-js';
+import type { Config } from 'ziggy-js'
 
 export interface User {
-  id: number;
-  name: string;
-  email: string;
-  email_verified_at: string;
+  id: number
+  name: string
+  email: string
+  emailVerifiedAt: string
+  can: {
+    accessStudio: boolean
+  }
 }
 
 export type AppPageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
@@ -12,7 +15,7 @@ export type AppPageProps<T extends Record<string, unknown> = Record<string, unkn
     user: User
   }
   locale: string
-  ziggy: Config & { location: string };
+  ziggy: Config & { location: string }
 }
 
 export interface Paginator<T> {
@@ -39,3 +42,5 @@ export interface VideoSource {
   url: string
   posterImageUrl: string | null
 }
+
+export type TextContentType = 'html' | 'markdown'

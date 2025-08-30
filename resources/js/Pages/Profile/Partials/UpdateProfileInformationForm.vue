@@ -20,7 +20,7 @@
           <Input v-model="form.email" autocomplete="username" autofocus id="email" />
         </FormControl>
 
-        <div v-if="mustVerifyEmail && user.email_verified_at === null">
+        <div v-if="mustVerifyEmail && user.emailVerifiedAt === null">
           <p class="text-sm mt-2">
             {{ $t('Your email address is unverified.') }}
             <Link

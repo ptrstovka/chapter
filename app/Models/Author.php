@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TextContentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -29,5 +30,13 @@ class Author extends Model
         }
 
         return null;
+    }
+
+    /**
+     * Get the default text content type for the user.
+     */
+    public function getDefaultTextContentType(): TextContentType
+    {
+        return TextContentType::Html;
     }
 }

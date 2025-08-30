@@ -79,7 +79,7 @@
       <TabsTrigger v-if="resources.length > 0" value="resources">{{ $t('Resources') }}</TabsTrigger>
     </TabsList>
     <TabsContent value="description" v-if="description">
-      <div class="editor-content mt-4" v-html="description"></div>
+      <div class="prose mt-4" v-html="description"></div>
     </TabsContent>
     <TabsContent value="resources">
       <ul class="max-w-xs flex flex-col gap-2 mt-4">

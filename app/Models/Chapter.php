@@ -22,6 +22,13 @@ class Chapter extends Model
 
     protected $guarded = false;
 
+    protected static function booted(): void
+    {
+        static::deleting(function (Chapter $chapter) {
+            $chapter->lessons->each->delete();
+        });
+    }
+
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
@@ -30,5 +37,13 @@ class Chapter extends Model
     public function lessons(): HasMany
     {
         return $this->hasMany(Lesson::class);
+    }
+
+    /**
+     * Get the chapter fallback title.
+     */
+    public function getFallbackTitle(): string
+    {
+        return __('Chapter :value', ['value' => $this->position]);
     }
 }

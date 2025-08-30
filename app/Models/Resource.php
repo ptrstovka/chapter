@@ -23,6 +23,17 @@ class Resource extends Model
 
     protected $guarded = false;
 
+    protected static function booted(): void
+    {
+        static::deleted(function (Resource $resource) {
+            $disk = static::disk();
+
+            if (Storage::disk($disk)->exists($resource->file_path)) {
+                Storage::disk($disk)->delete($resource->file_path);
+            }
+        });
+    }
+
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
@@ -34,10 +45,42 @@ class Resource extends Model
     }
 
     /**
+     * Get direct URL to the resource.
+     */
+    public function getDirectUrl(): string
+    {
+        return Storage::disk(static::disk())->url($this->file_path);
+    }
+
+    /**
+     * Get the download URL for the resource.
+     */
+    public function getDownloadUrl(): string
+    {
+        return route('resources.show', [$this->course, $this]);
+    }
+
+    /**
      * Download the file.
      */
     public function download(): StreamedResponse
     {
-        return Storage::disk(config('filesystems.content_disk'))->download($this->file_path, $this->client_file_name);
+        return Storage::disk(static::disk())->download($this->file_path, $this->client_file_name);
+    }
+
+    /**
+     * Get the disk where the resources are stored.
+     */
+    public static function disk(): string
+    {
+        return config('filesystems.content_disk');
+    }
+
+    /**
+     * Get the directory where on the disk are resources stored.
+     */
+    public static function dir(): string
+    {
+        return 'course-resources';
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TextContentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -81,5 +82,13 @@ class User extends Authenticatable
     public function isEnrolledIn(Course $course): bool
     {
         return $this->enrolledCourses()->whereBelongsTo($course)->exists();
+    }
+
+    /**
+     * Determine whether user is a course author.
+     */
+    public function isAuthor(): bool
+    {
+        return $this->author != null;
     }
 }

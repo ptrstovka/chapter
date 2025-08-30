@@ -3,8 +3,9 @@
 namespace App\View\Models;
 
 use App\Models\Video;
+use StackTrace\Ui\ViewModel;
 
-class VideoSource extends Model
+class VideoSource extends ViewModel
 {
     public function __construct(
         protected string $url,

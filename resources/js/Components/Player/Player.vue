@@ -81,7 +81,7 @@ const emit = defineEmits(['ended'])
 
 const props = withDefaults(defineProps<{
   src: string
-  poster: string | null
+  poster?: string | null
   autoplay?: boolean
   captions?: boolean
   speed?: boolean
