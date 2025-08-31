@@ -52,6 +52,8 @@
         "ziggy-js": "^2.5.3"
     },
     "dependencies": {
+        "@atlaskit/pragmatic-drag-and-drop": "^1.7.4",
+        "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.1.0",
         "@tailwindcss/typography": "^0.5.16",
         "@tiptap/pm": "^3.3.0",
         "@tiptap/starter-kit": "^3.3.0",

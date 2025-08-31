@@ -4,11 +4,12 @@
       <div v-if="page.props.chapters.length > 0" class="w-80 shrink-0 overflow-y-auto [scrollbar-width:thin] border-r" scroll-region="">
         <div class="flex flex-col divide-y border-b border-dashed">
           <CourseChapter
-            v-for="chapter in page.props.chapters"
+            v-for="(chapter, idx) in page.props.chapters"
             :title="chapter.title || chapter.fallbackTitle"
             :chapter-id="chapter.id"
             :course-id="page.props.id"
             :active="route().current('studio.course.chapters.show', [page.props.id, chapter.id])"
+            :first="idx === 0"
           >
             <div v-if="chapter.lessons.length > 0" class="divide-y border-b">
               <CourseLesson
@@ -51,7 +52,11 @@
 <script setup lang="ts">
 import { Button } from "@/Components/Button";
 import type { AppPageProps } from "@/Types";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/types";
 import { useForm, usePage } from "@inertiajs/vue3";
+import { onBeforeUnmount, onMounted } from "vue";
 import CourseLayout from "./CourseLayout.vue";
 import { PlusIcon } from 'lucide-vue-next'
 import CourseChapter from '../Components/CourseChapter.vue'
@@ -78,4 +83,36 @@ const createChapter = () => {
     preserveScroll: true,
   })
 }
+
+let cleanup: CleanupFn | undefined
+
+onMounted(() => {
+  cleanup = combine(
+    monitorForElements({
+      canMonitor: ({ source }) => {
+        return source.data.type === 'lesson' || source.data.type === 'chapter'
+      },
+      onDrop: ({ location, source }) => {
+        if (!location.current.dropTargets.length) {
+          return
+        }
+
+        if (source.data.type === 'chapter') {
+          console.log('dropped chapter somewhere')
+        }
+
+        if (source.data.type === 'lesson') {
+          console.log('dropped lesson somewhere')
+        }
+      }
+    })
+  )
+})
+
+onBeforeUnmount(() => {
+  if (cleanup) {
+    cleanup()
+    cleanup = undefined
+  }
+})
 </script>
