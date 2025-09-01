@@ -37,7 +37,7 @@ class ChapterController
         if ($lessonOrChapter instanceof Chapter) {
             return to_route('studio.course.chapters.show', [$course, $lessonOrChapter]);
         } elseif ($lessonOrChapter instanceof Lesson) {
-            return to_route('studio.course.lessons.show', [$course, $lessonOrChapter->chapter, $lessonOrChapter]);
+            return to_route('studio.course.lessons.show', [$course, $lessonOrChapter]);
         }
 
         return back();

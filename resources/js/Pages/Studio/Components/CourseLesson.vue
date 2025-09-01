@@ -14,7 +14,7 @@
     </div>
 
     <Link
-      :href="route('studio.course.lessons.show', [courseId, chapterId, lessonId])"
+      :href="route('studio.course.lessons.show', [courseId, lessonId])"
       preserve-scroll
       :class="cn('flex-1 flex px-1.5 py-3 cursor-pointer text-sm')"
     >

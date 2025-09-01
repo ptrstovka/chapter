@@ -27,7 +27,7 @@ class CourseContentLayout extends CourseLayout
                     'position' => $chapter->position,
                     'title' => $chapter->title,
                     'fallbackTitle' => $chapter->getFallbackTitle(),
-                    'lessons' => $chapter->lessons->sortBy('position')->map(fn (Lesson $lesson) => [
+                    'lessons' => $chapter->lessons->sortBy('position')->values()->map(fn (Lesson $lesson) => [
                         'id' => $lesson->uuid,
                         'title' => $lesson->title,
                         'fallbackTitle' => $lesson->getFallbackTitle(),

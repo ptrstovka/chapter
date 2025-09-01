@@ -39,8 +39,10 @@ class LessonController
         return back();
     }
 
-    public function show(Course $course, Chapter $chapter, Lesson $lesson)
+    public function show(Course $course, Lesson $lesson)
     {
+        $chapter = $lesson->chapter;
+
         return Inertia::render('Studio/CourseContentLesson', CourseContentLayout::make($course, [
             'chapter' => [
                 'id' => $chapter->uuid,
