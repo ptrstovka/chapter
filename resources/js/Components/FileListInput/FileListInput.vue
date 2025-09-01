@@ -1,5 +1,5 @@
 <template>
-  <Dropzone @files="onFiles" :class="cn('p-3 overflow-auto', $attrs.class || '')" :data-empty="fileArray.length === 0 ? '' : undefined">
+  <Dropzone @files="onFiles" :class="cn('p-3 overflow-auto', $attrs.class || '')" :data-empty="fileArray.length === 0 ? '' : undefined" :disabled="disabled">
     <div v-if="fileArray.length > 0" class="flex flex-col w-full h-full gap-2">
       <div v-for="fileItem in fileList" class="border h-16 px-3 pt-3 rounded-md flex flex-row gap-4">
         <FileTextIcon
@@ -22,7 +22,7 @@
           </div>
         </div>
 
-        <div class="inline-flex flex-row items-start pt-2 gap-1">
+        <div class="inline-flex flex-row items-start pt-2 gap-1" v-if="!disabled">
           <template v-if="fileItem.pending">
             <Button v-if="fileItem.pending.uploadFailed" @click="retryUpload(fileItem)" variant="ghost" class="h-auto p-1">
               <RotateCcwIcon class="size-4" />
@@ -74,6 +74,7 @@ const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{
   scope: string
   modelValue?: Array<FileListItem>
+  disabled?: boolean
 }>()
 
 const createFileItems: (files: Array<FileListItem>) => Record<string, FileItem> = files => {
