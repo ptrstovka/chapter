@@ -8,6 +8,7 @@ use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
 use App\Models\Lesson;
+use App\Support\TextRenderer;
 use App\View\Models\CourseCard;
 use App\View\Models\Paginator;
 use App\View\Models\VideoSource;
@@ -100,7 +101,9 @@ class CourseController
             'slug' => $course->slug,
             'title' => $course->title,
             'trailer' => VideoSource::for($course->trailer),
-            'description' => $course->description,
+            'description' => $course->description
+                ? (new TextRenderer)->toHtml($course->description, $course->description_type)
+                : null,
             'enrollment' => $enrollment ? [
                 'isCompleted' => $enrollment->isCompleted(),
                 'progress' => $enrollment->progress,
