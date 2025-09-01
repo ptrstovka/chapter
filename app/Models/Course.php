@@ -8,6 +8,7 @@ use App\Jobs\CalculateCourseDuration;
 use App\Jobs\PublishCourse;
 use App\Models\Concerns\HasUuid;
 use App\Support\Duration;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,7 +16,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use LogicException;
 use Throwable;
 
@@ -93,6 +96,13 @@ class Course extends Model
         return $this->belongsToMany(User::class, 'favorite_courses');
     }
 
+    public function scopeSearch(Builder $builder, string $term): void
+    {
+        // TODO: Add full text search
+
+        $builder->where(DB::raw('lower(title)'), 'like', '%'.Str::lower($term).'%');
+    }
+
     /**
      * Publish the course.
      */
@@ -168,5 +178,47 @@ class Course extends Model
         }
 
         return null;
+    }
+
+    /**
+     * Determine whether a course can be published.
+     */
+    public function canBePublished(): bool
+    {
+        if ($this->status === CourseStatus::Draft || $this->status === CourseStatus::Unpublished) {
+            if (! $this->title) {
+                return false;
+            }
+
+            if (! $this->category_id) {
+                return false;
+            }
+
+            if ($this->hasAttribute('lessons_count')) {
+                if ($this->lessons_count <= 0) {
+                    return false;
+                }
+            } else {
+                if ($this->relationLoaded('lessons')) {
+                    if ($this->lessons->isEmpty()) {
+                        return false;
+                    }
+                } else {
+                    if ($this->lessons()->doesntExist()) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine whether a course can be unpublished.
+     */
+    public function canBeUnpublished(): bool
+    {
+        return $this->status === CourseStatus::Published;
     }
 }

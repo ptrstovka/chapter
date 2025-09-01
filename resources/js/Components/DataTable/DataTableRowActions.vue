@@ -11,7 +11,7 @@
       <DropdownMenuTrigger as-child>
         <Button variant="ghost" class="px-2 data-[state=open]:bg-muted" size="sm"><EllipsisIcon class="w-4 h-4" /></Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" class="min-w-48">
         <DataTableActionDropdownMenuItem
           v-for="action in menuActions"
           :action="action"

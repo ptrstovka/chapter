@@ -62,7 +62,11 @@ class StudioLayout extends Layout
                             title: __('Courses'),
                             action: Link::to(route('studio.courses')),
                             icon: new Icon('graduation-cap'),
-                        )
+                        )->active(routes: [
+                            'studio.courses',
+                            'studio.courses.*',
+                            'studio.course.*',
+                        ])
                     )
                     ->addChild(
                         MenuItem::make(

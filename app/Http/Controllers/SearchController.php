@@ -7,8 +7,6 @@ namespace App\Http\Controllers;
 use App\Enums\CourseStatus;
 use App\Models\Course;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class SearchController
 {
@@ -23,7 +21,7 @@ class SearchController
         $courses = Course::query()
             ->with(['author'])
             ->where('status', CourseStatus::Published)
-            ->where(DB::raw('lower(title)'), 'like', '%'.Str::lower($term).'%')
+            ->search($term)
             ->limit(6)
             ->get();
 

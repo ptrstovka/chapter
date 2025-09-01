@@ -11,7 +11,7 @@
       <DropdownMenuTrigger as-child>
         <Button size="sm"><ChevronDownIcon class="w-4 h-4 mr-1" /> {{ messages.actions }}</Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" class="min-w-48">
         <DataTableActionDropdownMenuItem
           v-for="action in menuActions"
           :action="action"

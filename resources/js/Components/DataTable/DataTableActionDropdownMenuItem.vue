@@ -5,7 +5,7 @@
     </template>
     <template v-else-if="action.type === 'Link'">
       <DropdownMenuItem as-child>
-        <component :is="action.isExternal ? 'a' : Link" :href="action.url">{{ action.label }}</component>
+        <component class="w-full" :is="action.isExternal ? 'a' : Link" :href="action.url">{{ action.label }}</component>
       </DropdownMenuItem>
     </template>
     <template v-else-if="action.type === 'Executable'">
