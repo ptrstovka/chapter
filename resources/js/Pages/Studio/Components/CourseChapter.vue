@@ -1,9 +1,12 @@
 <template>
   <div ref="containerEl" class="relative">
-    <div ref="containerInnerEl">
+    <div ref="containerInnerEl" :class="cn(
+      'transition-colors',
+      { 'bg-primary/10': isDraggedInto }
+    )">
       <div :class="cn(
         'relative flex flex-row transition items-start border-b',
-        active ? 'bg-accent' : 'hover:bg-accent/50',
+        isDraggedInto ? '' : (active ? 'bg-accent' : 'hover:bg-accent/50'),
       )">
         <div ref="handleEl" class="text-muted-foreground shrink-0 p-1.5 ml-[4px] mt-[8px] hover:text-foreground transition-colors cursor-move">
           <GripVerticalIcon class="size-4" />
@@ -77,6 +80,7 @@ let cleanup: CleanupFn | undefined
 
 const isDragging = ref(false)
 const closestEdge = ref<Edge | null>()
+const isDraggedInto = ref(false)
 
 const gap = computed(() => {
   if (props.first && closestEdge.value === 'top') {
@@ -109,7 +113,25 @@ onMounted(() => {
         }
       }),
 
-      // dropTargetForElements
+      dropTargetForElements({
+        element: containerInner,
+        getData: () => ({ type: 'chapter', courseId: props.courseId, chapterId: props.chapterId }),
+        canDrop: ({ source }) => source.data.type === 'lesson',
+        getIsSticky: () => true,
+        onDragEnter: () => {
+          isDraggedInto.value = true
+        },
+        onDragStart: () => {
+          isDraggedInto.value = true
+        },
+        onDragLeave: () => {
+          isDraggedInto.value = false
+        },
+        onDrop: () => {
+          isDraggedInto.value = false
+        }
+      }),
+
       dropTargetForElements({
         element: container,
         canDrop: ({ source }) => {

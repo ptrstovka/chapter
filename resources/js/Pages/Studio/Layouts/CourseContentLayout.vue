@@ -111,6 +111,7 @@ onMounted(() => {
           const startIndex = chapters.value.findIndex(it => it.id === source.data.chapterId)
           const target = location.current.dropTargets[0]
           const indexOfTarget = chapters.value.findIndex(it => it.id === target.data.chapterId)
+
           const closestEdgeOfTarget = extractClosestEdge(target.data)
 
           const finishIndex = getReorderDestinationIndex({
@@ -138,7 +139,7 @@ onMounted(() => {
 
             moveLessonWithinChapter(destinationChapter.id, itemIndex, destinationIndex)
           } else {
-            const destinationIndex = closestEdgeOfTarget === 'bottom' ? indexOfTarget + 1 : indexOfTarget
+            const destinationIndex = indexOfTarget < 0 ? 0 : (closestEdgeOfTarget === 'bottom' ? indexOfTarget + 1 : indexOfTarget)
 
             moveLessonToChapter(sourceChapter.id, destinationChapter.id, itemIndex, destinationIndex)
           }

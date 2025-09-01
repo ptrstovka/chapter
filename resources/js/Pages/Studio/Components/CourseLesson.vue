@@ -5,8 +5,8 @@
     :data-active="active ? '' : undefined"
     :class="cn(
       'relative flex flex-row transition items-start text-muted-foreground',
-      'data-[active]:bg-accent data-[active]:text-foreground not-data-[active]:hover:bg-accent/50',
-      'data-[dragging]:bg-black/10'
+      'data-[dragging]:bg-primary/20 data-[dragging]:text-foreground',
+      isDragging ? '' : 'data-[active]:bg-accent data-[active]:text-foreground not-data-[active]:hover:bg-accent/50',
     )"
   >
     <div ref="handleEl" class="text-muted-foreground shrink-0 p-1.5 ml-[4px] mt-[8px] hover:text-foreground transition-colors cursor-move">
