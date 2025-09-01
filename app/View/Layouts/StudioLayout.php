@@ -50,13 +50,13 @@ class StudioLayout extends Layout
         return Menu::make()
             ->add(
                 MenuItem::make()
-                    ->addChild(
-                        MenuItem::make(
-                            title: __('Overview'),
-                            action: Link::to(route('studio.overview')),
-                            icon: new Icon('chart-line'),
-                        )
-                    )
+                    // ->addChild(
+                    //     MenuItem::make(
+                    //         title: __('Overview'),
+                    //         action: Link::to(route('studio.overview')),
+                    //         icon: new Icon('chart-line'),
+                    //     )
+                    // )
                     ->addChild(
                         MenuItem::make(
                             title: __('Courses'),
@@ -68,13 +68,13 @@ class StudioLayout extends Layout
                             'studio.course.*',
                         ])
                     )
-                    ->addChild(
-                        MenuItem::make(
-                            title: __('Profile'),
-                            action: Link::to(route('studio.profile')),
-                            icon: new Icon('contact'),
-                        )
-                    )
+                    // ->addChild(
+                    //     MenuItem::make(
+                    //         title: __('Profile'),
+                    //         action: Link::to(route('studio.profile')),
+                    //         icon: new Icon('contact'),
+                    //     )
+                    // )
             );
     }
 

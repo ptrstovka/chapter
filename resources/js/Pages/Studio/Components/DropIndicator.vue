@@ -3,7 +3,7 @@
     :class="[
       orientationStyles[edgeToOrientationMap[edge]],
       [edgeStyles[edge]],
-      'absolute z-10 bg-blue-700 pointer-events-none before:content[\'\'] before:w-(--terminal-size) before:h-(--terminal-size) box-border before:absolute before:border-[length:var(--line-thickness)] before:border-solid before:border-blue-700 before:rounded-full',
+      'absolute z-10 bg-primary pointer-events-none before:content[\'\'] before:w-(--terminal-size) before:h-(--terminal-size) box-border before:absolute before:border-[length:var(--line-thickness)] before:border-solid before:border-primary before:rounded-full',
     ]"
     :style="{
       '--line-thickness': `${strokeSize}px`,

@@ -8,7 +8,7 @@
             <ImageOffIcon class="w-5 h-5 text-stone-400" />
           </div>
 
-          <Badge v-if="course.enrollment && course.enrollment.isCompleted" class="absolute top-2 left-2 gap-0.5 pl-1.5" variant="positive">
+          <Badge v-if="course.enrollment && course.enrollment.isCompleted" class="absolute top-2 left-2 gap-0.5 pl-1.5" variant="primary">
             <CheckIcon class="w-4 h-4 mt-px" />
             {{ $t('Completed') }}
           </Badge>

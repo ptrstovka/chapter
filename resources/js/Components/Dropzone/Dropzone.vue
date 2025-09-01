@@ -6,6 +6,7 @@
       'group/dropzone',
       'relative flex flex-col w-full items-center justify-center text-sm border overflow-hidden border-2 border-dashed rounded-md py-8 px-3 transition-colors',
       isOverDropZone && !disabled ? 'border-ring' : 'border-input',
+      'dark:bg-input/30',
       'data-[disabled]:cursor-not-allowed data-[disabled]:bg-accent/50 data-[disabled]:text-muted-foreground',
       $attrs.class || ''
     )"

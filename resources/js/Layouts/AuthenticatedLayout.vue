@@ -58,17 +58,23 @@
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" class="w-48">
+                <DropdownMenuLink :href="route('profile.edit')"><UserRoundCogIcon /> {{ $t('Profile') }}</DropdownMenuLink>
+                <DropdownMenuSeparator/>
                 <template v-if="$page.props.auth.user.can.accessStudio">
-                  <DropdownMenuLink :href="route('studio')">{{ $t('My Studio') }}</DropdownMenuLink>
+                  <DropdownMenuLink :href="route('studio')"><ClapperboardIcon /> {{ $t('Studio') }}</DropdownMenuLink>
+                  <DropdownMenuSeparator/>
                 </template>
-                <DropdownMenuLink :href="route('profile.edit')">{{ $t('Profile') }}</DropdownMenuLink>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger><SunMoonIcon />{{ $t('Theme') }}</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuCheckboxItem @select="mode = 'dark'" :model-value="mode == 'dark'">{{ $t('Dark') }}</DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem @select="mode = 'light'" :model-value="mode == 'light'">{{ $t('Light') }}</DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem @select="mode = 'system'" :model-value="mode == 'system'">{{ $t('System') }}</DropdownMenuCheckboxItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+
                 <DropdownMenuSeparator/>
-                <DropdownMenuLabel>{{ $t('Theme') }}</DropdownMenuLabel>
-                <DropdownMenuCheckboxItem @select="mode = 'dark'" :model-value="mode == 'dark'">{{ $t('Dark') }}</DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem @select="mode = 'light'" :model-value="mode == 'light'">{{ $t('Light') }}</DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem @select="mode = 'system'" :model-value="mode == 'system'">{{ $t('System') }}</DropdownMenuCheckboxItem>
-                <DropdownMenuSeparator/>
-                <DropdownMenuLink :href="route('logout')" method="post" as="button">{{ $t('Log Out') }}</DropdownMenuLink>
+                <DropdownMenuLink :href="route('logout')" method="post" as="button"><LogOutIcon /> {{ $t('Log Out') }}</DropdownMenuLink>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -141,11 +147,15 @@ import { useDarkMode } from '@/Composables'
 import { useToggle } from '@stacktrace/ui'
 import { ref } from 'vue'
 import { navigationMenuTriggerStyle } from '@/Components/NavigationMenu'
-import { ChevronDownIcon, MenuIcon, XIcon, SearchIcon } from 'lucide-vue-next'
+import { ChevronDownIcon, MenuIcon, XIcon, SearchIcon, UserRoundCogIcon, ClapperboardIcon, LogOutIcon, SunMoonIcon } from 'lucide-vue-next'
 import { cn } from '@/Utils'
 import { Link } from '@inertiajs/vue3'
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from '@/Components/NavigationMenu'
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLink, DropdownMenuSeparator, DropdownMenuCheckboxItem, DropdownMenuLabel } from '@/Components/DropdownMenu'
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLink,
+  DropdownMenuSeparator, DropdownMenuCheckboxItem,
+  DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent
+} from '@/Components/DropdownMenu'
 import { Button } from '@/Components/Button'
 import { Logo } from '@/Components/Logo'
 import { SearchDialog } from '@/Components/Search'

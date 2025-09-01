@@ -3,7 +3,7 @@
     :data-disabled="disabled === true ? '' : undefined"
     :class="cn(
       'focus-within:ring-[3px] focus-within:border-ring focus-within:ring-ring/50 border border-input rounded-md shadow-xs transition-[color,box-shadow] overflow-hidden',
-      'data-[disabled]:bg-accent/50'
+      'data-[disabled]:bg-accent/50 dark:bg-input/30'
     )"
   >
     <TiptapEditor

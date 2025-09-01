@@ -15,11 +15,11 @@
 
           <DropdownMenu v-else-if="course.canBeUnpublished">
             <DropdownMenuTrigger as-child>
-              <Button class="relative" plain variant="positive">
+              <Button class="relative" plain>
                 <CheckIcon />
                 {{ $t('Published') }}
                 <ChevronDownIcon class="ml-3" />
-                <div class="top-0 bottom-0 w-px bg-positive-foreground/30 right-8 absolute"></div>
+                <div class="top-0 bottom-0 w-px bg-primary-foreground/30 right-8 absolute"></div>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent class="min-w-40" align="end">

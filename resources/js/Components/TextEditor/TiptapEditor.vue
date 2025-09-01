@@ -25,7 +25,7 @@ const editor = useEditor({
   },
   editorProps: {
     attributes: {
-      class: 'prose prose-sm min-h-60 max-w-full px-3 py-3 focus:outline-none',
+      class: 'prose dark:prose-invert prose-sm min-h-60 max-w-full px-3 py-3 focus:outline-none',
     },
   },
 })
