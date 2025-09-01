@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\View\Layouts;
-
 
 use App\Enums\CourseStatus;
 use App\Models\Course;

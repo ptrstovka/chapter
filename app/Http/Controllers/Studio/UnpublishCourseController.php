@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Studio;
-
 
 use App\Models\Course;
 use Illuminate\Support\Facades\Gate;

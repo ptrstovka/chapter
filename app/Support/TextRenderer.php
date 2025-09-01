@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Support;
-
 
 use App\Enums\TextContentType;
 use League\CommonMark\Environment\Environment;

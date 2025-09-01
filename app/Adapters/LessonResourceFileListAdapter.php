@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Adapters;
-
 
 use App\Models\Lesson;
 use App\Models\Resource;

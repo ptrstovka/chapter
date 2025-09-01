@@ -26,17 +26,19 @@ class ImportCourse implements ShouldQueue
     public function __construct(
         public string $folder,
         public bool $publish,
-    ) { }
+    ) {}
 
     public function handle(): void
     {
         if (! File::exists($this->folder)) {
             $this->fail("The folder [$this->folder] does not exist.");
+
             return;
         }
 
         if (! File::isDirectory($this->folder)) {
             $this->fail("The [$this->folder] is not a directory.");
+
             return;
         }
 
@@ -49,6 +51,7 @@ class ImportCourse implements ShouldQueue
 
         if (! $sourceStorage->exists('manifest.json')) {
             $this->fail('The manifest file does not exist.');
+
             return;
         }
 
@@ -58,12 +61,14 @@ class ImportCourse implements ShouldQueue
 
         if (! $title) {
             $this->fail('The course does not have a title.');
+
             return;
         }
 
         $chapters = collect(Arr::get($manifest, 'chapters', []));
         if ($chapters->isEmpty()) {
             $this->fail('No chapters in the course.');
+
             return;
         }
 
@@ -72,6 +77,7 @@ class ImportCourse implements ShouldQueue
 
         if (! $categoryTitle) {
             $this->fail('No category specified.');
+
             return;
         }
 
@@ -110,6 +116,7 @@ class ImportCourse implements ShouldQueue
             $name = Arr::get($authorSource, 'name');
             if (! $name) {
                 $this->fail('Author name could not be resolved');
+
                 return;
             }
 
@@ -124,6 +131,7 @@ class ImportCourse implements ShouldQueue
             }
         } else {
             $this->fail('The course does not have author.');
+
             return;
         }
 

@@ -3,27 +3,27 @@
 namespace App\Http\Controllers\MyCourses;
 
 use App\Enums\CourseStatus;
-use App\Models\Course;
 use App\Http\Controllers\Controller;
-use App\Models\CourseEnrollment;
+use App\Models\Course;
+use App\View\Models\CourseCard;
 use App\View\Models\Paginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\JoinClause;
-use App\View\Models\CourseCard;
 
 class InProgressController extends Controller
 {
-    public function __invoke() {
+    public function __invoke()
+    {
 
         $user = Auth::user();
 
         $inProgress = Course::query()
             ->with([
                 'author',
-                'enrollments' => fn (HasMany $query) => $query->where('user_id', $user->id) 
+                'enrollments' => fn (HasMany $query) => $query->where('user_id', $user->id),
             ])
             ->select('courses.*')
             ->withExists([
@@ -36,12 +36,12 @@ class InProgressController extends Controller
             })
             ->where('status', CourseStatus::Published)
             ->latest('course_enrollments.updated_at')
-            ->paginate(16);        
+            ->paginate(16);
 
-            return Inertia::render('MyCourses/InProgressList', [
-                'inProgress' => Paginator::make(
-                    $inProgress->through(fn (Course $course) => new CourseCard($course, $course->enrollments->first()))
-                ),
-            ]);
+        return Inertia::render('MyCourses/InProgressList', [
+            'inProgress' => Paginator::make(
+                $inProgress->through(fn (Course $course) => new CourseCard($course, $course->enrollments->first()))
+            ),
+        ]);
     }
 }

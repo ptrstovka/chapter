@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\View\Layouts;
-
 
 use App\Models\Chapter;
 use App\Models\Course;

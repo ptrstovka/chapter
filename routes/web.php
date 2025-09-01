@@ -15,10 +15,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResetProgressController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\Studio;
 use App\Http\Controllers\TemporaryUploadController;
 use App\Http\Middleware\StudioMiddleware;
 use Illuminate\Support\Facades\Route;
-use \App\Http\Controllers\Studio;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', HomeController::class)->name('home');

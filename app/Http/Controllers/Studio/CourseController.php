@@ -27,7 +27,6 @@ use StackTrace\Ui\Breadcrumbs\BreadcrumbItem;
 use StackTrace\Ui\DateRange;
 use StackTrace\Ui\Link;
 use StackTrace\Ui\ModelSelection;
-use StackTrace\Ui\NumberValue;
 use StackTrace\Ui\SelectOption;
 use StackTrace\Ui\Table;
 use StackTrace\Ui\Table\Actions;

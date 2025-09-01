@@ -68,13 +68,13 @@ class StudioLayout extends Layout
                             'studio.course.*',
                         ])
                     )
-                    // ->addChild(
-                    //     MenuItem::make(
-                    //         title: __('Profile'),
-                    //         action: Link::to(route('studio.profile')),
-                    //         icon: new Icon('contact'),
-                    //     )
-                    // )
+                // ->addChild(
+                //     MenuItem::make(
+                //         title: __('Profile'),
+                //         action: Link::to(route('studio.profile')),
+                //         icon: new Icon('contact'),
+                //     )
+                // )
             );
     }
 

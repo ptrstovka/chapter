@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Studio;
-
 
 use App\View\Layouts\StudioLayout;
 use Inertia\Inertia;

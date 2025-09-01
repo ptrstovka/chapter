@@ -5,26 +5,24 @@ namespace App\Http\Controllers\MyCourses;
 use App\Enums\CourseStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
-use App\Models\CourseEnrollment;
-use App\Models\User;
 use App\View\Models\CourseCard;
+use App\View\Models\Paginator;
 use Auth;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\JoinClause;
 use Inertia\Inertia;
-use Illuminate\Database\Eloquent\Builder;
-use App\View\Models\Paginator;
 
 class CompletedController extends Controller
 {
-    public function __invoke() 
+    public function __invoke()
     {
         $user = Auth::user();
 
         $completed = Course::query()
             ->with([
                 'author',
-                'enrollments' => fn (HasMany $query) => $query->where('user_id', $user->id)
+                'enrollments' => fn (HasMany $query) => $query->where('user_id', $user->id),
             ])
             ->withExists([
                 'favoritedBy' => fn (Builder $builder) => $builder->where('id', $user->id),
@@ -38,11 +36,10 @@ class CompletedController extends Controller
             ->orderByDesc('completed_at')
             ->paginate(16);
 
-    
-        return Inertia::render('MyCourses/CompletedList', [ 
+        return Inertia::render('MyCourses/CompletedList', [
             'completed' => Paginator::make(
                 $completed->through(fn (Course $course) => new CourseCard($course, $course->enrollments->first()))
-            )
+            ),
         ]);
     }
 }

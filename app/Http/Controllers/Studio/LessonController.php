@@ -1,20 +1,15 @@
 <?php
 
-
 namespace App\Http\Controllers\Studio;
 
-
-use App\Adapters\LessonResourceFileListAdapter;
 use App\Enums\TextContentType;
 use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\TemporaryUpload;
 use App\Models\Video;
-use App\Repositories\LessonResourcesFileRepository;
 use App\Rules\FileListRule;
 use App\Rules\TemporaryUploadRule;
-use App\Support\FileList;
 use App\View\Layouts\CourseContentLayout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

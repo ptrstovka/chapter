@@ -20,12 +20,13 @@ class ImportCourse extends Command
 
         if (Course::query()->where('slug', $slug)->exists()) {
             $this->info("Course [$slug] already imported");
+
             return Command::SUCCESS;
         }
 
         dispatch(new ImportJob(
             folder: $this->argument('dir'),
-            publish: !$this->option('skip-publish')
+            publish: ! $this->option('skip-publish')
         ));
 
         return Command::SUCCESS;

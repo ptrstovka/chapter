@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Studio;
-
 
 use App\Models\Chapter;
 use App\Models\Course;
