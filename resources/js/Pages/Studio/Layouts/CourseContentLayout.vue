@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import { Button } from "@/Components/Button";
 import type { AppPageProps } from "@/Types";
-import { type Edge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { getReorderDestinationIndex } from '@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index';
 import { reorder } from '@atlaskit/pragmatic-drag-and-drop/reorder';
