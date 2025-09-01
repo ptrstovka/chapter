@@ -15,7 +15,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResetProgressController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\TemporaryUploadController;
+use App\Http\Middleware\StudioMiddleware;
 use Illuminate\Support\Facades\Route;
+use \App\Http\Controllers\Studio;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', HomeController::class)->name('home');
@@ -44,6 +47,37 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-courses', InProgressController::class)->name('mycourses.inprogress');
     Route::get('/my-courses/favorites', FavoriteController::class)->name('mycourses.favorite');
     Route::get('/my-courses/completed', CompletedController::class)->name('mycourses.completed');
+
+    Route::prefix('studio')->middleware(StudioMiddleware::class)->group(function () {
+        Route::get('/', Studio\StudioController::class)->name('studio');
+
+        Route::name('studio.')->group(function () {
+            Route::get('/overview', Studio\OverviewController::class)->name('overview');
+
+            Route::get('/courses', [Studio\CourseController::class, 'index'])->name('courses');
+            Route::post('/courses', [Studio\CourseController::class, 'store'])->name('courses.store');
+            Route::get('/courses/{course:uuid}', [Studio\CourseController::class, 'show'])->name('courses.show');
+            Route::patch('/courses/{course:uuid}', [Studio\CourseController::class, 'update'])->name('courses.update');
+            Route::delete('/courses/{course:uuid}', [Studio\CourseController::class, 'destroy'])->name('courses.destroy');
+            Route::get('/courses/{course:uuid}/content', Studio\CourseContentController::class)->name('courses.content');
+            Route::post('/courses/{course:uuid}/unpublish', Studio\UnpublishCourseController::class)->name('courses.unpublish');
+            Route::post('/courses/{course:uuid}/publish', Studio\PublishCourseController::class)->name('courses.publish');
+            Route::post('/courses/{course:uuid}/chapters', [Studio\ChapterController::class, 'store'])->name('course.chapters.store');
+            Route::post('/courses/{course:uuid}/sort-chapters', Studio\SortChaptersController::class)->name('course.chapters.sort');
+            Route::post('/courses/{course:uuid}/move-lesson', Studio\MoveLessonController::class)->name('course.lessons.move');
+            Route::get('/courses/{course:uuid}/chapters/{chapter:uuid}', [Studio\ChapterController::class, 'show'])->name('course.chapters.show');
+            Route::patch('/courses/{course:uuid}/chapters/{chapter:uuid}', [Studio\ChapterController::class, 'update'])->name('course.chapters.update');
+            Route::post('/courses/{course:uuid}/chapters/{chapter:uuid}/lessons', [Studio\LessonController::class, 'store'])->name('course.lessons.store');
+            Route::delete('/courses/{course:uuid}/chapters/{chapter:uuid}', [Studio\ChapterController::class, 'destroy'])->name('course.chapters.destroy');
+            Route::get('/courses/{course:uuid}/lessons/{lesson:uuid}', [Studio\LessonController::class, 'show'])->name('course.lessons.show');
+            Route::patch('/courses/{course:uuid}/chapters/{chapter:uuid}/lessons/{lesson:uuid}', [Studio\LessonController::class, 'update'])->name('course.lessons.update');
+            Route::delete('/courses/{course:uuid}/chapters/{chapter:uuid}/lessons/{lesson:uuid}', [Studio\LessonController::class, 'destroy'])->name('course.lessons.destroy');
+
+            Route::get('/profile', [Studio\ProfileController::class, 'show'])->name('profile');
+        });
+    });
+
+    Route::post('/files', [TemporaryUploadController::class, 'store'])->name('files.store');
 });
 
 require __DIR__.'/auth.php';

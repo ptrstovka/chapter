@@ -12,7 +12,7 @@
         "laravel/tinker": "^2.10",
         "league/flysystem-aws-s3-v3": "^3.29",
         "pbmedia/laravel-ffmpeg": "^8.7",
-        "stacktrace/ui": "^0.5",
+        "stacktrace/ui": "^0.6",
         "tightenco/ziggy": "^2.5",
         "vinkla/hashids": "^13.0"
     },

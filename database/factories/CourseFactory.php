@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\CourseStatus;
+use App\Enums\TextContentType;
 use App\Models\Author;
 use App\Models\Category;
 use App\Models\Chapter;
@@ -25,6 +26,7 @@ class CourseFactory extends Factory
             'status' => CourseStatus::Published,
             'title' => $title,
             'description' => fake()->paragraphs(asText: true),
+            'description_type' => TextContentType::Html,
             'duration_seconds' => 0,
         ];
     }

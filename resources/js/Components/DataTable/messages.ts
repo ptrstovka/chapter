@@ -1,0 +1,18 @@
+export default {
+  searchPlaceholder: 'Search…',
+  emptyTableTitle: 'Nothing to see there.',
+  emptyTableDescription: 'The table is empty.',
+  selectedRows: (selected: number, total: number) => `Selected ${selected} of ${total}`,
+  actions: 'Actions',
+  cancelSelection: 'Cancel selection',
+  viewOptions: 'View options',
+  perPage: 'Per page',
+  perPageOption: (value: number) => `${value} results`,
+  paginatorTotal: 'Total',
+  paginatorOf: 'of',
+  paginatorPrevious: 'Previous',
+  paginatorNext: 'Next',
+  searchEmptyTitle: 'No records found.',
+  searchEmptyDescription: 'Try to adjust your search criteria.',
+  clearSearch: 'Clear Search',
+}

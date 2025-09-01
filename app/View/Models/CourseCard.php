@@ -4,8 +4,9 @@ namespace App\View\Models;
 
 use App\Models\Course;
 use App\Models\CourseEnrollment;
+use StackTrace\Ui\ViewModel;
 
-class CourseCard extends Model
+class CourseCard extends ViewModel
 {
     public function __construct(
         protected Course $course,

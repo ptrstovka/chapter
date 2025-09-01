@@ -8,6 +8,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { RootLayout } from '@/Layouts'
 import { MotionPlugin } from '@vueuse/motion'
 import { i18nVue } from 'laravel-vue-i18n'
+import { DataTablePlugin } from '@/Components/DataTable'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -22,6 +23,7 @@ createInertiaApp({
     createApp({render: () => h(App, props)})
       .use(plugin)
       .use(MotionPlugin)
+      .use(DataTablePlugin)
       .use(ZiggyVue)
       .use(i18nVue, {
         lang: props.initialPage?.props.locale || 'en',

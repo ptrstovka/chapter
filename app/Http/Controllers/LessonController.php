@@ -7,8 +7,8 @@ use App\Models\CompletedLesson;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Resource;
+use App\Support\TextRenderer;
 use App\View\Models\VideoSource;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Number;
@@ -16,7 +16,7 @@ use Inertia\Inertia;
 
 class LessonController
 {
-    public function show(Request $request, Course $course, Lesson $lesson)
+    public function show(Course $course, Lesson $lesson)
     {
         Gate::authorize('study', $course);
 
@@ -74,7 +74,9 @@ class LessonController
             'courseTitle' => $course->title,
             'lessonTitle' => $lesson->title,
             'video' => VideoSource::for($lesson->video),
-            'description' => $lesson->description,
+            'description' => $lesson->description
+                ? (new TextRenderer)->toHtml($lesson->description, $lesson->description_type)
+                : null,
             'resources' => $lesson->resources->map(fn (Resource $resource) => [
                 'name' => $resource->client_file_name,
                 'url' => route('resources.show', [$course->slug, $resource->uuid]),

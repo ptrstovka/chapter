@@ -20,7 +20,7 @@
                 <TabsTrigger value="lessons">{{ $t('Lessons') }}</TabsTrigger>
               </TabsList>
               <TabsContent v-if="description" value="description">
-                <div class="editor-content" v-html="description"></div>
+                <div class="prose dark:prose-invert" v-html="description"></div>
               </TabsContent>
               <TabsContent value="lessons">
                 <Accordion type="multiple" collapsible>

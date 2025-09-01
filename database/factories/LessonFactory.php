@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\TextContentType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -18,6 +19,7 @@ class LessonFactory extends Factory
             'title' => $title,
             'slug' => Str::slug($title),
             'description' => fake()->paragraphs(asText: true),
+            'description_type' => TextContentType::Html,
             'position' => 1,
         ];
     }

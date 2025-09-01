@@ -3,17 +3,22 @@
 namespace App\Models;
 
 use App\Enums\CourseStatus;
+use App\Enums\TextContentType;
 use App\Jobs\CalculateCourseDuration;
 use App\Jobs\PublishCourse;
 use App\Models\Concerns\HasUuid;
 use App\Support\Duration;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use LogicException;
 use Throwable;
 
@@ -25,8 +30,9 @@ use Throwable;
  * @property string|null $cover_image_file_path
  * @property \App\Models\Author $author
  * @property \App\Models\Video|null $trailer
- * @property \App\Models\Category $category
- * @property string $slug
+ * @property \App\Models\Category|null $category
+ * @property \App\Enums\TextContentType $description_type
+ * @property string|null $slug
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chapter> $chapters
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Resource> $resources
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Lesson> $lessons
@@ -36,7 +42,9 @@ use Throwable;
  */
 class Course extends Model
 {
-    use HasFactory, HasUuid;
+    use HasFactory, HasUuid, SoftDeletes;
+
+    // TODO: Add prunable to delete soft deleted courses.
 
     protected $guarded = false;
 
@@ -44,6 +52,7 @@ class Course extends Model
     {
         return [
             'status' => CourseStatus::class,
+            'description_type' => TextContentType::class,
         ];
     }
 
@@ -87,6 +96,13 @@ class Course extends Model
         return $this->belongsToMany(User::class, 'favorite_courses');
     }
 
+    public function scopeSearch(Builder $builder, string $term): void
+    {
+        // TODO: Add full text search
+
+        $builder->where(DB::raw('lower(title)'), 'like', '%'.Str::lower($term).'%');
+    }
+
     /**
      * Publish the course.
      */
@@ -98,14 +114,6 @@ class Course extends Model
 
         if ($this->status === CourseStatus::Publishing) {
             throw new LogicException('The course is already being published.');
-        }
-
-        if ($this->status === CourseStatus::Unpublished) {
-            $this->update([
-                'status' => CourseStatus::Published,
-            ]);
-
-            return;
         }
 
         $jobs = $this->lessons()
@@ -143,6 +151,16 @@ class Course extends Model
     }
 
     /**
+     * Unpublish the course.
+     */
+    public function unpublish(): void
+    {
+        $this->update([
+            'status' => CourseStatus::Unpublished,
+        ]);
+    }
+
+    /**
      * Retrieve total course duration as label.
      */
     public function getDurationLabel(): ?string
@@ -162,5 +180,65 @@ class Course extends Model
         }
 
         return null;
+    }
+
+    /**
+     * Determine whether a course can be published.
+     */
+    public function canBePublished(): bool
+    {
+        if ($this->status === CourseStatus::Draft || $this->status === CourseStatus::Unpublished) {
+            if (! $this->title) {
+                return false;
+            }
+
+            if (! $this->category_id) {
+                return false;
+            }
+
+            if ($this->hasAttribute('lessons_count')) {
+                if ($this->lessons_count <= 0) {
+                    return false;
+                }
+            } else {
+                if ($this->relationLoaded('lessons')) {
+                    if ($this->lessons->isEmpty()) {
+                        return false;
+                    }
+                } else {
+                    if ($this->lessons()->doesntExist()) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine whether a course can be unpublished.
+     */
+    public function canBeUnpublished(): bool
+    {
+        return $this->status === CourseStatus::Published;
+    }
+
+    /**
+     * Determine whether the course can be updated by the user.
+     */
+    public function canBeUpdated(): bool
+    {
+        return $this->status === CourseStatus::Draft || $this->status === CourseStatus::Unpublished;
+    }
+
+    /**
+     * Determine whether the course can be deleted by the user.
+     */
+    public function canBeDeleted(): bool
+    {
+        return $this->status === CourseStatus::Draft || $this->status === CourseStatus::Unpublished;
     }
 }
