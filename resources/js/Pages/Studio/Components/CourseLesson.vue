@@ -9,7 +9,12 @@
       isDragging ? '' : 'data-[active]:bg-accent data-[active]:text-foreground not-data-[active]:hover:bg-accent/50',
     )"
   >
-    <div ref="handleEl" class="text-muted-foreground shrink-0 p-1.5 ml-[4px] mt-[8px] hover:text-foreground transition-colors cursor-move">
+    <div
+      ref="handleEl"
+      :class="cn(
+        'text-muted-foreground shrink-0 p-1.5 ml-[4px] mt-[8px] transition-colors cursor-move',
+        disabled ? 'opacity-50 cursor-auto' : 'hover:text-foreground',
+      )">
       <GripVerticalIcon class="size-4" />
     </div>
 
@@ -42,6 +47,7 @@ const props = defineProps<{
   lessonId: string
   title: string
   active: boolean
+  disabled?: boolean
 }>()
 
 const containerEl = ref<HTMLDivElement>()
@@ -60,6 +66,7 @@ onMounted(() => {
       draggable({
         element: container,
         dragHandle: handle,
+        canDrag: () => !props.disabled,
         getInitialData: () => ({
           type: 'lesson',
           courseId: props.courseId,

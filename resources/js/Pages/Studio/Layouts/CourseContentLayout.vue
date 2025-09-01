@@ -2,7 +2,7 @@
   <CourseLayout :title="$t('Content')">
     <div class="relative h-[calc(100vh_-_8.5rem)] overflow-hidden flex flex-row">
       <div v-if="chapters.length > 0" class="w-80 shrink-0 overflow-y-auto [scrollbar-width:thin] border-r" scroll-region="">
-        <div class="flex flex-col divide-y border-b border-dashed">
+        <div :class="cn('flex flex-col', { 'divide-y border-b border-dashed': page.props.isEditable })">
           <CourseChapter
             v-for="(chapter, idx) in chapters"
             :title="chapter.title || chapter.fallbackTitle"
@@ -10,6 +10,7 @@
             :course-id="page.props.id"
             :active="route().current('studio.course.chapters.show', [page.props.id, chapter.id])"
             :first="idx === 0"
+            :disabled="!page.props.isEditable"
           >
             <div v-if="chapter.lessons.length > 0" class="divide-y border-b">
               <CourseLesson
@@ -19,12 +20,13 @@
                 :lesson-id="lesson.id"
                 :title="lesson.title || lesson.fallbackTitle"
                 :active="route().current('studio.course.lessons.show', [page.props.id, lesson.id])"
+                :disabled="!page.props.isEditable"
               />
             </div>
           </CourseChapter>
         </div>
 
-        <div class="p-3">
+        <div class="p-3" v-if="page.props.isEditable">
           <Button
             class="w-full"
             @click="createChapter"
@@ -52,6 +54,7 @@
 <script setup lang="ts">
 import { Button } from "@/Components/Button";
 import type { AppPageProps } from "@/Types";
+import { cn } from "@/Utils";
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { getReorderDestinationIndex } from '@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index';
@@ -83,6 +86,7 @@ interface Chapter {
 const page = usePage<AppPageProps & {
   id: string
   chapters: Array<Chapter>
+  isEditable: boolean
 }>()
 
 const chapters = ref(page.props.chapters)

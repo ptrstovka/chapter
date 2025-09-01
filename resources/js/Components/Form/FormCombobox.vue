@@ -7,7 +7,8 @@
         role="combobox"
         :aria-expanded="open"
         size="default"
-        :class="cn('w-full justify-between text-left font-normal', $attrs.class || '')"
+        :class="cn('w-full justify-between text-left font-normal disabled:opacity-100 disabled:bg-accent/50', $attrs.class || '')"
+        :disabled="disabled"
       >
         {{ value ? options.find((option) => option.value === value)?.label : placeholder }}
         <ChevronDownIcon class="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -58,6 +59,7 @@ const props = withDefaults(defineProps<{
   notFoundLabel?: string | null
   nullable?: boolean
   modelValue?: V | null
+  disabled?: boolean
 }>(), {
   searchLabel: 'Search options…',
   placeholder: 'Select option…',

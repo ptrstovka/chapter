@@ -1,14 +1,22 @@
 <template>
-  <div class="focus-within:ring-[3px] focus-within:border-ring focus-within:ring-ring/50 border border-input rounded-md shadow-xs transition-[color,box-shadow] overflow-hidden">
+  <div
+    :data-disabled="disabled === true ? '' : undefined"
+    :class="cn(
+      'focus-within:ring-[3px] focus-within:border-ring focus-within:ring-ring/50 border border-input rounded-md shadow-xs transition-[color,box-shadow] overflow-hidden',
+      'data-[disabled]:bg-accent/50'
+    )"
+  >
     <TiptapEditor
       v-if="contentType === 'html'"
       v-model="content"
+      :disabled="disabled"
     />
 
     <Textarea
       v-else-if="contentType === 'markdown'"
       v-model="content"
       class="border-0 shadow-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 min-h-60 font-mono"
+      :disabled="disabled"
     />
 
     <div class="border-t border-input flex items-center justify-end px-3 py-1.5">
@@ -16,6 +24,7 @@
         <span class="text-xs font-medium">{{ $t('Rich Text') }}</span>
         <Switch
           v-model="isMarkdown"
+          :disabled="disabled"
           class="data-[state=unchecked]:bg-primary dark:data-[state=unchecked]:bg-primary h-[12px] w-6"
           thumb="dark:data-[state=unchecked]:bg-primary-foreground size-2 data-[state=checked]:translate-x-[13px] data-[state=unchecked]:translate-x-[1px]"
         />
@@ -29,6 +38,7 @@
 import { Switch } from "@/Components/Switch";
 import { Textarea } from "@/Components/Textarea";
 import type { TextContentType } from "@/Types"
+import { cn } from "@/Utils";
 import { ref, watch } from "vue";
 import TiptapEditor from "./TiptapEditor.vue"
 
@@ -37,6 +47,7 @@ const emit = defineEmits(['update:content', 'update:contentType'])
 const props = defineProps<{
   content: string | null
   contentType: TextContentType
+  disabled?: boolean
 }>()
 
 const content = ref<string | undefined>(props.content || undefined)

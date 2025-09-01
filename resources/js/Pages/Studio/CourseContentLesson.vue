@@ -20,7 +20,7 @@
               <Button :icon="EllipsisIcon" variant="ghost" class="px-2" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" class="min-w-48">
-              <DropdownMenuItem @select="destroy" variant="destructive"><Trash2Icon /> {{ $t('Delete') }}</DropdownMenuItem>
+              <DropdownMenuItem :disabled="disabled" @select="destroy" variant="destructive"><Trash2Icon /> {{ $t('Delete') }}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -28,7 +28,7 @@
 
       <div class="flex flex-col gap-4 p-3">
         <FormControl :label="$t('Title')" :error="form.errors.title" class="max-w-lg">
-          <Input v-model="form.title" :placeholder="lesson.fallbackTitle" />
+          <Input v-model="form.title" :placeholder="lesson.fallbackTitle" :disabled="disabled" />
         </FormControl>
 
         <FormControl :label="$t('Video')" :error="form.errors.video" class="max-w-lg">
@@ -41,13 +41,18 @@
             drag-label="Drag & drop a video"
             pick-label="select a video"
             v-slot="{ preview }"
+            :disabled="disabled"
           >
             <Player :src="preview" class="w-full h-full rounded-none" />
           </TemporaryFileInput>
         </FormControl>
 
         <FormControl :label="$t('Description')" :error="form.errors.description || form.errors.description_type">
-          <TextEditor v-model:content="form.description" v-model:content-type="form.description_type" />
+          <TextEditor
+            v-model:content="form.description"
+            v-model:content-type="form.description_type"
+            :disabled="disabled"
+          />
         </FormControl>
 
         <FormControl :label="$t('Resources')" :error="form.errors.resources" class="max-w-lg">
@@ -57,6 +62,7 @@
             v-model="form.resources"
             :drag-label="$t('Drag and drop files')"
             :pick-label="$t('select files')"
+            :disabled="disabled"
           />
         </FormControl>
       </div>
@@ -70,6 +76,7 @@
           @click="save"
           :processing="form.processing"
           :recently-successful="form.recentlySuccessful"
+          :disabled="disabled"
         />
       </div>
     </template>
@@ -97,6 +104,7 @@ import type { TextContentType } from "@/Types";
 import { useForm } from "@inertiajs/vue3";
 import { asyncRouter } from "@stacktrace/ui";
 import { trans } from "laravel-vue-i18n";
+import { computed } from "vue";
 import CourseContentLayout from "./Layouts/CourseContentLayout.vue";
 import { Trash2Icon, EllipsisIcon, SaveIcon } from 'lucide-vue-next'
 
@@ -115,8 +123,11 @@ const props = defineProps<{
     descriptionType: TextContentType
     video: string | null
     resources: Array<FileListItem>
+    isEditable: boolean
   }
 }>()
+
+const disabled = computed(() => !props.lesson.isEditable)
 
 const form = useForm(() => ({
   title: props.lesson.title || '',

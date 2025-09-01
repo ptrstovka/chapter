@@ -50,6 +50,7 @@ class ChapterController
                 'id' => $chapter->uuid,
                 'title' => $chapter->title,
                 'fallbackTitle' => $chapter->getFallbackTitle(),
+                'isEditable' => $course->canBeUpdated(),
             ],
         ]));
     }

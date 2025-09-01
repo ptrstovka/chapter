@@ -13,11 +13,13 @@ const emit = defineEmits(['update:modelValue'])
 
 const props = defineProps<{
   modelValue: string | null | undefined
+  disabled?: boolean
 }>()
 
 const editor = useEditor({
   extensions: [StarterKit],
   content: props.modelValue,
+  editable: props.disabled === true ? false : true,
   onUpdate: () => {
     emit('update:modelValue', editor.value?.getHTML())
   },
@@ -31,6 +33,14 @@ const editor = useEditor({
 watch(() => props.modelValue, newModelValue => {
   if (editor.value?.getHTML() !== newModelValue) {
     editor.value?.commands.setContent(newModelValue as any)
+  }
+})
+
+watch(() => props.disabled, isDisabled => {
+  if (isDisabled === true) {
+    editor.value?.setEditable(false)
+  } else {
+    editor.value?.setEditable(true)
   }
 })
 

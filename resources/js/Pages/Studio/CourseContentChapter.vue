@@ -16,7 +16,7 @@
               <Button :icon="EllipsisIcon" variant="ghost" class="px-2" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" class="min-w-48">
-              <DropdownMenuItem @select="destroy" variant="destructive"><Trash2Icon /> {{ $t('Delete') }}</DropdownMenuItem>
+              <DropdownMenuItem :disabled="!chapter.isEditable" @select="destroy" variant="destructive"><Trash2Icon /> {{ $t('Delete') }}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -24,7 +24,7 @@
 
       <div class="flex flex-col gap-4 p-3">
         <FormControl :label="$t('Title')" :error="form.errors.title" class="max-w-lg">
-          <Input v-model="form.title" :placeholder="chapter.fallbackTitle" />
+          <Input v-model="form.title" :placeholder="chapter.fallbackTitle" :disabled="!chapter.isEditable" />
         </FormControl>
       </div>
     </div>
@@ -37,6 +37,7 @@
           @click="save"
           :processing="form.processing"
           :recently-successful="form.recentlySuccessful"
+          :disabled="!chapter.isEditable"
         />
       </div>
     </template>
@@ -71,6 +72,7 @@ const props = defineProps<{
     id: string
     title: string | null
     fallbackTitle: string
+    isEditable: boolean
   }
 }>()
 

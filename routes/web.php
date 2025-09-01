@@ -60,6 +60,8 @@ Route::middleware('auth')->group(function () {
             Route::patch('/courses/{course:uuid}', [Studio\CourseController::class, 'update'])->name('courses.update');
             Route::delete('/courses/{course:uuid}', [Studio\CourseController::class, 'destroy'])->name('courses.destroy');
             Route::get('/courses/{course:uuid}/content', Studio\CourseContentController::class)->name('courses.content');
+            Route::post('/courses/{course:uuid}/unpublish', Studio\UnpublishCourseController::class)->name('courses.unpublish');
+            Route::post('/courses/{course:uuid}/publish', Studio\PublishCourseController::class)->name('courses.publish');
             Route::post('/courses/{course:uuid}/chapters', [Studio\ChapterController::class, 'store'])->name('course.chapters.store');
             Route::post('/courses/{course:uuid}/sort-chapters', Studio\SortChaptersController::class)->name('course.chapters.sort');
             Route::post('/courses/{course:uuid}/move-lesson', Studio\MoveLessonController::class)->name('course.lessons.move');

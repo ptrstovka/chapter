@@ -8,7 +8,12 @@
         'relative flex flex-row transition items-start border-b',
         isDraggedInto ? '' : (active ? 'bg-accent' : 'hover:bg-accent/50'),
       )">
-        <div ref="handleEl" class="text-muted-foreground shrink-0 p-1.5 ml-[4px] mt-[8px] hover:text-foreground transition-colors cursor-move">
+        <div
+          ref="handleEl"
+          :class="cn(
+            'text-muted-foreground shrink-0 p-1.5 ml-[4px] mt-[8px] transition-colors cursor-move',
+            disabled ? 'opacity-50 cursor-auto' : 'hover:text-foreground',
+          )">
           <GripVerticalIcon class="size-4" />
         </div>
 
@@ -25,7 +30,7 @@
 
       <slot />
 
-      <div class="px-4 py-2">
+      <div class="px-4 py-2" v-if="!disabled">
         <Button
           class="w-full"
           variant="ghost"
@@ -64,6 +69,7 @@ const props = defineProps<{
   title: string
   active: boolean
   first: boolean
+  disabled?: boolean
 }>()
 
 const createLessonForm = useForm({})
@@ -100,6 +106,7 @@ onMounted(() => {
       draggable({
         element: container,
         dragHandle: handle,
+        canDrag: () => !props.disabled,
         getInitialData: () => ({
           type: 'chapter',
           courseId: props.courseId,

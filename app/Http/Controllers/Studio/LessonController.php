@@ -57,6 +57,7 @@ class LessonController
                 'descriptionType' => $lesson->description_type,
                 'video' => $lesson->video?->getUrl(),
                 'resources' => $lesson->resourceFiles()->all(),
+                'isEditable' => $course->canBeUpdated(),
             ],
         ]));
     }

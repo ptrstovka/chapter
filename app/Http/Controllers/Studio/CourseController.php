@@ -67,13 +67,15 @@ class CourseController
                 Columns\Badge::make(__('Status'), fn (Course $course) => $course->status->value)
                     ->variant([
                         CourseStatus::Draft->value => 'default',
-                        CourseStatus::Publishing->value, CourseStatus::PublishFailure->value => 'default',
+                        CourseStatus::Publishing->value => 'default',
+                        CourseStatus::PublishFailure->value => 'default',
                         CourseStatus::Unpublished->value => 'warning',
                         CourseStatus::Published->value => 'positive',
                     ])
                     ->label([
                         CourseStatus::Draft->value => __('Draft'),
-                        CourseStatus::Publishing->value, CourseStatus::PublishFailure->value => __('Publishing'),
+                        CourseStatus::Publishing->value => __('Publishing'),
+                        CourseStatus::PublishFailure->value => __('Publishing'),
                         CourseStatus::Unpublished->value => __('Unpublished'),
                         CourseStatus::Published->value => __('Published'),
                     ])
@@ -110,6 +112,9 @@ class CourseController
                 UnpublishCourseAction::make()
                     ->can(fn (Course $course) => Gate::allows('unpublish', $course) && $course->canBeUnpublished())
                     ->bulk(),
+
+                Actions\Link::make(__('View on Platform'), fn (Course $course) => $course->slug ? Link::to(route('courses.show', $course)) : '')
+                    ->can(fn (Course $course) => $course->slug && $course->status === CourseStatus::Published),
             ])
             ->withFilters([
                 Filters\Select::make(__('Status'), 'status', [

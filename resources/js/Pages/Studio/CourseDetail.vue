@@ -6,11 +6,11 @@
           <div class="flex flex-col gap-4 p-3 md:p-4 max-w-4xl">
             <div class="grid md:grid-cols-2 gap-4">
               <FormControl :label="$t('Title')" :error="form.errors.title">
-                <Input v-model="form.title" />
+                <Input v-model="form.title" :disabled="disabled" />
               </FormControl>
 
               <FormControl :label="$t('URL Slug')" :error="form.errors.slug" v-if="title || slug">
-                <Input v-model="form.slug" />
+                <Input v-model="form.slug" :disabled="disabled" />
               </FormControl>
             </div>
 
@@ -23,6 +23,7 @@
                   :placeholder="$t('Select category…')"
                   :search-label="$t('Search category…')"
                   :not-found-label="$t('No category found.')"
+                  :disabled="disabled"
                 />
               </FormControl>
             </div>
@@ -31,6 +32,7 @@
               <TextEditor
                 v-model:content="form.description"
                 v-model:content-type="form.description_type"
+                :disabled="disabled"
               />
             </FormControl>
 
@@ -44,6 +46,7 @@
                   v-model:file="form.trailer"
                   drag-label="Drag & drop a video"
                   pick-label="select a video"
+                  :disabled="disabled"
                   v-slot="{ preview }"
                 >
                   <Player :src="preview" class="w-full h-full rounded-none" />
@@ -59,6 +62,7 @@
                   v-model:file="form.cover_image"
                   drag-label="Drag & drop an image"
                   pick-label="select an image"
+                  :disabled="disabled"
                   v-slot="{ preview }"
                 >
                   <img class="w-full h-full object-contain object-center" :src="preview" alt="">
@@ -75,6 +79,7 @@
             :recently-successful="form.recentlySuccessful"
             :label="$t('Save')"
             @click="save"
+            :disabled="disabled"
           />
         </div>
       </div>
@@ -93,6 +98,7 @@ import type { SelectOption } from "@stacktrace/ui";
 import { SaveIcon } from 'lucide-vue-next'
 import { TemporaryFileInput } from '@/Components/TemporaryFileInput'
 import { Player } from '@/Components/Player'
+import { computed } from "vue";
 import CourseLayout from "./Layouts/CourseLayout.vue"
 
 const props = defineProps<{
@@ -105,7 +111,10 @@ const props = defineProps<{
   trailer: string | null
   categories: Array<SelectOption<number>>
   category: number | null
+  isEditable: boolean
 }>()
+
+const disabled = computed(() => !props.isEditable)
 
 const form = useForm(() => ({
   title: props.title || '',

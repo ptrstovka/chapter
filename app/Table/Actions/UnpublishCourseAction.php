@@ -4,7 +4,9 @@
 namespace App\Table\Actions;
 
 
+use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use StackTrace\Ui\Selection;
 use StackTrace\Ui\Table\Actions\Action;
 
@@ -43,6 +45,10 @@ class UnpublishCourseAction extends Action
 
     public function handle(Selection $selection): void
     {
-        // TODO: Add unpublish
+        Course::query()->with(['author'])->whereIn('id', $selection->all())->eachById(function (Course $course) {
+            if (Gate::allows('unpublish', $course) && $course->canBeUnpublished()) {
+                $course->unpublish();
+            }
+        });
     }
 }

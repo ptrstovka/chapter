@@ -1,15 +1,20 @@
 <template>
-  <div ref="zoneEl" :class="cn(
-    'relative flex flex-col w-full items-center justify-center text-sm border overflow-hidden border-2 border-dashed rounded-md py-8 px-3 transition-colors',
-    isOverDropZone && !disabled ? 'border-ring' : 'border-input',
-    { 'opacity-80 cursor-not-allowed text-muted-foreground': disabled },
-    $attrs.class || ''
-  )">
+  <div
+    ref="zoneEl"
+    :data-disabled="disabled === true ? '' : undefined"
+    :class="cn(
+      'group/dropzone',
+      'relative flex flex-col w-full items-center justify-center text-sm border overflow-hidden border-2 border-dashed rounded-md py-8 px-3 transition-colors',
+      isOverDropZone && !disabled ? 'border-ring' : 'border-input',
+      'data-[disabled]:cursor-not-allowed data-[disabled]:bg-accent/50 data-[disabled]:text-muted-foreground',
+      $attrs.class || ''
+    )"
+  >
     <slot>
-      <UploadIcon v-if="showIcon" class="size-6 mb-2 text-primary" />
+      <UploadIcon v-if="showIcon" class="size-6 mb-2 text-primary group-data-[disabled]/dropzone:opacity-80" />
       <span class="font-medium">{{ $t(dragLabel) }}</span>
       <span class="text-muted-foreground mt-2">{{ $t(orLabel) }}</span>
-      <Button :disabled="disabled" @click.prevent.stop="selectFile" variant="link">{{ $t(pickLabel) }}</Button>
+      <Button :disabled="disabled" class="disabled:opacity-80" @click.prevent.stop="selectFile" variant="link">{{ $t(pickLabel) }}</Button>
       <input ref="inputEl" type="file" class="hidden" :multiple="multiple" :accept="accept" @change="onInputChange">
 
       <div v-if="processing" class="bg-background absolute inset-0 flex flex-col items-center justify-center">

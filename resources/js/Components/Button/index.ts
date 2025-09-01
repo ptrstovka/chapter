@@ -31,7 +31,7 @@ export const buttonVariants = cva(
         ghost: 'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
         'ghost-desctructive': 'text-destructive hover:bg-destructive/10 dark:hover:bg-accent/50',
         link: 'text-primary underline-offset-4 hover:underline',
-        positive: 'bg-green-50 border border-green-200 text-green-700 dark:bg-green-800 dark:text-green-50 dark:border-green-800',
+        positive: 'bg-positive text-positive-foreground shadow-xs hover:bg-positive/90',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

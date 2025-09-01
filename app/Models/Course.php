@@ -116,14 +116,6 @@ class Course extends Model
             throw new LogicException('The course is already being published.');
         }
 
-        if ($this->status === CourseStatus::Unpublished) {
-            $this->update([
-                'status' => CourseStatus::Published,
-            ]);
-
-            return;
-        }
-
         $jobs = $this->lessons()
             ->with(['video'])
             ->get()
@@ -156,6 +148,16 @@ class Course extends Model
                 'failure_reason' => $exception->getMessage(),
             ]);
         })->dispatch();
+    }
+
+    /**
+     * Unpublish the course.
+     */
+    public function unpublish(): void
+    {
+        $this->update([
+            'status' => CourseStatus::Unpublished,
+        ]);
     }
 
     /**
@@ -209,6 +211,8 @@ class Course extends Model
                     }
                 }
             }
+
+            return true;
         }
 
         return false;
@@ -220,5 +224,21 @@ class Course extends Model
     public function canBeUnpublished(): bool
     {
         return $this->status === CourseStatus::Published;
+    }
+
+    /**
+     * Determine whether the course can be updated by the user.
+     */
+    public function canBeUpdated(): bool
+    {
+        return $this->status === CourseStatus::Draft || $this->status === CourseStatus::Unpublished;
+    }
+
+    /**
+     * Determine whether the course can be deleted by the user.
+     */
+    public function canBeDeleted(): bool
+    {
+        return $this->status === CourseStatus::Draft || $this->status === CourseStatus::Unpublished;
     }
 }
