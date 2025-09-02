@@ -12,6 +12,7 @@
     :shortcut="shortcutKey"
   >
     <component :is="icon" />
+    <template v-if="text">{{ text }}</template>
   </TiptapButton>
 </template>
 
@@ -65,8 +66,20 @@ const markIcons = {
 const emit = defineEmits(['click'])
 
 const props = withDefaults(defineProps<ButtonProps & {
+  /**
+   * The type of mark to toggle
+   */
   type: Mark
+
+  /**
+   * Display text for the button (optional)
+   */
   text?: string
+
+  /**
+   * Whether this button should be hidden when the mark is not available
+   * @default false
+   */
   hideWhenUnavailable?: boolean
 }>(), {
   hideWhenUnavailable: false
@@ -91,19 +104,20 @@ const canToggleMark = (type: Mark) => {
 const markInSchema = computed(() => isMarkInSchema(props.type, editor.value || null))
 
 const isDisabled = computed<boolean>(() => {
-  const e = editor.value
-  if (!e) return true
+  if (!editor.value) return true
   if (props.disabled) return true
   if (editorDisabled.value) return true
-  if (e.isActive('codeBlock')) return true
+  if (editor.value.isActive('codeBlock')) return true
   if (!canToggleMark(props.type)) return true
   return false
 })
 
 const isActive = computed<boolean>(() => {
-  const e = editor.value
-  if (!e) return false
-  return e.isActive(props.type)
+  if (editor.value) {
+    return editor.value.isActive(props.type)
+  }
+
+  return false
 })
 
 const icon = computed(() => markIcons[props.type])

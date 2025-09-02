@@ -1,5 +1,5 @@
 <template>
-  <Tooltip>
+  <Tooltip ignore-non-keyboard-focus :disabled="!tooltip">
     <TooltipTrigger as-child>
       <Button
         v-bind="forwarded"
@@ -8,7 +8,8 @@
         variant="ghost"
         :class="cn(
           'h-full has-[>svg]:px-1.5 p-1.5',
-          'data-[active=on]:bg-primary data-[active=on]:text-primary-foreground data-[active=on]:hover:bg-primary/90',
+          'data-[active=on]:bg-primary data-[active=on]:text-primary-foreground data-[active=on]:hover:bg-primary/90 [&_svg:not([class*=\'text-\'])]:text-primary-foreground',
+          'dark:data-[active=on]:hover:bg-primary/90',
           $attrs.class || '',
         )"
       >
@@ -37,5 +38,5 @@ const props = defineProps<ButtonProps & {
 }>()
 
 const delegatedProps = reactiveOmit(props, 'active', 'tooltip', 'shortcut')
-const forwarded = useForwardPropsEmits(props, emit)
+const forwarded = useForwardPropsEmits(delegatedProps, emit)
 </script>
