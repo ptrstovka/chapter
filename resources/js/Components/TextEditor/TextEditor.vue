@@ -6,10 +6,11 @@
       'data-[disabled]:bg-accent/50 dark:bg-input/30'
     )"
   >
-    <TiptapEditor
+    <TiptapSimpleEditor
       v-if="contentType === 'html'"
       v-model="content"
       :disabled="disabled"
+      class="border-0 rounded-none"
     />
 
     <Textarea
@@ -40,7 +41,7 @@ import { Textarea } from "@/Components/Textarea";
 import type { TextContentType } from "@/Types"
 import { cn } from "@/Utils";
 import { ref, watch } from "vue";
-import TiptapEditor from "./TiptapEditor.vue"
+import { TiptapSimpleEditor } from '@/Components/Tiptap'
 
 const emit = defineEmits(['update:content', 'update:contentType'])
 

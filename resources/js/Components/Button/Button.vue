@@ -1,5 +1,5 @@
 <template>
-  <Primitive data-slot="button" :as="as" :as-child="asChild" :class="cn(buttonVariants({ variant, size }), props.class)">
+  <Primitive data-slot="button" :as="as" :as-child="asChild" :class="cn(buttonVariants({ variant, size }), props.class)" :disabled="disabled">
     <slot v-if="plain" />
     <span v-else class="relative flex w-full">
       <span :class="cn('flex w-full justify-center flex-row items-center gap-1.5 leading-none', { 'invisible': showProcessing }, contentClass || '')">

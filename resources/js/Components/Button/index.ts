@@ -17,6 +17,7 @@ export interface ButtonProps extends PrimitiveProps {
   icon?: Component
   contentClass?: string
   plain?: boolean
+  disabled?: boolean
 }
 
 export const buttonVariants = cva(

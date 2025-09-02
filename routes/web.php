@@ -17,8 +17,11 @@ use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Studio;
 use App\Http\Controllers\TemporaryUploadController;
+use App\Http\Controllers\TiptapImageController;
 use App\Http\Middleware\StudioMiddleware;
 use Illuminate\Support\Facades\Route;
+
+// Route::inertia('/tiptap', 'TiptapPage');
 
 Route::middleware('auth')->group(function () {
     Route::get('/', HomeController::class)->name('home');
@@ -78,6 +81,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::post('/files', [TemporaryUploadController::class, 'store'])->name('files.store');
+
+    Route::post('/tiptap/images', [TiptapImageController::class, 'store'])->name('tiptap.images.store');
 });
 
 require __DIR__.'/auth.php';
