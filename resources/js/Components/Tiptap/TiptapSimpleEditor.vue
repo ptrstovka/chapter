@@ -13,6 +13,7 @@
       <TiptapMarkButton type="strike" />
       <TiptapMarkButton type="code" />
       <TiptapMarkButton type="underline" />
+      <TiptapLinkPopover />
 
       <TiptapToolbarSeparator />
 
@@ -43,7 +44,8 @@ import {
   TiptapTextAlignButton,
   TiptapListDropdownMenu,
   TiptapBlockquoteButton,
-  TiptapCodeBlockButton
+  TiptapCodeBlockButton,
+  TiptapLinkPopover,
 } from ".";
 import type { TiptapProviderProps, TiptapProviderEmits } from ".";
 

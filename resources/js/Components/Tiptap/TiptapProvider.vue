@@ -16,6 +16,9 @@ import { ListKit } from '@tiptap/extension-list'
 import { Subscript } from "@tiptap/extension-subscript"
 import { Superscript } from "@tiptap/extension-superscript"
 import { TextAlign } from "@tiptap/extension-text-align"
+import { Link } from "./Extension/link-extension"
+import { Selection } from "./Extension/selection-extension"
+import { TrailingNode } from "./Extension/trailing-node-extension"
 import StarterKit from "@tiptap/starter-kit";
 
 const emit = defineEmits<TiptapProviderEmits>()
@@ -33,6 +36,10 @@ const editor = useEditor({
     TextAlign.configure({
       types: ['heading', 'paragraph'],
     }),
+
+    Selection,
+    // TrailingNode,
+    Link.configure({ openOnClick: false }),
   ],
   content: props.modelValue,
   editable: props.disabled === true ? false : true,
@@ -44,7 +51,11 @@ const editor = useEditor({
   },
   editorProps: {
     attributes: {
-      class: 'prose dark:prose-invert prose-sm min-h-60 max-w-full px-3 py-3 focus:outline-none',
+      autocomplete: "off",
+      autocorrect: "off",
+      autocapitalize: "off",
+      "aria-label": "Main content area, start typing to enter text.",
+      class: 'prose dark:prose-invert prose-sm min-h-60 max-w-full px-3 py-3 focus:outline-none selection:bg-primary selection:text-primary-foreground',
     },
   },
 })
@@ -70,3 +81,11 @@ provideTiptapContext({
   disabled: isDisabled,
 })
 </script>
+
+<style>
+.tiptap.ProseMirror .selection {
+  display: inline;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+</style>
