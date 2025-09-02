@@ -14,6 +14,7 @@
       <TiptapMarkButton type="code" />
       <TiptapMarkButton type="underline" />
       <TiptapLinkPopover />
+      <TiptapColorHighlightPopover />
 
       <TiptapToolbarSeparator />
 
@@ -46,6 +47,7 @@ import {
   TiptapBlockquoteButton,
   TiptapCodeBlockButton,
   TiptapLinkPopover,
+  TiptapColorHighlightPopover,
 } from ".";
 import type { TiptapProviderProps, TiptapProviderEmits } from ".";
 

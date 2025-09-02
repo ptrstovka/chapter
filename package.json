@@ -17,6 +17,7 @@
         "@internationalized/date": "^3.8.2",
         "@tailwindcss/typography": "^0.5.16",
         "@tailwindcss/vite": "^4.1.12",
+        "@tiptap/extension-highlight": "^3.3.0",
         "@tiptap/extension-list": "^3.3.0",
         "@tiptap/extension-subscript": "^3.3.0",
         "@tiptap/extension-superscript": "^3.3.0",

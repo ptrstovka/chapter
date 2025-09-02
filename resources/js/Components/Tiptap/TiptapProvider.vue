@@ -19,6 +19,7 @@ import { TextAlign } from "@tiptap/extension-text-align"
 import { Link } from "./Extension/link-extension"
 import { Selection } from "./Extension/selection-extension"
 import { TrailingNode } from "./Extension/trailing-node-extension"
+import { Highlight } from "@tiptap/extension-highlight"
 import StarterKit from "@tiptap/starter-kit";
 
 const emit = defineEmits<TiptapProviderEmits>()
@@ -36,6 +37,7 @@ const editor = useEditor({
     TextAlign.configure({
       types: ['heading', 'paragraph'],
     }),
+    Highlight.configure({ multicolor: true }),
 
     Selection,
     TrailingNode,

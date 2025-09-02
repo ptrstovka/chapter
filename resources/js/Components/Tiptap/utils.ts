@@ -1,5 +1,6 @@
 import { createContext } from 'reka-ui'
-import { type Editor } from '@tiptap/vue-3'
+import type { Editor } from '@tiptap/vue-3'
+import type { Node } from '@tiptap/pm/model'
 import type { ComputedRef, ShallowRef } from "vue";
 
 export const [useTiptap, provideTiptapContext] = createContext<{
@@ -33,6 +34,70 @@ export const isNodeInSchema = (
 ): boolean => {
   if (!editor?.schema) return false
   return editor.schema.spec.nodes.get(nodeName) !== undefined
+}
+
+/**
+ * Checks if a node is empty
+ */
+export function isEmptyNode(node?: Node | null): boolean {
+  return !!node && node.content.size === 0
+}
+
+/**
+ * Finds the position and instance of a node in the document
+ * @param props Object containing editor, node (optional), and nodePos (optional)
+ * @param props.editor The TipTap editor instance
+ * @param props.node The node to find (optional if nodePos is provided)
+ * @param props.nodePos The position of the node to find (optional if node is provided)
+ * @returns An object with the position and node, or null if not found
+ */
+export function findNodePosition(props: {
+  editor: Editor | null
+  node?: Node | null
+  nodePos?: number | null
+}): { pos: number; node: Node } | null {
+  const { editor, node, nodePos } = props
+
+  if (!editor || !editor.state?.doc) return null
+
+  // Zero is valid position
+  const hasValidNode = node !== undefined && node !== null
+  const hasValidPos = nodePos !== undefined && nodePos !== null
+
+  if (!hasValidNode && !hasValidPos) {
+    return null
+  }
+
+  if (hasValidPos) {
+    try {
+      const nodeAtPos = editor.state.doc.nodeAt(nodePos!)
+      if (nodeAtPos) {
+        return { pos: nodePos!, node: nodeAtPos }
+      }
+    } catch (error) {
+      console.error("Error checking node at position:", error)
+      return null
+    }
+  }
+
+  // Otherwise search for the node in the document
+  let foundPos = -1
+  let foundNode: Node | null = null
+
+  editor.state.doc.descendants((currentNode, pos) => {
+    // TODO: Needed?
+    // if (currentNode.type && currentNode.type.name === node!.type.name) {
+    if (currentNode === node) {
+      foundPos = pos
+      foundNode = currentNode
+      return false
+    }
+    return true
+  })
+
+  return foundPos !== -1 && foundNode !== null
+    ? { pos: foundPos, node: foundNode }
+    : null
 }
 
 type ProtocolOptions = {

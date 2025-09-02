@@ -1,6 +1,6 @@
 <template>
   <Popover v-if="show" v-model:open="isOpen">
-    <PopoverTrigger as-child >
+    <PopoverTrigger as-child>
       <TiptapButton
         v-bind="forwarded"
         tabindex="-1"
