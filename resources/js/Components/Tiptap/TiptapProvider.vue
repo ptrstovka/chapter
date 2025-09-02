@@ -38,7 +38,7 @@ const editor = useEditor({
     }),
 
     Selection,
-    // TrailingNode,
+    TrailingNode,
     Link.configure({ openOnClick: false }),
   ],
   content: props.modelValue,
