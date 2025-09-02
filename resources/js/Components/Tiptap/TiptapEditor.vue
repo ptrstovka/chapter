@@ -3,6 +3,8 @@
     <TiptapToolbar>
       <TiptapHeadingDropdownMenu :levels="[1, 2, 3, 4]" />
 
+      <TiptapListDropdownMenu :types="['bulletList', 'orderedList']" />
+
       <TiptapToolbarSeparator />
 
       <TiptapMarkButton type="bold" />
@@ -38,6 +40,7 @@ import {
   TiptapHeadingDropdownMenu,
   TiptapToolbarSeparator,
   TiptapTextAlignButton,
+  TiptapListDropdownMenu,
 } from ".";
 import type { TiptapProviderProps, TiptapProviderEmits } from ".";
 

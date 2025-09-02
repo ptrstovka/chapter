@@ -12,6 +12,7 @@ import { cn } from "@/Utils";
 import { useEditor } from "@tiptap/vue-3";
 import { computed, watch } from "vue";
 import { provideTiptapContext } from './utils.ts'
+import { ListKit } from '@tiptap/extension-list'
 import { Subscript } from "@tiptap/extension-subscript"
 import { Superscript } from "@tiptap/extension-superscript"
 import { TextAlign } from "@tiptap/extension-text-align"
@@ -24,6 +25,9 @@ const editor = useEditor({
   extensions: [
     StarterKit,
 
+    ListKit.configure({
+      taskList: false,
+    }),
     Subscript,
     Superscript,
     TextAlign.configure({

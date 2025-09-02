@@ -6,16 +6,15 @@
         :active="isAnyHeadingActive"
         tabindex="-1"
         aria-label="Format text as heading"
-        aria-pressed={isAnyHeadingActive}
+        :aria-pressed="isAnyHeadingActive"
         tooltip="Heading"
         class="gap-0.5"
       >
         <component :is="icon" />
-
         <ChevronDownIcon class="size-3" />
       </TiptapButton>
     </DropdownMenuTrigger>
-    <DropdownMenuContent>
+    <DropdownMenuContent @close-auto-focus.prevent>
       <DropdownMenuGroup>
         <DropdownMenuItem
           v-for="level in levels"
