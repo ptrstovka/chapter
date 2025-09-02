@@ -59,10 +59,8 @@
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" class="w-48">
                 <DropdownMenuLink :href="route('profile.edit')"><UserRoundCogIcon /> {{ $t('Profile') }}</DropdownMenuLink>
-                <DropdownMenuSeparator/>
                 <template v-if="$page.props.auth.user.can.accessStudio">
                   <DropdownMenuLink :href="route('studio')"><ClapperboardIcon /> {{ $t('Studio') }}</DropdownMenuLink>
-                  <DropdownMenuSeparator/>
                 </template>
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger><SunMoonIcon />{{ $t('Theme') }}</DropdownMenuSubTrigger>
@@ -73,7 +71,6 @@
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
 
-                <DropdownMenuSeparator/>
                 <DropdownMenuLink :href="route('logout')" method="post" as="button"><LogOutIcon /> {{ $t('Log Out') }}</DropdownMenuLink>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -153,7 +150,7 @@ import { Link } from '@inertiajs/vue3'
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from '@/Components/NavigationMenu'
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLink,
-  DropdownMenuSeparator, DropdownMenuCheckboxItem,
+  DropdownMenuCheckboxItem,
   DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent
 } from '@/Components/DropdownMenu'
 import { Button } from '@/Components/Button'
