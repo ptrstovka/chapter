@@ -14,6 +14,7 @@ import { computed, watch } from "vue";
 import { provideTiptapContext } from './utils.ts'
 import { Subscript } from "@tiptap/extension-subscript"
 import { Superscript } from "@tiptap/extension-superscript"
+import { TextAlign } from "@tiptap/extension-text-align"
 import StarterKit from "@tiptap/starter-kit";
 
 const emit = defineEmits<TiptapProviderEmits>()
@@ -25,6 +26,9 @@ const editor = useEditor({
 
     Subscript,
     Superscript,
+    TextAlign.configure({
+      types: ['heading', 'paragraph'],
+    }),
   ],
   content: props.modelValue,
   editable: props.disabled === true ? false : true,

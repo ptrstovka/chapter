@@ -23,19 +23,16 @@
 </template>
 
 <script setup lang="ts">
-import { Button, type ButtonProps } from '@/Components/Button'
+import { Button } from '@/Components/Button'
 import { TooltipTrigger, TooltipContent, Tooltip } from "@/Components/Tooltip";
 import { cn } from "@/Utils";
 import { reactiveOmit } from "@vueuse/core";
 import { useForwardPropsEmits } from "reka-ui";
+import type { TiptapButtonProps } from '.'
 
 const emit = defineEmits(['click'])
 
-const props = defineProps<ButtonProps & {
-  active?: boolean
-  tooltip?: string | null | undefined
-  shortcut?: string | null | undefined
-}>()
+const props = defineProps<TiptapButtonProps>()
 
 const delegatedProps = reactiveOmit(props, 'active', 'tooltip', 'shortcut')
 const forwarded = useForwardPropsEmits(delegatedProps, emit)

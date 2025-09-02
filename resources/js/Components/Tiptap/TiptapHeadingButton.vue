@@ -21,8 +21,7 @@ import { isNodeSelection } from "@tiptap/vue-3";
 import { reactiveOmit } from "@vueuse/core";
 import { useForwardProps } from "reka-ui";
 import { computed } from "vue";
-import { TiptapButton } from '.'
-import { type ButtonProps } from '@/Components/Button'
+import { TiptapButton, type TiptapButtonProps } from '.'
 import { Heading1Icon, Heading2Icon, Heading3Icon, Heading4Icon, Heading5Icon, Heading6Icon } from 'lucide-vue-next'
 import { isNodeInSchema, useTiptap } from "./utils.ts";
 
@@ -48,7 +47,7 @@ const headingShortcutKeys: Partial<Record<Level, string>> = {
 
 const emit = defineEmits(['click'])
 
-const props = defineProps<ButtonProps & {
+const props = defineProps<TiptapButtonProps & {
   /**
    * The heading level.
    */
@@ -64,11 +63,6 @@ const props = defineProps<ButtonProps & {
    * @default false
    */
   hideWhenUnavailable?: boolean
-
-  /**
-   * The tooltip of the underlying button.
-   */
-  tooltip?: string | null | undefined
 }>()
 
 const { editor, disabled: editorDisabled } = useTiptap()
