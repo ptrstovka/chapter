@@ -1,6 +1,7 @@
 <template>
   <div :class="cn(
     'dark:bg-input/30 border-input rounded-md border bg-transparent transition-[color,box-shadow] outline-none disabled:bg-accent/50',
+    props.class || '',
   )">
     <slot />
   </div>

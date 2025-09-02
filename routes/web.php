@@ -21,7 +21,7 @@ use App\Http\Controllers\TiptapImageController;
 use App\Http\Middleware\StudioMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/tiptap', 'TiptapPage');
+// Route::inertia('/tiptap', 'TiptapPage');
 
 Route::middleware('auth')->group(function () {
     Route::get('/', HomeController::class)->name('home');

@@ -55,7 +55,6 @@ const onFiles = async (files: Array<File>) => {
 </script>
 
 <style>
-.tiptap.ProseMirror *::selection,
 .tiptap.ProseMirror .group\/dropzone *::selection {
   background: transparent;
   color: inherit;

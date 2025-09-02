@@ -1,4 +1,5 @@
 import type { ButtonProps } from "@/Components/Button";
+import type { HTMLAttributes } from "vue";
 
 export { default as TiptapBlockquoteButton } from './TiptapBlockquoteButton.vue'
 export { default as TiptapButton } from './TiptapButton.vue'
@@ -26,6 +27,7 @@ export interface TiptapProviderEmits {
 export interface TiptapProviderProps {
   modelValue?: string | null | undefined
   disabled?: boolean
+  class?: HTMLAttributes['class']
 }
 
 export interface TiptapButtonProps extends Omit<ButtonProps, 'variant'> {
