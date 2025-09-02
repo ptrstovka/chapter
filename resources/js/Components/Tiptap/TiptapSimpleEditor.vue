@@ -27,6 +27,10 @@
       <TiptapTextAlignButton align="center" />
       <TiptapTextAlignButton align="right" />
       <TiptapTextAlignButton align="justify" />
+
+      <TiptapToolbarSeparator />
+
+      <TiptapImageUploadButton />
     </TiptapToolbar>
 
     <TiptapContent />
@@ -48,6 +52,7 @@ import {
   TiptapCodeBlockButton,
   TiptapLinkPopover,
   TiptapColorHighlightPopover,
+  TiptapImageUploadButton,
 } from ".";
 import type { TiptapProviderProps, TiptapProviderEmits } from ".";
 

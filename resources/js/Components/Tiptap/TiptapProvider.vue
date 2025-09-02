@@ -11,7 +11,7 @@ import type { TiptapProviderProps, TiptapProviderEmits } from ".";
 import { cn } from "@/Utils";
 import { useEditor } from "@tiptap/vue-3";
 import { computed, watch } from "vue";
-import { provideTiptapContext } from './utils.ts'
+import { handleImageUpload, MAX_FILE_SIZE, provideTiptapContext } from "./utils.ts";
 import { ListKit } from '@tiptap/extension-list'
 import { Subscript } from "@tiptap/extension-subscript"
 import { Superscript } from "@tiptap/extension-superscript"
@@ -20,6 +20,8 @@ import { Link } from "./Extension/link-extension"
 import { Selection } from "./Extension/selection-extension"
 import { TrailingNode } from "./Extension/trailing-node-extension"
 import { Highlight } from "@tiptap/extension-highlight"
+import { ImageUploadNode } from './Extension/image-upload-node-extension'
+import { Image } from "@tiptap/extension-image"
 import StarterKit from "@tiptap/starter-kit";
 
 const emit = defineEmits<TiptapProviderEmits>()
@@ -29,6 +31,7 @@ const editor = useEditor({
   extensions: [
     StarterKit,
 
+    Image,
     ListKit.configure({
       taskList: false,
     }),
@@ -40,6 +43,13 @@ const editor = useEditor({
     Highlight.configure({ multicolor: true }),
 
     Selection,
+    ImageUploadNode.configure({
+      accept: "image/*",
+      maxSize: MAX_FILE_SIZE,
+      limit: 1,
+      upload: handleImageUpload,
+      onError: (error) => console.error("Upload failed:", error),
+    }),
     TrailingNode,
     Link.configure({ openOnClick: false }),
   ],
@@ -89,5 +99,17 @@ provideTiptapContext({
   display: inline;
   background-color: var(--primary);
   color: var(--primary-foreground);
+}
+
+.tiptap.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.tiptap.ProseMirror > img:not([data-type="emoji"] img) {
+  margin: 2rem 0;
+  outline: 0.125rem solid transparent;
+  border-radius: var(--radius, 0.25rem);
 }
 </style>

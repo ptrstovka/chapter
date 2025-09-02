@@ -8,6 +8,7 @@ export { default as TiptapColorHighlightPopover } from './TiptapColorHighlightPo
 export { default as TiptapContent } from './TiptapContent.vue'
 export { default as TiptapHeadingButton } from './TiptapHeadingButton.vue'
 export { default as TiptapHeadingDropdownMenu } from './TiptapHeadingDropdownMenu.vue'
+export { default as TiptapImageUploadButton } from './TiptapImageUploadButton.vue'
 export { default as TiptapLinkPopover } from './TiptapLinkPopover.vue'
 export { default as TiptapListButton } from './TiptapListButton.vue'
 export { default as TiptapListDropdownMenu } from './TiptapListDropdownMenu.vue'
