@@ -54,11 +54,6 @@ const canToggle = computed(() => {
   }
 })
 
-const isActive = computed(() => {
-  if (!editor.value) return false
-  return editor.value.isActive("blockquote")
-})
-
 const toggle = () => {
   if (!editor.value) return false
   return editor.value.chain().focus().toggleWrap("blockquote").run()
@@ -70,6 +65,11 @@ const isDisabled = computed(() => {
   if (editorDisabled.value) return true
   if (!canToggle.value) return true
   return false
+})
+
+const isActive = computed(() => {
+  if (!editor.value) return false
+  return !isDisabled.value && editor.value.isActive("blockquote")
 })
 
 const nodeInSchema = computed(() => isNodeInSchema("blockquote", editor.value || null))

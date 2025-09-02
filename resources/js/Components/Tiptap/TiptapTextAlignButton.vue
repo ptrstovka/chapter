@@ -126,7 +126,7 @@ const isDisabled = computed(() => {
 })
 const isActive = computed(() => {
   if (editor.value) {
-    return editor.value.isActive({ textAlign: props.align })
+    return !isDisabled.value && editor.value.isActive({ textAlign: props.align })
   }
 
   return false

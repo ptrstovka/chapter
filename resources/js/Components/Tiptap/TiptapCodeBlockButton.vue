@@ -54,11 +54,6 @@ const canToggle = computed(() => {
   }
 })
 
-const isActive = computed(() => {
-  if (!editor.value) return false
-  return editor.value.isActive("codeBlock")
-})
-
 const toggle = () => {
   if (!editor.value) return false
   return editor.value.chain().focus().toggleNode("codeBlock", "paragraph").run()
@@ -70,6 +65,11 @@ const isDisabled = computed(() => {
   if (editorDisabled.value) return true
   if (!canToggle.value) return true
   return false
+})
+
+const isActive = computed(() => {
+  if (!editor.value) return false
+  return !isDisabled.value && editor.value.isActive("codeBlock")
 })
 
 const nodeInSchema = computed(() => isNodeInSchema("codeBlock", editor.value || null))

@@ -139,12 +139,12 @@ const isDisabled = computed(() => {
   return false
 })
 
-const isActive = computed(() => props.types.some(it => isListActive(it)))
+const isActive = computed(() => !isDisabled.value && props.types.some(it => isListActive(it)))
 
 const icon = computed(() => {
   const activeType = props.types.find(it => isListActive(it))
 
-  if (activeType) {
+  if (activeType && !isDisabled.value) {
     return {
       bulletList: ListIcon,
       orderedList: ListOrderedIcon,

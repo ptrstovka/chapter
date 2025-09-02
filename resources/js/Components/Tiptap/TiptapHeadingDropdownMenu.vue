@@ -71,12 +71,12 @@ const canToggleAnyHeading = computed(() => props.levels.some(level => editor.val
 
 const headingInSchema = computed(() => isNodeInSchema('heading', editor.value || null))
 const isDisabled = computed(() => editorDisabled.value || !canToggleAnyHeading.value)
-const isAnyHeadingActive = computed(() => editor.value?.isActive("heading") ?? false)
+const isAnyHeadingActive = computed(() => !isDisabled.value && (editor.value?.isActive("heading") ?? false))
 
 const icon = computed(() => {
   const activeLevel = props.levels.find((level) => editor.value?.isActive("heading", { level })) as Level | undefined
 
-  if (activeLevel) {
+  if (activeLevel && !isDisabled.value) {
     return {
       1: Heading1Icon,
       2: Heading2Icon,

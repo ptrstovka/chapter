@@ -114,7 +114,7 @@ const isDisabled = computed<boolean>(() => {
 
 const isActive = computed<boolean>(() => {
   if (editor.value) {
-    return editor.value.isActive(props.type)
+    return !isDisabled.value && editor.value.isActive(props.type)
   }
 
   return false
