@@ -2,8 +2,8 @@
   <TiptapProvider v-bind="forwarded" data-slot="tiptap">
     <TiptapToolbar>
       <TiptapHeadingDropdownMenu :levels="[1, 2, 3, 4]" />
-
       <TiptapListDropdownMenu :types="['bulletList', 'orderedList']" />
+      <TiptapBlockquoteButton />
 
       <TiptapToolbarSeparator />
 
@@ -41,6 +41,7 @@ import {
   TiptapToolbarSeparator,
   TiptapTextAlignButton,
   TiptapListDropdownMenu,
+  TiptapBlockquoteButton
 } from ".";
 import type { TiptapProviderProps, TiptapProviderEmits } from ".";
 

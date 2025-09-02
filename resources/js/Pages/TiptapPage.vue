@@ -1,6 +1,6 @@
 <template>
   <div class="mx-auto max-w-4xl p-6 flex flex-col gap-6">
-    <TiptapEditor v-if="visible" v-model="value" :disabled="disabled" />
+    <TiptapSimpleEditor v-if="visible" v-model="value" :disabled="disabled" />
 
     <div class="inline-flex flex-row gap-2">
       <Button @click="setValue">Set HTML</Button>
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { TiptapEditor } from '@/Components/Tiptap'
+import { TiptapSimpleEditor } from '@/Components/Tiptap'
 import { Button } from "@/Components/Button";
 import { ref } from "vue";
 
