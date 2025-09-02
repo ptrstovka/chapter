@@ -4,6 +4,7 @@
       <TiptapHeadingDropdownMenu :levels="[1, 2, 3, 4]" />
       <TiptapListDropdownMenu :types="['bulletList', 'orderedList']" />
       <TiptapBlockquoteButton />
+      <TiptapCodeBlockButton />
 
       <TiptapToolbarSeparator />
 
@@ -41,12 +42,13 @@ import {
   TiptapToolbarSeparator,
   TiptapTextAlignButton,
   TiptapListDropdownMenu,
-  TiptapBlockquoteButton
+  TiptapBlockquoteButton,
+  TiptapCodeBlockButton
 } from ".";
 import type { TiptapProviderProps, TiptapProviderEmits } from ".";
 
-const emit = defineEmits<TiptapProviderEmits>()
-const props = defineProps<TiptapProviderProps>()
+const emit = defineEmits<TiptapProviderEmits>();
+const props = defineProps<TiptapProviderProps>();
 
-const forwarded = useForwardPropsEmits(props, emit)
+const forwarded = useForwardPropsEmits(props, emit);
 </script>

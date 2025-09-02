@@ -2,6 +2,7 @@ import type { ButtonProps } from "@/Components/Button";
 
 export { default as TiptapBlockquoteButton } from './TiptapBlockquoteButton.vue'
 export { default as TiptapButton } from './TiptapButton.vue'
+export { default as TiptapCodeBlockButton } from './TiptapCodeBlockButton.vue'
 export { default as TiptapContent } from './TiptapContent.vue'
 export { default as TiptapHeadingButton } from './TiptapHeadingButton.vue'
 export { default as TiptapHeadingDropdownMenu } from './TiptapHeadingDropdownMenu.vue'
