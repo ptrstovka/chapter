@@ -17,9 +17,7 @@
           <CourseFavoriteButton class="absolute bottom-0 left-0" :slug="course.slug" :is-favorite="course.isFavorite" />
         </div>
         <div class="px-2 py-3 border-t">
-          <p class="font-semibold">{{ course.title }}</p>
-
-          <div class="flex flex-row gap-2 mt-2">
+          <div class="flex flex-row gap-2 mb-2">
             <p class="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground">
               <ContactIcon class="w-4 h-4" />
               {{ course.author.name }}
@@ -29,6 +27,8 @@
               {{ course.duration }}
             </p>
           </div>
+
+          <p class="font-semibold">{{ course.title }}</p>
         </div>
       </Link>
     </CardContent>
