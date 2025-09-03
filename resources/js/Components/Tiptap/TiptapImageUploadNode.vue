@@ -4,6 +4,8 @@
       @files="onFiles"
       :multiple="false"
       :processing="fileItem?.status === 'uploading'"
+      :drag-label="$t('Drag & drop an image')"
+      :pick-label="$t('select an image')"
     />
   </NodeViewWrapper>
 </template>

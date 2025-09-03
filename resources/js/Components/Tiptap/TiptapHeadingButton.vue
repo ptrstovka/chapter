@@ -19,6 +19,7 @@
 <script setup lang="ts">
 import { isNodeSelection } from "@tiptap/vue-3";
 import { reactiveOmit } from "@vueuse/core";
+import { wTrans } from "laravel-vue-i18n";
 import { useForwardProps } from "reka-ui";
 import { computed } from "vue";
 import { TiptapButton, type TiptapButtonProps } from '.'
@@ -113,7 +114,7 @@ const isActive = computed<boolean>(() => {
 const icon = computed(() => headingIcons[props.level])
 
 const shortcutKey = computed(() => headingShortcutKeys[props.level])
-const formattedName = computed(() => `Heading ${props.level}`)
+const formattedName = wTrans('Tiptap:Heading :value', { value: `${props.level}` })
 
 const show = computed(() => {
   if (!headingInSchema.value || !editor.value) {

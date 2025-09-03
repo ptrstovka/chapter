@@ -4,8 +4,8 @@
       <TiptapButton
         v-bind="forwarded"
         tabindex="-1"
-        aria-label="Highlight text"
-        tooltip="Highlight"
+        :aria-label="$t('Tiptap:Highlight text')"
+        :tooltip="$t('Tiptap:Highlight')"
         :disabled="isDisabled"
         :active="isActive"
       >
@@ -17,7 +17,6 @@
         <TiptapColorHighlightButton
           v-for="color in colors"
           :color="color.value"
-          :aria-label="`${color.value} highlight color`"
         />
 
         <div class="h-5 px-1">
@@ -26,7 +25,7 @@
 
         <TiptapButton
           @click="removeHighlight"
-          title="Remove highlight"
+          :title="$t('Tiptap:Remove highlight')"
         >
           <BanIcon />
         </TiptapButton>

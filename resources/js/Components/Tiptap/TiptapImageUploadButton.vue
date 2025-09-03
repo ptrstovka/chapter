@@ -16,6 +16,7 @@
 
 <script setup lang="ts">
 import { reactiveOmit } from "@vueuse/core";
+import { wTrans } from "laravel-vue-i18n";
 import { useForwardProps } from "reka-ui";
 import { computed } from "vue";
 import { useTiptap } from "./utils.ts";
@@ -60,7 +61,7 @@ const handleInsertImage = () => {
     .run()
 }
 
-const label = "Add image"
+const label = wTrans('Tiptap:Image')
 
 const handleClick = (event: MouseEvent) => {
   emit('click', event)

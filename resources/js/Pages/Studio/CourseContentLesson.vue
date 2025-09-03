@@ -149,5 +149,5 @@ const save = () => {
 const { confirm } = useConfirmable()
 const destroy = () => confirm(trans('Are you sure you want to delete this lesson? All resources including video will be permanently deleted.'), async () => {
   await asyncRouter.delete(route('studio.course.lessons.destroy', [props.id, props.chapter.id, props.lesson.id]))
-}, { title: trans('Delete lesson'), confirmLabel: trans('Delete'), cancelLabel: trans('Keep'), destructive: true })
+}, { title: trans('Delete Lesson'), confirmLabel: trans('Delete'), cancelLabel: trans('Keep'), destructive: true })
 </script>

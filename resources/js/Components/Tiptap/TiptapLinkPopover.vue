@@ -4,8 +4,8 @@
       <TiptapButton
         v-bind="forwarded"
         tabindex="-1"
-        aria-label="Link"
-        tooltip="Link"
+        :aria-label="$t('Tiptap:Link')"
+        :tooltip="$t('Tiptap:Link')"
         :disabled="isDisabled"
       >
         <Link2Icon />
@@ -15,7 +15,7 @@
       <div class="flex flex-row items-center gap-0.5">
         <Input
           class="text-sm border-0 shadow-none focus-visible:ring-0"
-          placeholder="Paste a link…"
+          :placeholder="$t('Tiptap:Paste a link…')"
           v-model="url"
           @keydown.enter="onEnter"
           autocomplete="off"
@@ -25,7 +25,7 @@
 
         <TiptapButton
           @click="setLink"
-          title="Apply link"
+          :title="$t('Tiptap:Apply link')"
           :disabled="!url && !isActive"
         >
           <CornerDownLeftIcon />
@@ -37,7 +37,7 @@
 
         <TiptapButton
           @click="handleOpenLink"
-          title="Open in new window"
+          :title="$t('Tiptap:Open in new window')"
           :disabled="!url && !isActive"
         >
           <ExternalLinkIcon />
@@ -45,7 +45,7 @@
 
         <TiptapButton
           @click="removeLink"
-          title="Remove link"
+          :title="$t('Tiptap:Remove link')"
           :disabled="!url && !isActive"
         >
           <TrashIcon />

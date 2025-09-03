@@ -20,8 +20,9 @@
 import { useTiptap } from "@/Components/Tiptap/utils.ts";
 import type { ChainedCommands, CanCommands } from "@tiptap/vue-3";
 import { reactiveOmit } from "@vueuse/core";
+import { wTrans } from "laravel-vue-i18n";
 import { useForwardProps } from "reka-ui";
-import { computed } from "vue";
+import { computed, type ComputedRef } from "vue";
 import { TiptapButton, type TiptapButtonProps } from '.'
 import { AlignLeftIcon, AlignRightIcon, AlignCenterIcon, AlignJustifyIcon } from 'lucide-vue-next'
 
@@ -41,11 +42,11 @@ const textAlignShortcutKeys: Partial<Record<TextAlign, string>> = {
   justify: "Ctrl-Shift-j",
 }
 
-const textAlignLabels: Record<TextAlign, string> = {
-  left: "Align left",
-  center: "Align center",
-  right: "Align right",
-  justify: "Align justify",
+const textAlignLabels: Record<TextAlign, ComputedRef<string>> = {
+  left: wTrans(`Tiptap:Align left`),
+  center: wTrans(`Tiptap:Align center`),
+  right: wTrans(`Tiptap:Align right`),
+  justify: wTrans(`Tiptap:Align justify`),
 }
 
 const emit = defineEmits(['click'])
@@ -154,7 +155,7 @@ const show = computed(() => {
 
 const icon = computed(() => textAlignIcons[props.align])
 const shortcutKey = computed(() => textAlignShortcutKeys[props.align])
-const label = computed(() => textAlignLabels[props.align])
+const label = computed(() => textAlignLabels[props.align].value)
 
 const handleClick = (event: MouseEvent) => {
   emit('click', event)

@@ -12,6 +12,7 @@
           'dark:data-[active=on]:hover:bg-primary/90',
           $attrs.class || '',
         )"
+        :title="title || undefined"
       >
         <slot />
       </Button>

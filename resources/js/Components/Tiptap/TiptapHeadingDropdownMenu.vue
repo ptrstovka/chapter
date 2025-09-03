@@ -5,9 +5,9 @@
         :disabled="isDisabled"
         :active="isAnyHeadingActive"
         tabindex="-1"
-        aria-label="Format text as heading"
+        :aria-label="$t('Tiptap:Format text as heading')"
         :aria-pressed="isAnyHeadingActive"
-        tooltip="Heading"
+        :tooltip="$t('Tiptap:Heading')"
         class="gap-0.5"
       >
         <component :is="icon" />
@@ -41,6 +41,7 @@ import {
   DropdownMenuItem
 } from "@/Components/DropdownMenu";
 import { isNodeSelection } from "@tiptap/vue-3";
+import { trans } from "laravel-vue-i18n";
 import { isNodeInSchema, useTiptap } from "./utils.ts";
 import { computed } from "vue";
 import { TiptapButton, TiptapHeadingButton } from ".";
@@ -90,7 +91,7 @@ const icon = computed(() => {
   return HeadingIcon
 })
 
-const getFormattedHeadingName = (level: Level) => `Heading ${level}`
+const getFormattedHeadingName = (level: Level) => trans('Tiptap:Heading :value', { value: `${level}` })
 
 const show = computed(() => {
   if (!headingInSchema.value || !editor.value) {

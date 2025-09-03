@@ -5,7 +5,7 @@
     :disabled="isDisabled"
     :active="isActive"
     tabindex="-1"
-    :aria-label="`${color} highlight color`"
+    :aria-label="$t('Tiptap:AriaLabel :color highlight color', { color })"
     :aria-pressed="isActive"
     @click="handleClick"
   >

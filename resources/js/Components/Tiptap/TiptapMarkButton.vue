@@ -19,6 +19,7 @@
 <script setup lang="ts">
 import { type ButtonProps } from '@/Components/Button'
 import { reactiveOmit } from "@vueuse/core";
+import { trans } from "laravel-vue-i18n";
 import { useForwardProps } from "reka-ui";
 import { computed } from "vue";
 import { useTiptap, isMarkInSchema } from './utils.ts'
@@ -122,7 +123,7 @@ const isActive = computed<boolean>(() => {
 
 const icon = computed(() => markIcons[props.type])
 const shortcutKey = computed(() => markShortcutKeys[props.type])
-const formattedName = computed<string>(() => props.type.charAt(0).toUpperCase() + props.type.slice(1))
+const formattedName = computed<string>(() => trans(`Tiptap:${props.type.charAt(0).toUpperCase() + props.type.slice(1)}`))
 
 const show = computed(() => {
   const e = editor.value

@@ -52,12 +52,9 @@ import { StudioLayout } from "@/Layouts"
 import type { AppPageProps } from "@/Types";
 import { usePage } from "@inertiajs/vue3";
 import { asyncRouter, useNavigation } from "@stacktrace/ui";
-import { trans, wTrans } from "laravel-vue-i18n";
+import { trans } from "laravel-vue-i18n";
 import { computed } from "vue";
 import { CheckIcon, ChevronDownIcon } from 'lucide-vue-next'
-
-const generalTitle = wTrans('General')
-const contentTitle = wTrans('Content')
 
 const page = usePage<AppPageProps & {
   id: string
@@ -76,11 +73,11 @@ const course = computed(() => page.props)
 
 const menu = useNavigation(computed(() => [
   {
-    title: generalTitle.value,
+    title: trans('General'),
     action: { route: 'studio.courses.show', params: [page.props.id] },
   },
   {
-    title: contentTitle.value,
+    title: trans('Content'),
     action: { route: 'studio.courses.content', params: [page.props.id] },
     active: [
       { route: 'studio.courses.content' },

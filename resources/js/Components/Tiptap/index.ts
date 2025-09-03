@@ -34,6 +34,7 @@ export interface TiptapButtonProps extends Omit<ButtonProps, 'variant'> {
   active?: boolean
   tooltip?: string | null | undefined
   shortcut?: string | null | undefined
+  title?: string | null | undefined
 }
 
 export const HIGHLIGHT_COLORS = [

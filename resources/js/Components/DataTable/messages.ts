@@ -1,18 +1,21 @@
-export default {
-  searchPlaceholder: 'Search…',
-  emptyTableTitle: 'Nothing to see there.',
-  emptyTableDescription: 'The table is empty.',
-  selectedRows: (selected: number, total: number) => `Selected ${selected} of ${total}`,
-  actions: 'Actions',
-  cancelSelection: 'Cancel selection',
-  viewOptions: 'View options',
-  perPage: 'Per page',
-  perPageOption: (value: number) => `${value} results`,
-  paginatorTotal: 'Total',
-  paginatorOf: 'of',
-  paginatorPrevious: 'Previous',
-  paginatorNext: 'Next',
-  searchEmptyTitle: 'No records found.',
-  searchEmptyDescription: 'Try to adjust your search criteria.',
-  clearSearch: 'Clear Search',
-}
+import { trans } from "laravel-vue-i18n";
+import { computed } from "vue";
+
+export default computed(() => ({
+  searchPlaceholder: trans('Search…'),
+  emptyTableTitle: trans('Nothing to see there.'),
+  emptyTableDescription: trans('The table is empty.'),
+  selectedRows: (selected: number, total: number) => trans('Selected :selected of :total', { selected: `${selected}`, total: `${total}` }),
+  actions: trans('DataTableActions'),
+  cancelSelection: trans('Cancel selection'),
+  viewOptions: trans('View options'),
+  perPage: trans('Per page'),
+  perPageOption: (value: number) => trans(':value results', { value: `${value}` }),
+  paginatorTotal: trans('PaginatorTotal'),
+  paginatorOf: trans('PaginatorOf'),
+  paginatorPrevious: trans('PaginatorPrevious'),
+  paginatorNext: trans('Next'),
+  searchEmptyTitle: trans('No records found.'),
+  searchEmptyDescription: trans('Try to adjust your search criteria.'),
+  clearSearch: trans('Clear Search'),
+}))

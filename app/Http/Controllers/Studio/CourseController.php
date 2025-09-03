@@ -102,7 +102,7 @@ class CourseController
                     ->sortable(using: 'created_at', named: 'created'),
             ])
             ->withActions([
-                Actions\Link::make(__('Show'), fn (Course $course) => Link::to(route('studio.courses.show', $course))),
+                Actions\Link::make(__('Manage'), fn (Course $course) => Link::to(route('studio.courses.show', $course))),
 
                 PublishCourseAction::make()
                     ->can(fn (Course $course) => Gate::allows('publish', $course) && $course->canBePublished())

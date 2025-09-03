@@ -19,6 +19,7 @@
 <script setup lang="ts">
 import { isNodeSelection } from "@tiptap/vue-3";
 import { reactiveOmit } from "@vueuse/core";
+import { wTrans } from "laravel-vue-i18n";
 import { useForwardProps } from "reka-ui";
 import { computed } from "vue";
 import { useTiptap, isNodeInSchema } from "./utils.ts";
@@ -89,7 +90,7 @@ const show = computed(() => {
 })
 
 const shortcutKey = "Ctrl-Alt-c"
-const label = "Code Block"
+const label = wTrans('Tiptap:Code Block')
 
 const handleClick = (event: MouseEvent) => {
   emit('click', event)

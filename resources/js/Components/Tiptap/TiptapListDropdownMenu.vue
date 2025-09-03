@@ -5,9 +5,9 @@
         :disabled="isDisabled"
         :active="isActive"
         tabindex="-1"
-        aria-label="List options"
+        :aria-label="$t('Tiptap:List options')"
         :aria-pressed="isActive"
-        tooltip="List"
+        :tooltip="$t('Tiptap:List')"
         class="gap-0.5"
       >
         <component :is="icon" />
@@ -42,6 +42,7 @@ import {
 } from "@/Components/DropdownMenu";
 import { isNodeInSchema, useTiptap } from "@/Components/Tiptap/utils.ts";
 import { isNodeSelection } from "@tiptap/vue-3";
+import { trans } from "laravel-vue-i18n";
 import { computed } from "vue";
 import { type TiptapButtonProps, TiptapButton, TiptapListButton } from '.'
 import { ChevronDownIcon, ListIcon, ListOrderedIcon, ListTodoIcon } from "lucide-vue-next";
@@ -125,9 +126,9 @@ const show = computed(() => {
 
 const resolveLabel = (type: ListType) => {
   return {
-    bulletList: "Bullet List",
-    orderedList: "Ordered List",
-    taskList: "Task List",
+    bulletList: trans('Tiptap:Bullet List'),
+    orderedList: trans('Tiptap:Ordered List'),
+    taskList: trans('Tiptap:Task List'),
   }[type]
 }
 

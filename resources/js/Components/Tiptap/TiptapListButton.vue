@@ -18,10 +18,11 @@
 
 <script setup lang="ts">
 import { isNodeSelection } from "@tiptap/vue-3";
+import { wTrans } from "laravel-vue-i18n";
 import { isNodeInSchema, useTiptap } from "./utils.ts";
 import { reactiveOmit } from "@vueuse/core";
 import { useForwardProps } from "reka-ui";
-import { computed } from "vue";
+import { computed, type ComputedRef } from "vue";
 import { type TiptapButtonProps, TiptapButton } from '.'
 import { ListIcon, ListOrderedIcon, ListTodoIcon } from 'lucide-vue-next'
 
@@ -33,10 +34,10 @@ const listShortcutKeys: Record<ListType, string> = {
   taskList: "Ctrl-Shift-9",
 }
 
-const listLabels: Record<ListType, string> = {
-  bulletList: "Bullet List",
-  orderedList: "Ordered List",
-  taskList: "Task List",
+const listLabels: Record<ListType, ComputedRef<string>> = {
+  bulletList: wTrans('Tiptap:Bullet List'),
+  orderedList: wTrans('Tiptap:Ordered List'),
+  taskList: wTrans('Tiptap:Task List'),
 }
 
 const listIcons = {
@@ -140,7 +141,7 @@ const show = computed<boolean>(() => {
 
 const shortcutKey = computed(() => listShortcutKeys[props.type])
 const icon = computed(() => listIcons[props.type])
-const label = computed(() => listLabels[props.type])
+const label = computed(() => listLabels[props.type].value)
 const isDisabled = computed(() => {
   if (!editor.value) return true
   if (props.disabled) return true
