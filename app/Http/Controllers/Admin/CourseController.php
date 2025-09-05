@@ -15,7 +15,7 @@ class CourseController
     {
         $courses = new CourseTable(author: null);
 
-        return Inertia::render('Admin/CourseList', AdminLayout::make([
+        return Inertia::render('Admin/CourseListPage', AdminLayout::make([
             'courses' => $courses,
         ])->breadcrumb(BreadcrumbItem::make(__('Courses'))));
     }

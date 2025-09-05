@@ -3,6 +3,10 @@
 
   <SidebarProvider>
     <Sidebar collapsible="icon" variant="inset">
+      <SidebarHeader>
+        <div class="font-semibold px-1.5">{{ $t('Studio') }}</div>
+      </SidebarHeader>
+
       <SidebarContent>
         <SidebarNavigation
           :menu="page.props.sidebar"
@@ -52,7 +56,8 @@ import { type Menu } from '@stacktrace/ui'
 import {
   Sidebar, SidebarContent, SidebarNavigation, SidebarProvider, SidebarInset, SidebarTrigger,
   SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton,
-} from '@/Components/Sidebar'
+  SidebarHeader
+} from "@/Components/Sidebar";
 import { BreadcrumbNavigation } from '@/Components/Breadcrumb'
 import { ArrowLeftIcon } from 'lucide-vue-next'
 

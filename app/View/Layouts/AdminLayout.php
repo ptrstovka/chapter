@@ -54,6 +54,15 @@ class AdminLayout extends Layout
                 MenuItem::make()
                     ->addChild(
                         MenuItem::make(
+                            title: __('Settings'),
+                            action: Link::to(route('admin.settings')),
+                            icon: new Icon('settings'),
+                        )->active(routes: [
+                            'admin.settings',
+                        ])
+                    )
+                    ->addChild(
+                        MenuItem::make(
                             title: __('Courses'),
                             action: Link::to(route('admin.courses')),
                             icon: new Icon('graduation-cap'),

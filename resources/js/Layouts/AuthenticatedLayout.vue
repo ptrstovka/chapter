@@ -71,6 +71,10 @@
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
 
+                <template v-if="$page.props.auth.user.can.viewAdmin">
+                  <DropdownMenuLink :href="route('admin')"><WrenchIcon /> {{ $t('Admin') }}</DropdownMenuLink>
+                </template>
+
                 <DropdownMenuLink :href="route('logout')" method="post" as="button"><LogOutIcon /> {{ $t('Log Out') }}</DropdownMenuLink>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -144,7 +148,7 @@ import { useDarkMode } from '@/Composables'
 import { useToggle } from '@stacktrace/ui'
 import { ref } from 'vue'
 import { navigationMenuTriggerStyle } from '@/Components/NavigationMenu'
-import { ChevronDownIcon, MenuIcon, XIcon, SearchIcon, UserRoundCogIcon, ClapperboardIcon, LogOutIcon, SunMoonIcon } from 'lucide-vue-next'
+import { ChevronDownIcon, MenuIcon, XIcon, SearchIcon, UserRoundCogIcon, ClapperboardIcon, LogOutIcon, SunMoonIcon, WrenchIcon } from 'lucide-vue-next'
 import { cn } from '@/Utils'
 import { Link } from '@inertiajs/vue3'
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from '@/Components/NavigationMenu'

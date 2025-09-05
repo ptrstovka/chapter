@@ -8,6 +8,6 @@ class AdminController
 {
     public function __invoke()
     {
-        return to_route('admin.courses');
+        return to_route('admin.settings');
     }
 }

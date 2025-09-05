@@ -7,10 +7,12 @@ export interface User {
   emailVerifiedAt: string
   can: {
     accessStudio: boolean
+    viewAdmin: boolean
   }
 }
 
 export type AppPageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
+  appName: string
   auth: {
     user: User
   }

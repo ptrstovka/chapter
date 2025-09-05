@@ -9,11 +9,12 @@ import { RootLayout } from '@/Layouts'
 import { MotionPlugin } from '@vueuse/motion'
 import { i18nVue } from 'laravel-vue-i18n'
 import { DataTablePlugin } from '@/Components/DataTable'
+import { useAppTitle } from '@/Composables'
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const resolveAppTitle = useAppTitle()
 
 createInertiaApp({
-  title: (title) => `${title} - ${appName}`,
+  title: resolveAppTitle,
   resolve: async (name) => {
     const page = await resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob<DefineComponent>('./Pages/**/*.vue'))
     page.default.layout = page.default.layout || RootLayout
@@ -35,6 +36,6 @@ createInertiaApp({
       .mount(el);
   },
   progress: {
-    color: '#4B5563',
+    color: 'var(--primary)',
   },
 });

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin;
 use App\Http\Controllers\BeginCourseController;
 use App\Http\Controllers\CompletedLessonController;
 use App\Http\Controllers\CourseController;
@@ -16,9 +17,9 @@ use App\Http\Controllers\ResetProgressController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Studio;
-use App\Http\Controllers\Admin;
 use App\Http\Controllers\TemporaryUploadController;
 use App\Http\Controllers\TiptapImageController;
+use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\StudioMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -52,12 +53,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-courses/favorites', FavoriteController::class)->name('mycourses.favorite');
     Route::get('/my-courses/completed', CompletedController::class)->name('mycourses.completed');
 
-    Route::prefix('admin')->group(function () {
-       Route::get('/', Admin\AdminController::class)->name('admin');
+    Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
+        Route::get('/', Admin\AdminController::class)->name('admin');
 
-       Route::name('admin.')->group(function () {
-           Route::get('/courses', [Admin\CourseController::class, 'index'])->name('courses');
-       });
+        Route::name('admin.')->group(function () {
+            Route::get('/courses', [Admin\CourseController::class, 'index'])->name('courses');
+
+            Route::get('/settings', [Admin\SettingsController::class, 'index'])->name('settings');
+            Route::patch('/settings', [Admin\SettingsController::class, 'update'])->name('settings.update');
+        });
     });
 
     Route::prefix('studio')->middleware(StudioMiddleware::class)->group(function () {
