@@ -16,6 +16,7 @@ use App\Http\Controllers\ResetProgressController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Studio;
+use App\Http\Controllers\Admin;
 use App\Http\Controllers\TemporaryUploadController;
 use App\Http\Controllers\TiptapImageController;
 use App\Http\Middleware\StudioMiddleware;
@@ -50,6 +51,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-courses', InProgressController::class)->name('mycourses.inprogress');
     Route::get('/my-courses/favorites', FavoriteController::class)->name('mycourses.favorite');
     Route::get('/my-courses/completed', CompletedController::class)->name('mycourses.completed');
+
+    Route::prefix('admin')->group(function () {
+       Route::get('/', Admin\AdminController::class)->name('admin');
+
+       Route::name('admin.')->group(function () {
+           Route::get('/courses', [Admin\CourseController::class, 'index'])->name('courses');
+       });
+    });
 
     Route::prefix('studio')->middleware(StudioMiddleware::class)->group(function () {
         Route::get('/', Studio\StudioController::class)->name('studio');
