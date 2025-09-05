@@ -50,6 +50,6 @@ const props = defineProps<InputProps & FormControlProps & {
   inputClass?: HTMLAttributes['class']
 }>()
 
-const delegated = reactiveOmit(props, 'id', 'disabled', 'type', 'label', 'required', 'class', 'inputClass', 'variant', 'help')
+const delegated = reactiveOmit(props, 'label', 'required', 'class', 'inputClass', 'variant', 'help')
 const forwarded = useForwardProps(delegated)
 </script>

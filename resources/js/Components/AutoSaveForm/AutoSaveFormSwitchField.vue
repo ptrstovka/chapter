@@ -9,31 +9,29 @@
       :variant="variant"
       :help="help"
     >
-      <FormSelect
+      <SwitchControl
         v-bind="forwarded"
         :model-value="field.value"
         @update:model-value="field.updateAndSave"
-        :class="selectClass"
-        :options="options"
-      />
-
-      <slot />
+        :class="switchClass"
+      >
+        <slot />
+      </SwitchControl>
     </FormControl>
   </AutoSaveFormField>
 </template>
 
 <script setup lang="ts">
-import type { SelectOption } from "@stacktrace/ui";
 import { reactiveOmit } from "@vueuse/core";
 import { useForwardProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
 import { AutoSaveFormField } from '.'
-import { FormControl, FormSelect } from '@/Components/Form'
+import { FormControl } from '@/Components/Form'
+import { SwitchControl } from '@/Components/Switch'
 
-interface SelectProps {
+interface SwitchProps {
   id?: string | undefined
   disabled?: boolean
-  options: Array<SelectOption>
 }
 
 interface FormControlProps {
@@ -42,13 +40,13 @@ interface FormControlProps {
   help?: string
 }
 
-const props = defineProps<SelectProps & FormControlProps & {
+const props = defineProps<SwitchProps & FormControlProps & {
   name: string
   required?: boolean
   class?: HTMLAttributes['class']
-  selectClass?: HTMLAttributes['class']
+  switchClass?: HTMLAttributes['class']
 }>()
 
-const delegated = reactiveOmit(props, 'options', 'label', 'required', 'class', 'selectClass', 'variant', 'help')
+const delegated = reactiveOmit(props, 'id', 'disabled', 'label', 'required', 'class', 'switchClass', 'variant', 'help')
 const forwarded = useForwardProps(delegated)
 </script>

@@ -6,6 +6,7 @@ export { default as AutoSaveFormField } from './AutoSaveFormField.vue'
 export { default as AutoSaveFormInputField } from './AutoSaveFormInputField.vue'
 export { default as AutoSaveFormProvider } from './AutoSaveFormProvider.vue'
 export { default as AutoSaveFormSelectField } from './AutoSaveFormSelectField.vue'
+export { default as AutoSaveFormSwitchField } from './AutoSaveFormSwitchField.vue'
 
 export type FormData = object
 export interface AutoSaveForm<TFormData extends FormData> {

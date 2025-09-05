@@ -2,6 +2,8 @@
 
 namespace App\View\Layouts;
 
+use App\Enums\Preference;
+use App\Facades\Settings;
 use App\View\Layout;
 use Closure;
 use Illuminate\Support\Arr;
@@ -68,6 +70,39 @@ class AdminLayout extends Layout
                             icon: new Icon('graduation-cap'),
                         )->active(routes: [
                             'admin.courses',
+                        ])
+                    )
+                    ->when(
+                        Settings::boolean(Preference::EnableRegistration) && Settings::boolean(Preference::EnableInvitations),
+                        fn (MenuItem $menu) => $menu->addChild(
+                            MenuItem::make(
+                                title: __('Invitation Codes'),
+                                action: Link::to(route('admin.invitation-codes')),
+                                icon: new Icon('send'),
+                            )->active(routes: [
+                                'admin.invitation-codes',
+                            ])
+                        )
+                    )
+                    ->when(
+                        Settings::boolean(Preference::EnableSingleSignOn),
+                        fn (MenuItem $menu) => $menu->addChild(
+                            MenuItem::make(
+                                title: __('SSO Providers'),
+                                action: Link::to(route('admin.sso')),
+                                icon: new Icon('key-square'),
+                            )->active(routes: [
+                                'admin.sso',
+                            ])
+                        )
+                    )
+                    ->addChild(
+                        MenuItem::make(
+                            title: __('Users'),
+                            action: Link::to(route('admin.users')),
+                            icon: new Icon('user'),
+                        )->active(routes: [
+                            'admin.users',
                         ])
                     )
             );

@@ -58,9 +58,11 @@ Route::middleware('auth')->group(function () {
 
         Route::name('admin.')->group(function () {
             Route::get('/courses', [Admin\CourseController::class, 'index'])->name('courses');
-
             Route::get('/settings', [Admin\SettingsController::class, 'index'])->name('settings');
             Route::patch('/settings', [Admin\SettingsController::class, 'update'])->name('settings.update');
+            Route::get('/single-sign-on', [Admin\SSOProviderController::class, 'index'])->name('sso');
+            Route::get('/invitation-codes', [Admin\InvitationCodeController::class, 'index'])->name('invitation-codes');
+            Route::get('/users', [Admin\UserController::class, 'index'])->name('users');
         });
     });
 
