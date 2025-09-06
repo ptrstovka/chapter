@@ -41,23 +41,25 @@ class InvitationController
 
                     return 'expired';
                 })->label([
-                    'accepted' => __('Accepted'),
-                    'pending' => __('Pending'),
-                    'expired' => __('Expired'),
+                    'accepted' => __('Invitation:Accepted'),
+                    'pending' => __('Invitation:Pending'),
+                    'expired' => __('Invitation:Expired'),
                 ])->variant([
                     'accepted' => 'positive',
                     'pending' => 'default',
                     'expired' => 'destructive',
-                ])->width(32),
-
-                Columns\Text::make(__('Expires At'), fn (Invitation $invitation) => $invitation->expires_at?->format('d.m.Y H:i') ?: __('Never'))
-                    ->alignEnd()
-                    ->numsTabular()
-                    ->width(32),
+                ])->width(40),
 
                 Columns\Text::make(__('Accepted By'), fn (Invitation $invitation) => $invitation->usedBy?->name)
-                    ->width(40)
-                    ->alignEnd(),
+                    ->width(40),
+
+                Columns\Text::make(__('Accepted At'), fn (Invitation $invitation) => $invitation->used_at?->format('d.m.Y H:i'))
+                    ->numsTabular()
+                    ->width(40),
+
+                Columns\Text::make(__('Expires At'), fn (Invitation $invitation) => $invitation->expires_at?->format('d.m.Y H:i') ?: __('Never'))
+                    ->numsTabular()
+                    ->width(40),
             ])
             ->withActions([
                 RevokeInvitationAction::make()
