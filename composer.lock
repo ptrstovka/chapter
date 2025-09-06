@@ -6306,16 +6306,16 @@
         },
         {
             "name": "stacktrace/ui",
-            "version": "v0.6.3",
+            "version": "v0.6.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stacktracelabs/ui.git",
-                "reference": "75e3228f64fe94ed31814a5f9b8227ac68fe6500"
+                "reference": "f14bf260eb0cfda05822183d424a705a9f6a7345"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stacktracelabs/ui/zipball/75e3228f64fe94ed31814a5f9b8227ac68fe6500",
-                "reference": "75e3228f64fe94ed31814a5f9b8227ac68fe6500",
+                "url": "https://api.github.com/repos/stacktracelabs/ui/zipball/f14bf260eb0cfda05822183d424a705a9f6a7345",
+                "reference": "f14bf260eb0cfda05822183d424a705a9f6a7345",
                 "shasum": ""
             },
             "require": {
@@ -6347,9 +6347,9 @@
             "description": "Component library for Laravel, Vue and Inertia.js based on shadcn-vue.",
             "support": {
                 "issues": "https://github.com/stacktracelabs/ui/issues",
-                "source": "https://github.com/stacktracelabs/ui/tree/v0.6.3"
+                "source": "https://github.com/stacktracelabs/ui/tree/v0.6.4"
             },
-            "time": "2025-08-28T11:51:14+00:00"
+            "time": "2025-09-06T13:06:51+00:00"
         },
         {
             "name": "symfony/cache",

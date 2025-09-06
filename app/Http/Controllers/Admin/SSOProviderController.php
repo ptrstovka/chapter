@@ -18,6 +18,7 @@ use StackTrace\Ui\Link;
 use StackTrace\Ui\Table;
 use StackTrace\Ui\Table\Columns;
 use StackTrace\Ui\Table\Actions;
+use StackTrace\Ui\ViewModel;
 
 class SSOProviderController
 {
@@ -105,7 +106,7 @@ class SSOProviderController
                 'id' => $provider->uuid,
                 'name' => $provider->name,
                 'type' => $provider->type,
-                'configuration' => $provider->configuration,
+                'configuration' => ViewModel::unformatted($provider->configuration ?: []),
                 'isActive' => $provider->is_active,
                 'callbackUrl' => $provider->getCallbackUrl(),
             ],
