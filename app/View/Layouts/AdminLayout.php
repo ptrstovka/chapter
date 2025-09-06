@@ -76,11 +76,11 @@ class AdminLayout extends Layout
                         Settings::boolean(Preference::EnableRegistration) && Settings::boolean(Preference::EnableInvitations),
                         fn (MenuItem $menu) => $menu->addChild(
                             MenuItem::make(
-                                title: __('Invitation Codes'),
-                                action: Link::to(route('admin.invitation-codes')),
+                                title: __('Invitations'),
+                                action: Link::to(route('admin.invitations')),
                                 icon: new Icon('send'),
                             )->active(routes: [
-                                'admin.invitation-codes',
+                                'admin.invitations',
                             ])
                         )
                     )

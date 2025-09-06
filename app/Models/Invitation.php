@@ -43,4 +43,14 @@ class Invitation extends Model
 
         return true;
     }
+
+    /**
+     * Revoke the invitation.
+     */
+    public function revoke(): void
+    {
+        $this->expires_at = now()->subSecond();
+
+        $this->save();
+    }
 }

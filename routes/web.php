@@ -61,7 +61,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/settings', [Admin\SettingsController::class, 'index'])->name('settings');
             Route::patch('/settings', [Admin\SettingsController::class, 'update'])->name('settings.update');
             Route::get('/single-sign-on', [Admin\SSOProviderController::class, 'index'])->name('sso');
-            Route::get('/invitation-codes', [Admin\InvitationCodeController::class, 'index'])->name('invitation-codes');
+            Route::get('/invitations', [Admin\InvitationController::class, 'index'])->name('invitations');
+            Route::post('/invitations', [Admin\InvitationController::class, 'store'])->name('invitations.store');
             Route::get('/users', [Admin\UserController::class, 'index'])->name('users');
         });
     });

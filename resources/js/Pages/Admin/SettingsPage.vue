@@ -3,7 +3,7 @@
     <AutoSaveFormProvider :form="form">
       <div class="flex flex-col divide-y">
         <Panel>
-          <PanelHeader class="bg-accent/40">
+          <PanelHeader class="bg-accent/40 dark:bg-accent/20">
             <PanelTitle>{{ $t('General') }}</PanelTitle>
           </PanelHeader>
           <PanelContent>
@@ -17,7 +17,7 @@
         </Panel>
 
         <Panel>
-          <PanelHeader class="bg-accent/40">
+          <PanelHeader class="bg-accent/40 dark:bg-accent/20">
             <PanelTitle>{{ $t('Access') }}</PanelTitle>
           </PanelHeader>
           <PanelContent>
