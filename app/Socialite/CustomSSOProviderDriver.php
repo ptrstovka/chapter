@@ -23,11 +23,17 @@ class CustomSSOProviderDriver extends AbstractProvider
             clientSecret: $provider->configuration['client_secret'],
             redirectUrl: $provider->getCallbackUrl(),
             guzzle: [
-                'verify' => !App::isLocal(),
+                'verify' => ! App::isLocal(),
             ]
         );
 
         $this->config = $provider->configuration;
+
+        $requestParameters = Arr::get($this->config, 'request_parameters');
+
+        if (is_array($requestParameters)) {
+            $this->with($requestParameters);
+        }
     }
 
     protected function getAuthUrl($state)

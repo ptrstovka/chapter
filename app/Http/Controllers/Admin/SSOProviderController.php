@@ -1,12 +1,12 @@
 <?php
 
-
 namespace App\Http\Controllers\Admin;
 
-
 use App\Models\SingleSignOnProvider;
+use App\Rules\KeyValueRule;
 use App\Table\Columns as CustomColumns;
 use App\View\Layouts\AdminLayout;
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,8 +16,8 @@ use Inertia\Inertia;
 use StackTrace\Ui\Breadcrumbs\BreadcrumbItem;
 use StackTrace\Ui\Link;
 use StackTrace\Ui\Table;
-use StackTrace\Ui\Table\Columns;
 use StackTrace\Ui\Table\Actions;
+use StackTrace\Ui\Table\Columns;
 use StackTrace\Ui\ViewModel;
 
 class SSOProviderController
@@ -137,6 +137,7 @@ class SSOProviderController
                 'login_button_title' => ['required', 'string', 'max:64'],
                 'login_button_text_color' => ['required', 'string', 'regex:/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i'],
                 'login_button_background_color' => ['required', 'string', 'regex:/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i'],
+                'request_parameters' => ['nullable', KeyValueRule::make()],
             ]);
         }
 

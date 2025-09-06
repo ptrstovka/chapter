@@ -65,6 +65,12 @@
               </FormControl>
             </PanelItem>
 
+            <PanelItem :label="$t('Request Parameters')" :center="false">
+              <FormControl :error="form.errors.request_parameters">
+                <KeyValueInput v-model="form.request_parameters" class="sm:max-w-md" />
+              </FormControl>
+            </PanelItem>
+
             <PanelItem :label="$t('User E-Mail field')">
               <FormControl :error="form.errors.user_email_field">
                 <Input v-model="form.user_email_field" class="sm:max-w-md" />
@@ -125,6 +131,7 @@ import { useForm } from "@inertiajs/vue3";
 import { asyncRouter, type SelectOption } from "@stacktrace/ui";
 import { trans } from "laravel-vue-i18n";
 import { computed } from "vue";
+import { KeyValueInput } from '@/Components/KeyValueInput'
 
 const types = computed<Array<SelectOption>>(() => [
   { label: trans('Custom'), value: 'custom' },
@@ -134,7 +141,7 @@ interface Provider {
   id: string
   name: string
   type: string
-  configuration: Record<string, string>
+  configuration: Record<string, any>
   callbackUrl: string
   isActive: boolean
 }
@@ -151,6 +158,7 @@ const form = useForm(() => ({
   authorize_url: props.provider?.configuration.authorize_url || '',
   token_url: props.provider?.configuration.token_url || '',
   user_url: props.provider?.configuration.user_url || '',
+  request_parameters: props.provider?.configuration.request_parameters || {},
   user_id_field: props.provider?.configuration.user_id_field || '',
   user_email_field: props.provider?.configuration.user_email_field || '',
   user_name_field: props.provider?.configuration.user_name_field || '',
