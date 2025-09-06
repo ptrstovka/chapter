@@ -1,3 +1,4 @@
+import type { BackendToast } from "@/Components/Sonner/useBackendSonner.ts";
 import type { Config } from 'ziggy-js'
 
 export interface User {
@@ -18,6 +19,7 @@ export type AppPageProps<T extends Record<string, unknown> = Record<string, unkn
   }
   locale: string
   ziggy: Config & { location: string }
+  toasts: Array<BackendToast>
 }
 
 export interface Paginator<T> {

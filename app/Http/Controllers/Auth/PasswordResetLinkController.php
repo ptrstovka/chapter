@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\Preference;
+use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,6 +20,8 @@ class PasswordResetLinkController extends Controller
      */
     public function create(): Response
     {
+        abort_unless(Settings::boolean(Preference::EnablePasswordLogin), 404);
+
         return Inertia::render('Auth/ForgotPassword', [
             'status' => session('status'),
             'canLogin' => Route::has('login'),
@@ -31,6 +35,8 @@ class PasswordResetLinkController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        abort_unless(Settings::boolean(Preference::EnablePasswordLogin), 404);
+
         $request->validate([
             'email' => 'required|email',
         ]);

@@ -1,7 +1,7 @@
 <template>
   <div :class="cn('py-4 px-4', $attrs.class || '')">
     <div v-if="label" :class="cn('flex', { 'sm:items-center': center, 'items-center': !wrap && center }, wrap ? 'flex-col sm:flex-row' : 'flex-row')">
-      <div class="font-medium text-sm" :class="cn({ 'sm:mt-1.5': !description }, wrap ? 'sm:w-2/5' : 'flex-1')">
+      <div class="font-medium text-sm" :class="cn({ 'sm:mt-1.5': !description && !center }, wrap ? 'sm:w-2/5' : 'flex-1')">
         <span>{{ label }}</span>
         <p class="text-xs text-muted-foreground w-3/4" v-if="description">{{ description }}</p>
       </div>
@@ -23,7 +23,7 @@ withDefaults(defineProps<{
   center?: boolean
   wrap?: boolean
 }>(), {
-  center: false,
+  center: true,
   wrap: true,
 })
 </script>

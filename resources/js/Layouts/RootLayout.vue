@@ -1,6 +1,7 @@
 <template>
   <slot />
 
+  <Toaster />
   <ConfirmationDialog />
 </template>
 
@@ -10,6 +11,8 @@ import { ConfirmationDialog } from '@/Components/ConfirmationDialog'
 import { usePage } from "@inertiajs/vue3";
 import { computed, watch } from "vue";
 import { loadLanguageAsync } from 'laravel-vue-i18n'
+import { Toaster } from '@/Components/Sonner'
+import 'vue-sonner/style.css'
 
 useSelectedTheme()
 

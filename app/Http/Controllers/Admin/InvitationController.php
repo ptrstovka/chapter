@@ -82,7 +82,7 @@ class InvitationController
 
         $request->validate([
             'code' => ['nullable', 'string', 'alpha_num:ascii', 'min:4', 'max:12', Rule::unique(Invitation::class, 'code')],
-            'expires_at' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:' . now()->format('Y-m-d')],
+            'expires_at' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:'.now()->format('Y-m-d')],
         ]);
 
         Invitation::create([

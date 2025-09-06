@@ -17,13 +17,20 @@
         </h1>
       </div>
 
-      <form @submit.prevent="submit" class="grid gap-5">
+      <form v-if="passwordLoginEnabled" @submit.prevent="submit" class="grid gap-5">
         <FormControl :label="$t('E-Mail')" :error="form.errors.email" for="email">
           <Input v-model="form.email" autocomplete="username" type="email" required autofocus id="email" />
         </FormControl>
 
-        <FormControl :label="$t('Password')" :error="form.errors.password" for="password">
+        <FormControl :label="$t('Password')" :error="form.errors.password" for="password" class="relative">
           <Input v-model="form.password" autocomplete="current-password" type="password" required id="password" />
+
+          <Link
+            v-if="canResetPassword"
+            :href="route('password.request')"
+            class="hover:text-primary text-sm text-muted-foreground absolute -top-[3px] right-0">
+            {{ $t('Forgot your password?') }}
+          </Link>
         </FormControl>
 
         <FormControl>
@@ -36,13 +43,18 @@
         <Button :processing="form.processing">{{ $t('Log in') }}</Button>
       </form>
 
-      <p v-if="canResetPassword" class="px-8 text-center text-sm text-muted-foreground">
-        <Link
-          :href="route('password.request')"
-          class="underline underline-offset-4 hover:text-primary">
-          {{ $t('Forgot your password?') }}
-        </Link>
-      </p>
+      <template v-if="singleSignOnEnabled && singleSignOnProviders.length > 0">
+        <p v-if="passwordLoginEnabled" class="text-center text-muted-foreground text-sm">{{ $t('or') }}</p>
+
+        <div class="flex flex-col gap-4">
+          <a
+            v-for="provider in singleSignOnProviders"
+            :href="provider.url"
+            class="bg-(--provider) text-(--provider-foreground) text-center text-sm font-medium whitespace-nowrap outline-none shrink-0 rounded-md py-1.5"
+            :style="{ '--provider-foreground': provider.textColor, '--provider': provider.backgroundColor }"
+          >{{ provider.title }}</a>
+        </div>
+      </template>
     </div>
   </GuestLayout>
 </template>
@@ -61,6 +73,14 @@ defineProps<{
   canResetPassword?: boolean;
   canRegister?: boolean;
   status?: string;
+  passwordLoginEnabled: boolean
+  singleSignOnEnabled: boolean
+  singleSignOnProviders: Array<{
+    url: string
+    title: string
+    textColor: string
+    backgroundColor: string
+  }>
 }>()
 
 const form = useForm({

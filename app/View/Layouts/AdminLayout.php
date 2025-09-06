@@ -92,7 +92,7 @@ class AdminLayout extends Layout
                                 action: Link::to(route('admin.sso')),
                                 icon: new Icon('key-square'),
                             )->active(routes: [
-                                'admin.sso',
+                                'admin.sso*',
                             ])
                         )
                     )

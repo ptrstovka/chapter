@@ -61,6 +61,12 @@ Route::middleware('auth')->group(function () {
             Route::get('/settings', [Admin\SettingsController::class, 'index'])->name('settings');
             Route::patch('/settings', [Admin\SettingsController::class, 'update'])->name('settings.update');
             Route::get('/single-sign-on', [Admin\SSOProviderController::class, 'index'])->name('sso');
+            Route::get('/single-sign-on/create', [Admin\SSOProviderController::class, 'create'])->name('sso.create');
+            Route::get('/single-sign-on/{provider:uuid}', [Admin\SSOProviderController::class, 'edit'])->name('sso.edit');
+            Route::patch('/single-sign-on/{provider:uuid}', [Admin\SSOProviderController::class, 'update'])->name('sso.update');
+            Route::delete('/single-sign-on/{provider:uuid}', [Admin\SSOProviderController::class, 'destroy'])->name('sso.destroy');
+            Route::post('/single-sign-on/{provider:uuid}/activate', Admin\ToggleSSOProviderController::class)->name('sso.activate');
+            Route::post('/single-sign-on', [Admin\SSOProviderController::class, 'store'])->name('sso.store');
             Route::get('/invitations', [Admin\InvitationController::class, 'index'])->name('invitations');
             Route::post('/invitations', [Admin\InvitationController::class, 'store'])->name('invitations.store');
             Route::get('/users', [Admin\UserController::class, 'index'])->name('users');
