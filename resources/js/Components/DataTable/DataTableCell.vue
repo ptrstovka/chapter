@@ -1,6 +1,6 @@
 <template>
   <TableCell
-    :class="cn(createCellStyle(cell.style), $attrs.class || '')"
+    :class="cn(createCellStyle(cell.style), 'py-3', $attrs.class || '')"
     :style="{
       width: cell.width || undefined,
       minWidth: cell.minWidth || undefined,

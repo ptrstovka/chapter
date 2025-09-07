@@ -15,7 +15,7 @@
       <template v-else>
         <div
           class="flex flex-row justify-between"
-          :class="cn(insetLeft || 'pl-2', insetRight || 'pr-2', { 'border-b py-2': ! borderless, 'pb-3': borderless })"
+          :class="cn(insetLeft || 'pl-2', insetRight || 'pr-2', { 'border-b py-3': ! borderless, 'pb-3': borderless })"
         >
           <div class="inline-flex items-center gap-4">
             <slot name="search" />
@@ -36,7 +36,7 @@
           </div>
         </div>
 
-        <DataTableFilter :class="cn(insetLeft || 'pl-2', insetRight || 'pr-2', { 'border-b py-2': ! borderless, 'pb-4': borderless })" />
+        <DataTableFilter :class="cn(insetLeft || 'pl-2', insetRight || 'pr-2', { 'border-b py-3': ! borderless, 'pb-4': borderless })" />
 
         <Table v-if="table.rows.length">
           <TableHeader>
