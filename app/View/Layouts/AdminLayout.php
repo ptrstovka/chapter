@@ -72,6 +72,15 @@ class AdminLayout extends Layout
                             'admin.courses',
                         ])
                     )
+                    ->addChild(
+                        MenuItem::make(
+                            title: __('Categories'),
+                            action: Link::to(route('admin.categories')),
+                            icon: new Icon('list-tree'),
+                        )->active(routes: [
+                            'admin.categories',
+                        ])
+                    )
                     ->when(
                         Settings::boolean(Preference::EnableRegistration) && Settings::boolean(Preference::EnableInvitations),
                         fn (MenuItem $menu) => $menu->addChild(

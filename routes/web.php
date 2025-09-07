@@ -60,9 +60,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/', Admin\AdminController::class)->name('admin');
 
         Route::name('admin.')->group(function () {
-            Route::get('/courses', [Admin\CourseController::class, 'index'])->name('courses');
             Route::get('/settings', [Admin\SettingsController::class, 'index'])->name('settings');
             Route::patch('/settings', [Admin\SettingsController::class, 'update'])->name('settings.update');
+
             Route::get('/single-sign-on', [Admin\SSOProviderController::class, 'index'])->name('sso');
             Route::get('/single-sign-on/create', [Admin\SSOProviderController::class, 'create'])->name('sso.create');
             Route::get('/single-sign-on/{provider:uuid}', [Admin\SSOProviderController::class, 'edit'])->name('sso.edit');
@@ -70,9 +70,20 @@ Route::middleware('auth')->group(function () {
             Route::delete('/single-sign-on/{provider:uuid}', [Admin\SSOProviderController::class, 'destroy'])->name('sso.destroy');
             Route::post('/single-sign-on/{provider:uuid}/activate', Admin\ToggleSSOProviderController::class)->name('sso.activate');
             Route::post('/single-sign-on', [Admin\SSOProviderController::class, 'store'])->name('sso.store');
+
             Route::get('/invitations', [Admin\InvitationController::class, 'index'])->name('invitations');
             Route::post('/invitations', [Admin\InvitationController::class, 'store'])->name('invitations.store');
+
             Route::get('/users', [Admin\UserController::class, 'index'])->name('users');
+
+            Route::get('/categories', [Admin\CategoryController::class, 'index'])->name('categories');
+            Route::get('/categories/create', [Admin\CategoryController::class, 'create'])->name('categories.create');
+            Route::post('/categories', [Admin\CategoryController::class, 'store'])->name('categories.store');
+            Route::get('/categories/{category}', [Admin\CategoryController::class, 'edit'])->name('categories.edit');
+            Route::patch('/categories/{category}', [Admin\CategoryController::class, 'update'])->name('categories.update');
+            Route::delete('/categories/{category}', [Admin\CategoryController::class, 'destroy'])->name('categories.destroy');
+
+            Route::get('/courses', [Admin\CourseController::class, 'index'])->name('courses');
         });
     });
 
