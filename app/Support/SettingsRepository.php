@@ -259,6 +259,31 @@ class SettingsRepository
     }
 
     /**
+     * Set preference value or list of preference values.
+     * When the value is null, the preference is removed.
+     */
+    public function setOrForget(string|PreferenceKey|array $key, mixed $value = null): void
+    {
+        if ($key instanceof PreferenceKey) {
+            $key = $key->value;
+        }
+
+        if (is_array($key) && $value == null) {
+            foreach ($key as $k => $v) {
+                $this->setOrForget($k, $v);
+            }
+
+            return;
+        }
+
+        if ($value === null) {
+            $this->forget($key);
+        } else {
+            $this->set($key, $value);
+        }
+    }
+
+    /**
      * Set preference value or list of preferences.
      */
     public function set(string|PreferenceKey|array $key, mixed $value = null): void

@@ -12,6 +12,7 @@ use App\Http\Controllers\MyCourses\CompletedController;
 use App\Http\Controllers\MyCourses\FavoriteController;
 use App\Http\Controllers\MyCourses\InProgressController;
 use App\Http\Controllers\NextLessonController;
+use App\Http\Controllers\Platform\ExploreController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResetProgressController;
 use App\Http\Controllers\ResourceController;
@@ -27,6 +28,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', HomeController::class)->name('home');
+
+    Route::get('/explore', ExploreController::class)->name('explore');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

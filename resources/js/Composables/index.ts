@@ -1,2 +1,2 @@
+export * from './useAppearance'
 export * from './useAppTitle'
-export * from './useDarkMode'

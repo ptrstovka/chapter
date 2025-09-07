@@ -1,5 +1,5 @@
 <template>
-  <Head :title="$t('Home')" />
+  <Head :title="$t('Explore')" />
 
   <AuthenticatedLayout class="bg-background">
     <div class="py-8">

@@ -12,12 +12,21 @@ export interface User {
   }
 }
 
+export interface Application {
+  name: string
+  locale: string
+  enableExplorePage: boolean
+  primaryColorForeground: string | null
+  primaryColorBackground: string | null
+  primaryColorForegroundDark: string | null
+  primaryColorBackgroundDark: string | null
+}
+
 export type AppPageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
-  appName: string
+  app: Application
   auth: {
     user: User
   }
-  locale: string
   ziggy: Config & { location: string }
   toasts: Array<BackendToast>
 }

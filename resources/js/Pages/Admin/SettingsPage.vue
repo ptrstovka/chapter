@@ -3,7 +3,7 @@
     <AutoSaveFormProvider :form="form">
       <div class="flex flex-col divide-y">
         <Panel>
-          <PanelHeader class="bg-accent/40 dark:bg-accent/20">
+          <PanelHeader>
             <PanelTitle>{{ $t('General') }}</PanelTitle>
           </PanelHeader>
           <PanelContent>
@@ -13,11 +13,50 @@
             <PanelItem :label="$t('Platform Locale')" :description="$t('The default platform locale.')">
               <AutoSaveFormSelectField name="platform_locale" :options="availableLocales" class="sm:max-w-sm" select-class="w-full" />
             </PanelItem>
+            <PanelItem :label="$t('Primary Color')" :description="$t('Adjust primary color to your brand. hasl() and oklch() formats are currently supported.')">
+              <div class="grid grid-cols-2 sm:max-w-md">
+                <AutoSaveFormInputField
+                  input-class="rounded-r-none"
+                  name="primary_color_background"
+                  :placeholder="$t('Background Color')"
+                />
+
+                <AutoSaveFormInputField
+                  input-class="rounded-l-none -mx-px"
+                  name="primary_color_foreground"
+                  :placeholder="$t('Text Color')"
+                />
+              </div>
+            </PanelItem>
+            <PanelItem :label="$t('Primary Color - Dark')" :description="$t('The primary color used in the dark mode.')">
+              <div class="grid grid-cols-2 sm:max-w-md">
+                <AutoSaveFormInputField
+                  input-class="rounded-r-none"
+                  name="primary_color_dark_background"
+                  :placeholder="$t('Background Color')"
+                />
+
+                <AutoSaveFormInputField
+                  input-class="rounded-l-none -mx-px"
+                  name="primary_color_dark_foreground"
+                  :placeholder="$t('Text Color')"
+                />
+              </div>
+            </PanelItem>
           </PanelContent>
         </Panel>
 
         <Panel>
-          <PanelHeader class="bg-accent/40 dark:bg-accent/20">
+          <PanelHeader>
+            <PanelTitle>{{ $t('Features') }}</PanelTitle>
+          </PanelHeader>
+          <PanelItem :label="$t('Explore Page')" :description="$t('Enable course recommendations through Explore page.')">
+            <AutoSaveFormSwitchField name="enable_explore_page" />
+          </PanelItem>
+        </Panel>
+
+        <Panel>
+          <PanelHeader>
             <PanelTitle>{{ $t('Access') }}</PanelTitle>
           </PanelHeader>
           <PanelContent>
@@ -57,15 +96,25 @@ const props = defineProps<{
   enableInvitations: boolean
   enableSingleSignOn: boolean
   enablePasswordLogin: boolean
+  enableExplorePage: boolean
+  primaryColorForeground: string | null
+  primaryColorBackground: string | null
+  primaryColorDarkForeground: string | null
+  primaryColorDarkBackground: string | null
 }>()
 
 const form = useAutoSaveForm(() => ({
   platform_name: props.platformName || '',
   platform_locale: props.platformLocale,
+  primary_color_foreground: props.primaryColorForeground || '',
+  primary_color_background: props.primaryColorBackground || '',
+  primary_color_dark_foreground: props.primaryColorDarkForeground || '',
+  primary_color_dark_background: props.primaryColorDarkBackground || '',
   enable_registration: props.enableRegistration,
   enable_invitations: props.enableInvitations,
   enable_single_sign_on: props.enableSingleSignOn,
   enable_password_login: props.enablePasswordLogin,
+  enable_explore_page: props.enableExplorePage,
 }), {
   method: 'patch',
   url: route('admin.settings.update')

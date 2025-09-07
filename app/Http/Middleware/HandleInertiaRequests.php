@@ -15,8 +15,15 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            'appName' => fn () => Settings::get(Preference::PlatformName),
-            'locale' => fn () => App::getLocale(),
+            'app' => fn () => [
+                'name' => Settings::get(Preference::PlatformName),
+                'locale' => App::getLocale(),
+                'enableExplorePage' => Settings::boolean(Preference::EnableExplorePage),
+                'primaryColorForeground' => Settings::string(Preference::PrimaryColorForeground),
+                'primaryColorBackground' => Settings::string(Preference::PrimaryColorBackground),
+                'primaryColorForegroundDark' => Settings::string(Preference::PrimaryColorDarkForeground),
+                'primaryColorBackgroundDark' => Settings::string(Preference::PrimaryColorDarkBackground),
+            ],
             'auth' => fn () => [
                 'user' => UserViewViewModel::from($request->user()),
             ],

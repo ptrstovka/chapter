@@ -4,7 +4,7 @@
       <Link href="/" class="inline-flex items-center text-lg font-medium">
         <Logo class="mr-2 h-6 w-6" />
 
-        {{ page.props.appName }}
+        {{ $page.props.app.name }}
       </Link>
     </div>
 
@@ -17,7 +17,7 @@
         <Link href="/" class="inline-flex items-center text-lg font-medium">
           <Logo class="mr-2 h-6 w-6" />
 
-          {{ page.props.appName }}
+          {{ $page.props.app.name }}
         </Link>
       </div>
     </div>
@@ -30,7 +30,5 @@
 <script setup lang="ts">
 import { Logo } from "@/Components/Logo";
 import { Particles } from "@/Components/Patterns";
-import { Link, usePage } from "@inertiajs/vue3";
-
-const page = usePage()
+import { Link } from "@inertiajs/vue3";
 </script>
