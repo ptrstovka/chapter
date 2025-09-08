@@ -1,8 +1,10 @@
 <template>
-  <slot />
+  <ConfigProvider :scroll-body="false" :locale="locale">
+    <slot />
 
-  <Toaster />
-  <ConfirmationDialog />
+    <Toaster />
+    <ConfirmationDialog />
+  </ConfigProvider>
 </template>
 
 <script setup lang="ts">
@@ -12,6 +14,7 @@ import { usePage } from "@inertiajs/vue3";
 import { computed, watch } from "vue";
 import { loadLanguageAsync } from 'laravel-vue-i18n'
 import { Toaster } from '@/Components/Sonner'
+import { ConfigProvider } from 'reka-ui'
 import 'vue-sonner/style.css'
 
 const page = usePage()

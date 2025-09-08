@@ -17,15 +17,16 @@ use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use StackTrace\Ui\SelectOption;
 
 class CourseController
 {
     public function index(Request $request)
     {
-        $categories = Category::all()->map(fn (Category $category) => [
-            'value' => $category->slug,
-            'title' => $category->title,
-        ])->sortBy('title')->values();
+        $categories = Category::all()
+            ->map(fn (Category $category) => new SelectOption($category->title, $category->slug))
+            ->sortBy('label')
+            ->values();
 
         $user = Auth::user();
 

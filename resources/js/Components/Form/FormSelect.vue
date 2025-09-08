@@ -1,6 +1,6 @@
 <template>
   <Select v-bind="forwarded" v-model="value">
-    <SelectTrigger :class="props.class">
+    <SelectTrigger :class="props.class" :size="size">
       <SelectValue :placeholder="placeholder" />
     </SelectTrigger>
     <SelectContent>
@@ -22,6 +22,7 @@ const props = defineProps<SelectRootProps & {
   placeholder?: string | undefined
   class?: HTMLAttributes['class']
   modelValue?: string | number | undefined
+  size?: 'sm' | 'default'
 }>()
 const emits = defineEmits<SelectRootEmits>()
 

@@ -82,7 +82,7 @@ import { cn } from '@/Utils'
 import { Head, Link } from '@inertiajs/vue3'
 import { LinkButton } from '@/Components/Button'
 import { PlayIcon, TimerIcon, HourglassIcon, CheckIcon, XIcon } from 'lucide-vue-next'
-import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from "vue";
 import { Badge } from '@/Components/Badge'
 
 interface Lesson {
@@ -171,6 +171,12 @@ const currentLesson = computed(() => lessons.value.find(it => it.isCurrent))
 
 onMounted(() =>{
   scrollToCurrentLesson()
+
+  document.getElementsByTagName('html')[0].classList.remove('overflow-y-scroll')
+})
+
+onBeforeUnmount(() => {
+  document.getElementsByTagName('html')[0].classList.add('overflow-y-scroll')
 })
 
 watch(currentLesson, () => {

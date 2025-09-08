@@ -2,7 +2,7 @@
   <Card class="p-0 overflow-hidden">
     <CardContent class="p-0">
       <Link :href="course.url">
-        <div class="relative h-44">
+        <div class="relative aspect-video">
           <img :class="{ 'grayscale': course.enrollment && course.enrollment.isCompleted }" class="object-cover w-full h-full" v-if="course.coverImageUrl" :src="course.coverImageUrl" :alt="`Cover image of ${course.title} course`">
           <div v-else class="flex items-center justify-center w-full h-full bg-stone-50 dark:bg-background">
             <ImageOffIcon class="w-5 h-5 text-stone-400" />

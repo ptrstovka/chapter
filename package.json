@@ -57,6 +57,7 @@
         "tw-animate-css": "^1.3.7",
         "typescript": "~5.8.3",
         "typescript-eslint": "^8.40.0",
+        "vaul-vue": "^0.4.1",
         "vidstack": "^1.12.13",
         "vite": "^6.3.5",
         "vue": "^3.5.19",

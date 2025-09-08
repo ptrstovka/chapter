@@ -1,5 +1,5 @@
 <template>
-  <div :class="cn('min-h-screen flex flex-col bg-stone-50 dark:bg-background', $attrs.class || '')">
+  <div :class="cn('min-h-screen flex flex-col', $attrs.class || '')">
     <div v-if="header" class="h-16 border-b bg-background">
       <!-- Primary Navigation Menu -->
       <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -95,15 +95,19 @@
       <!-- Responsive Navigation Menu -->
       <div
         :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }"
-        class="sm:hidden"
+        class="sm:hidden relative z-10 bg-background"
       >
         <div class="flex flex-col gap-1 px-2 pt-2 pb-3">
-          <Link :href="route('home')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('dashboard') || undefined">
-            {{ $t('Home') }}
+          <Link v-if="$page.props.app.enableExplorePage" :href="route('explore')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('explore*') || undefined">
+            {{ $t('Explore') }}
           </Link>
 
-          <Link :href="route('courses')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('courses') || undefined">
-            {{ $t('Browse Course') }}
+          <Link :href="route('courses')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('courses*') || undefined">
+            {{ $t('Browse Courses') }}
+          </Link>
+
+          <Link :href="route('mycourses.inprogress')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('mycourses.*') || undefined">
+            {{ $t('My Courses') }}
           </Link>
         </div>
 
@@ -119,6 +123,14 @@
           <div class="flex flex-col gap-1 px-2 mt-3">
             <Link :href="route('profile.edit')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('profile.edit') || undefined">
               {{ $t('Profile') }}
+            </Link>
+
+            <Link v-if="$page.props.auth.user.can.accessStudio" :href="route('studio')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('studio*') || undefined">
+              {{ $t('Studio') }}
+            </Link>
+
+            <Link v-if="$page.props.auth.user.can.viewAdmin" :href="route('admin')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" :data-active="route().current('studio*') || undefined">
+              {{ $t('Admin Panel') }}
             </Link>
 
             <Link :href="route('logout')" :class="cn(navigationMenuTriggerStyle(), 'w-full justify-start px-2')" method="post" as="button">
