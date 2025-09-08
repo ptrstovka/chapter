@@ -3,6 +3,7 @@ import { reactive } from "vue";
 import { router } from "@inertiajs/vue3";
 
 export { default as AutoSaveFormField } from './AutoSaveFormField.vue'
+export { default as AutoSaveFormImageField } from './AutoSaveFormImageField.vue'
 export { default as AutoSaveFormInputField } from './AutoSaveFormInputField.vue'
 export { default as AutoSaveFormProvider } from './AutoSaveFormProvider.vue'
 export { default as AutoSaveFormSelectField } from './AutoSaveFormSelectField.vue'

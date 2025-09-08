@@ -5,6 +5,7 @@ namespace App\View\Layouts;
 use App\View\Layout;
 use Closure;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use StackTrace\Ui\Breadcrumbs\BreadcrumbItem;
 use StackTrace\Ui\Breadcrumbs\BreadcrumbList;
 use StackTrace\Ui\Icon;
@@ -80,9 +81,15 @@ class StudioLayout extends Layout
 
     public function toLayout(): array
     {
+        $instructor = Auth::user()->author;
+
         return [
             'sidebar' => $this->sidebar(),
             'breadcrumbs' => $this->breadcrumbs,
+            'instructor' => [
+                'name' => $instructor->name,
+                'avatarUrl' => $instructor->getAvatarUrl(),
+            ],
         ];
     }
 

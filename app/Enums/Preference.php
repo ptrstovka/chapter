@@ -6,6 +6,7 @@ enum Preference: string
 {
     case PlatformName = 'Platform.Name';
     case PlatformLocale = 'Platform.Locale';
+    case AppLogo = 'App.Logo';
     case PrimaryColorForeground = 'Platform.PrimaryColorForeground';
     case PrimaryColorBackground = 'Platform.PrimaryColorBackground';
     case PrimaryColorDarkForeground = 'Platform.PrimaryColorDarkForeground';

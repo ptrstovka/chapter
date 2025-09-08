@@ -8,7 +8,9 @@
             <!-- Logo -->
             <div class="flex items-center shrink-0">
               <Link :href="route('home')" class="inline-flex flex-row items-center gap-4 font-medium">
-                <Logo class="block w-auto h-6 text-foreground" />
+                <Logo />
+
+                <span>{{ $page.props.app.name }}</span>
               </Link>
             </div>
 

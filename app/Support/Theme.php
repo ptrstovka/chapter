@@ -5,6 +5,7 @@ namespace App\Support;
 use App\Enums\Preference;
 use App\Facades\Settings;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Storage;
 
 final readonly class Theme
 {
@@ -70,5 +71,17 @@ final readonly class Theme
     public static function primaryDarkForegroundColor(): string
     {
         return Settings::get(Preference::PrimaryColorDarkForeground) ?: self::DEFAULT_DARK_PRIMARY_FOREGROUND_COLOR;
+    }
+
+    /**
+     * Get the logo URL.
+     */
+    public static function logo(): ?string
+    {
+        if ($logo = Settings::get(Preference::AppLogo)) {
+            return Storage::disk('public')->url($logo);
+        }
+
+        return null;
     }
 }

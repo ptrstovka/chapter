@@ -4,7 +4,23 @@
   <SidebarProvider>
     <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader>
-        <div class="font-semibold px-1.5">{{ $t('Admin') }}</div>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <Link
+              :as="SidebarMenuButton"
+              :href="route('admin')"
+              size="lg"
+              class="cursor-pointer"
+            >
+              <Logo class="shrink-0" />
+
+              <div class="grid flex-1 text-left text-sm leading-tight">
+                <span class="truncate font-semibold">{{ $page.props.app.name }}</span>
+                <span class="truncate text-xs">{{ $t('Admin Panel') }}</span>
+              </div>
+            </Link>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
 
       <SidebarContent>
@@ -60,6 +76,7 @@ import {
 } from '@/Components/Sidebar'
 import { BreadcrumbNavigation } from '@/Components/Breadcrumb'
 import { ArrowLeftIcon } from 'lucide-vue-next'
+import { Logo } from '@/Components/Logo'
 
 defineProps<{
   title?: string | null | undefined

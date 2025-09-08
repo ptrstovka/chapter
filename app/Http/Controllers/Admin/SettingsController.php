@@ -6,9 +6,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\Preference;
 use App\Facades\Settings;
+use App\Models\TemporaryUpload;
 use App\Support\Patch;
+use App\Support\Theme;
 use App\View\Layouts\AdminLayout;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use StackTrace\Ui\Breadcrumbs\BreadcrumbItem;
@@ -34,6 +39,7 @@ class SettingsController
             'primaryColorBackground' => Settings::string(Preference::PrimaryColorBackground),
             'primaryColorDarkForeground' => Settings::string(Preference::PrimaryColorDarkForeground),
             'primaryColorDarkBackground' => Settings::string(Preference::PrimaryColorDarkBackground),
+            'logo' => Theme::logo(),
         ])->breadcrumb(BreadcrumbItem::make(__('Settings'))));
     }
 
@@ -53,6 +59,7 @@ class SettingsController
             'enable_single_sign_on' => ['sometimes', 'boolean'],
             'enable_password_login' => ['sometimes', 'boolean'],
             'enable_explore_page' => ['sometimes', 'boolean'],
+            'logo' => ['sometimes', 'nullable', 'string'],
         ]);
 
         $patch = new Patch($validated);
@@ -70,6 +77,37 @@ class SettingsController
         $patch->present('enable_password_login', fn (bool $value) => Settings::setOrForget(Preference::EnablePasswordLogin, $value));
 
         $patch->present('enable_explore_page', fn (bool $value) => Settings::setOrForget(Preference::EnableExplorePage, $value));
+
+        $patch->present('logo', function (?string $logo) {
+            $removeCurrentLogo = function () {
+                if ($currentLogo = Settings::get(Preference::AppLogo)) {
+                    Settings::forget(Preference::AppLogo);
+
+                    if (Storage::disk('public')->exists($currentLogo)) {
+                        Storage::disk('public')->delete($currentLogo);
+                    }
+                }
+            };
+
+            if ($logo) {
+                if (Str::isUuid($logo)) {
+                    $upload = TemporaryUpload::query()
+                        ->where('uuid', $logo)
+                        ->where('scope', 'AppLogo')
+                        ->whereBelongsTo(Auth::user())
+                        ->first();
+
+                    if ($upload) {
+                        $removeCurrentLogo();
+                        $path = $upload->copyTo('public', 'app');
+                        Settings::set(Preference::AppLogo, $path);
+                        $upload->delete();
+                    }
+                }
+            } else {
+                $removeCurrentLogo();
+            }
+        });
 
         return back();
     }

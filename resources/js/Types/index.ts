@@ -16,10 +16,7 @@ export interface Application {
   name: string
   locale: string
   enableExplorePage: boolean
-  primaryColorForeground: string | null
-  primaryColorBackground: string | null
-  primaryColorForegroundDark: string | null
-  primaryColorBackgroundDark: string | null
+  logo: string | null
 }
 
 export type AppPageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
