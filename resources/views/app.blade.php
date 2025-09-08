@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="appName" content="{{ \App\Facades\Settings::get(\App\Enums\Preference::PlatformName) }}">
+    <title inertia>{{ \App\Facades\Settings::get(\App\Enums\Preference::PlatformName) }}</title>
 
     <script>
         (function() {
@@ -39,7 +40,9 @@
         }
     </style>
 
-    <title inertia>{{ \App\Facades\Settings::get(\App\Enums\Preference::PlatformName) }}</title>
+    @if($logo = \App\Support\Theme::logo())
+    <link rel="icon" href="{{ $logo }}" />
+    @endif
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
