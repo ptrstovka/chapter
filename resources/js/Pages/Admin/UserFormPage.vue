@@ -1,5 +1,5 @@
 <template>
-  <AdminLayout :title="$t('Users')">
+  <AdminLayout :title="$t('User :name', { name: user.name })">
     <Panel class="flex-1 flex flex-col">
       <PanelHeader>
         <PanelTitle>{{ $t('User :name', { name: user.name }) }}</PanelTitle>
@@ -37,15 +37,15 @@
               <div class="flex flex-row p-3 gap-3">
                 <RadioGroupItem id="role:author" value="author" />
                 <div class="pt-px w-full flex flex-col gap-3">
-                  <Label for="role:author">{{ $t('Author') }}</Label>
+                  <Label for="role:author">{{ $t('Instructor') }}</Label>
                   <FormCombobox
                     v-if="form.role === 'author'"
                     class="w-full"
                     :options="authors"
                     v-model="form.author"
-                    :search-label="$t('Search author…')"
-                    :not-found-label="$t('No author found')"
-                    :placeholder="$t('Select author…')"
+                    :search-label="$t('Search instructor…')"
+                    :not-found-label="$t('No instructor found')"
+                    :placeholder="$t('Select instructor…')"
                   />
                 </div>
               </div>

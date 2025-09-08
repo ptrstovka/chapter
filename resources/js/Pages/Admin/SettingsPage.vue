@@ -13,7 +13,7 @@
             <PanelItem :label="$t('Platform Locale')" :description="$t('The default platform locale.')">
               <AutoSaveFormSelectField name="platform_locale" :options="availableLocales" class="sm:max-w-sm" select-class="w-full" />
             </PanelItem>
-            <PanelItem :label="$t('Primary Color')" :description="$t('Adjust primary color to your brand. hasl() and oklch() formats are currently supported.')">
+            <PanelItem :label="$t('Primary Color')" :description="$t('Adjust primary color to your brand. hsl() and oklch() formats are currently supported.')">
               <div class="grid sm:grid-cols-2 sm:max-w-md">
                 <AutoSaveFormInputField
                   input-class="rounded-b-none sm:rounded-bl-md sm:rounded-r-none"

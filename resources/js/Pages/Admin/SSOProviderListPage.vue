@@ -2,8 +2,8 @@
   <AdminLayout :title="$t('SSO Providers')">
     <DataTable
       :table="providers"
-      :empty-table-message="$t('No SSO providers')"
-      :empty-table-description="$t('Get started by configuring first SSO provider.')"
+      :empty-table-message="$t('No SSO Providers')"
+      :empty-table-description="$t('Get started by configuring first SSO Provider.')"
     >
       <template #empty-table>
         <LinkButton :href="route('admin.sso.create')" class="mt-4">

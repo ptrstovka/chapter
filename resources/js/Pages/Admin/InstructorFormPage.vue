@@ -1,5 +1,5 @@
 <template>
-  <AdminLayout :title="instructor ? $t('Instructor :name', { name: instructor.name }) : $t('Create Instructor')">
+  <AdminLayout :title="instructor ? $t('Instructor :name', { name: instructor.name }) : $t('New Instructor')">
     <Panel class="flex-1 flex flex-col">
       <PanelHeader v-if="instructor">
         <PanelTitle>{{ $t('Instructor :name', { name: instructor.name }) }}</PanelTitle>

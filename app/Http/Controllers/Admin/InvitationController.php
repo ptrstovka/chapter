@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use StackTrace\Ui\Breadcrumbs\BreadcrumbItem;
+use StackTrace\Ui\Link;
 use StackTrace\Ui\Table;
 use StackTrace\Ui\Table\Columns;
 
@@ -51,6 +52,7 @@ class InvitationController
                 ])->width(40),
 
                 Columns\Text::make(__('Accepted By'), fn (Invitation $invitation) => $invitation->usedBy?->name)
+                    ->link(fn (Invitation $invitation) => $invitation->usedBy ? Link::to(route('admin.users.edit', $invitation->usedBy)) : null)
                     ->width(40),
 
                 Columns\Text::make(__('Accepted At'), fn (Invitation $invitation) => $invitation->used_at?->format('d.m.Y H:i'))

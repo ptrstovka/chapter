@@ -27,7 +27,7 @@ class AdminLayout extends Layout
 
         $this->breadcrumbs = new BreadcrumbList;
 
-        $this->breadcrumbs->append(BreadcrumbItem::make(__('Admin'), Link::to(route('admin'))));
+        $this->breadcrumbs->append(BreadcrumbItem::make(__('Admin Panel'), Link::to(route('admin'))));
     }
 
     /**

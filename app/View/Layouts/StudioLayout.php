@@ -25,6 +25,8 @@ class StudioLayout extends Layout
         parent::__construct($props);
 
         $this->breadcrumbs = new BreadcrumbList;
+
+        $this->breadcrumbs->append(BreadcrumbItem::make(__('Studio'), Link::to(route('studio'))));
     }
 
     /**

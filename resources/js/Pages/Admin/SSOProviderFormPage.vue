@@ -1,16 +1,16 @@
 <template>
-  <AdminLayout :title="$t('Create SSO Provider')">
+  <AdminLayout :title="provider ? $t('SSO Provider :provider', { provider: provider.name }) : $t('New SSO Provider')">
     <div class="flex flex-col divide-y">
       <Panel v-if="provider">
         <PanelHeader>
-          <PanelTitle>{{ $t('SSO Provider') }}</PanelTitle>
+          <PanelTitle>{{ $t('SSO Provider :provider', { provider: provider.name }) }}</PanelTitle>
         </PanelHeader>
         <PanelContent>
           <PanelItem :label="$t('Callback URL')">
             <code class="text-xs">{{ provider.callbackUrl }}</code>
           </PanelItem>
 
-          <PanelItem :label="$t('Active')" :wrap="false">
+          <PanelItem :label="$t('Is Active')" :wrap="false">
             <SwitchToggle :value="provider.isActive" field="is_active" method="post" :url="route('admin.sso.activate', provider.id)" />
           </PanelItem>
         </PanelContent>

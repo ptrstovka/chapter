@@ -2,7 +2,7 @@
   <AdminLayout :title="$t('Invitations')">
     <DataTable
       :table="invitations"
-      :empty-table-message="$t('No invitations')"
+      :empty-table-message="$t('No Invitations')"
       :empty-table-description="$t('Get started by creating first invitation.')"
     >
       <template #empty-table>

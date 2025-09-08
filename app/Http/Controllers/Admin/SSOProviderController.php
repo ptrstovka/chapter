@@ -45,7 +45,7 @@ class SSOProviderController
                 Actions\Link::make(__('Manage'), fn (SingleSignOnProvider $provider) => Link::to(route('admin.sso.edit', $provider))),
             ]);
 
-        return Inertia::render('Admin/SSOProvidersPage', AdminLayout::make([
+        return Inertia::render('Admin/SSOProviderListPage', AdminLayout::make([
             'providers' => $providers,
         ])->breadcrumb(BreadcrumbItem::make(__('SSO Providers'))));
     }
