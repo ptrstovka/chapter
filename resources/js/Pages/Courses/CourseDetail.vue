@@ -1,73 +1,71 @@
 <template>
   <Head :title="title" />
 
-  <AuthenticatedLayout class="bg-background">
-    <div class="py-8">
-      <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <h1 class="text-2xl font-semibold leading-tight">{{ title }}</h1>
+  <AuthenticatedLayout>
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+      <h1 class="text-2xl font-semibold leading-tight">{{ title }}</h1>
 
-        <div class="flex flex-row gap-8 mt-6">
-          <div class="flex flex-col w-full gap-6">
-            <Player
-              v-if="trailer"
-              :src="trailer.url"
-              :poster="trailer.posterImageUrl"
-            />
+      <div class="flex flex-col lg:flex-row lg:gap-8 mt-4 lg:mt-6">
+        <div class="flex flex-col w-full gap-6">
+          <Player
+            v-if="trailer"
+            :src="trailer.url"
+            :poster="trailer.posterImageUrl"
+          />
 
-            <Tabs :default-value="description ? 'description' : 'lessons'">
-              <TabsList>
-                <TabsTrigger v-if="description" value="description">{{ $t('About Course') }}</TabsTrigger>
-                <TabsTrigger value="lessons">{{ $t('Lessons') }}</TabsTrigger>
-              </TabsList>
-              <TabsContent v-if="description" value="description">
-                <div class="prose dark:prose-invert" v-html="description"></div>
-              </TabsContent>
-              <TabsContent value="lessons">
-                <Accordion type="multiple" collapsible>
-                  <AccordionItem :value="chapter.id" v-for="chapter in chapters">
-                    <AccordionTrigger>{{ chapter.title }}</AccordionTrigger>
-                    <AccordionContent>
-                      <ul class="flex flex-col gap-2">
-                        <li v-for="lesson in chapter.lessons" class="flex flex-row justify-between p-4 text-sm border rounded-md bg-background">
-                          <p class="font-medium">{{ lesson.title }}</p>
-                          <p class="font-mono tabular-nums text-muted-foreground" v-if="lesson.duration">{{ lesson.duration }}</p>
-                        </li>
-                      </ul>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </TabsContent>
-            </Tabs>
-          </div>
+          <Tabs :default-value="description ? 'description' : 'lessons'">
+            <TabsList class="w-full sm:max-w-sm">
+              <TabsTrigger class="flex-1 justify-center" v-if="description" value="description">{{ $t('About Course') }}</TabsTrigger>
+              <TabsTrigger class="flex-1 justify-center" value="lessons">{{ $t('Lessons') }}</TabsTrigger>
+            </TabsList>
+            <TabsContent v-if="description" value="description">
+              <div class="prose dark:prose-invert max-w-full pt-2" v-html="description"></div>
+            </TabsContent>
+            <TabsContent value="lessons">
+              <Accordion type="multiple" collapsible>
+                <AccordionItem :value="chapter.id" v-for="chapter in chapters">
+                  <AccordionTrigger>{{ chapter.title }}</AccordionTrigger>
+                  <AccordionContent>
+                    <ul class="flex flex-col gap-2">
+                      <li v-for="lesson in chapter.lessons" class="flex flex-row justify-between p-4 text-sm border rounded-md bg-background">
+                        <p class="font-medium">{{ lesson.title }}</p>
+                        <p class="font-mono tabular-nums text-muted-foreground" v-if="lesson.duration">{{ lesson.duration }}</p>
+                      </li>
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </TabsContent>
+          </Tabs>
+        </div>
 
-          <div class="flex-shrink-0 w-96">
-            <Card class="w-full">
-              <CardContent class="flex flex-col items-center p-6">
-                <Avatar class="size-12">
-                  <AvatarImage v-if="author.avatarUrl" :src="author.avatarUrl" />
-                  <AvatarFallback>
-                    <ContactIcon />
-                  </AvatarFallback>
-                </Avatar>
-                <h3 class="mt-4 text-lg font-semibold">{{ author.name }}</h3>
-                <p v-if="author.bio" class="mt-1 text-sm text-center text-muted-foreground">{{ author.bio }}</p>
+        <div class="flex-shrink-0 lg:w-96">
+          <Card class="w-full">
+            <CardContent class="flex flex-col items-center p-6 max-w-md mx-auto">
+              <Avatar class="size-12">
+                <AvatarImage v-if="author.avatarUrl" :src="author.avatarUrl" />
+                <AvatarFallback>
+                  <ContactIcon />
+                </AvatarFallback>
+              </Avatar>
+              <h3 class="mt-4 text-lg font-semibold">{{ author.name }}</h3>
+              <p v-if="author.bio" class="mt-1 text-sm text-center text-muted-foreground">{{ author.bio }}</p>
 
-                <div class="mt-4" v-if="enrollment">
-                  <Badge variant="positive" v-if="enrollment.isCompleted">{{ $t('Course Completed!') }}</Badge>
-                  <p class="text-sm text-muted-foreground" v-else>{{ $t(':value% completed', { value: `${enrollment.progress}` }) }}</p>
-                </div>
+              <div class="mt-4" v-if="enrollment">
+                <Badge variant="positive" v-if="enrollment.isCompleted">{{ $t('Course Completed!') }}</Badge>
+                <p class="text-sm text-muted-foreground" v-else>{{ $t(':value% completed', { value: `${enrollment.progress}` }) }}</p>
+              </div>
 
-                <div class="flex flex-col w-full gap-2 mt-4">
-                  <LinkButton v-if="enrollment" :href="route('courses.begin', slug)">
-                    {{ enrollment.isCompleted ? $t('Browse Lessons') : (enrollment.completedLessons === 0 ? $t('Start Learning') : $t('Continue Learning')) }}
-                  </LinkButton>
-                  <Button v-else :processing="enrollForm.processing" @click="enroll">{{ $t('Enroll') }}</Button>
-                </div>
+              <div class="flex flex-col w-full gap-2 mt-4">
+                <LinkButton v-if="enrollment" :href="route('courses.begin', slug)">
+                  {{ enrollment.isCompleted ? $t('Browse Lessons') : (enrollment.completedLessons === 0 ? $t('Start Learning') : $t('Continue Learning')) }}
+                </LinkButton>
+                <Button v-else :processing="enrollForm.processing" @click="enroll">{{ $t('Enroll') }}</Button>
+              </div>
 
-                <Button @click="resetProgress" v-if="enrollment && enrollment.completedLessons > 0" class="w-full mt-3" variant="ghost">{{ $t('Start Over') }}</Button>
-              </CardContent>
-            </Card>
-          </div>
+              <Button @click="resetProgress" v-if="enrollment && enrollment.completedLessons > 0" class="w-full mt-3" variant="ghost">{{ $t('Start Over') }}</Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

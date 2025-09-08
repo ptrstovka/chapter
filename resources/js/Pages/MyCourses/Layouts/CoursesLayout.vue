@@ -10,14 +10,14 @@
 
         <div class="w-full">
           <div class="flex flex-wrap items-center gap-4 sm:gap-4">
-            <TabsLinkList class="flex flex-wrap gap-2">
-              <TabsLink :href="route('mycourses.inprogress')" :active="route().current('mycourses.inprogress')">
+            <TabsLinkList class="flex flex-wrap gap-2 w-full lg:w-fit">
+              <TabsLink class="flex-1 justify-center" :href="route('mycourses.inprogress')" :active="route().current('mycourses.inprogress')">
                 {{ $t("In progress") }}
               </TabsLink>
-              <TabsLink :href="route('mycourses.favorite')" :active="route().current('mycourses.favorite')">
+              <TabsLink class="flex-1 justify-center" :href="route('mycourses.favorite')" :active="route().current('mycourses.favorite')">
                 {{ $t("Favorite") }}
               </TabsLink>
-              <TabsLink :href="route('mycourses.completed')" :active="route().current('mycourses.completed')">
+              <TabsLink class="flex-1 justify-center" :href="route('mycourses.completed')" :active="route().current('mycourses.completed')">
                 {{ $t("Completed") }}
               </TabsLink>
             </TabsLinkList>
