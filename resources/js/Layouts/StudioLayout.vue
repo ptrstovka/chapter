@@ -3,6 +3,29 @@
 
   <SidebarProvider>
     <Sidebar collapsible="icon" variant="inset">
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <Link
+              :as="SidebarMenuButton"
+              :href="route('studio')"
+              size="lg"
+              class="cursor-pointer"
+            >
+              <Avatar class="h-8 w-8 overflow-hidden rounded-lg">
+                <AvatarImage v-if="page.props.instructor.avatarUrl" :src="page.props.instructor.avatarUrl" :alt="page.props.instructor.name" />
+                <AvatarFallback class="rounded-lg text-black dark:text-white">{{ getInitials(page.props.instructor.name) }}</AvatarFallback>
+              </Avatar>
+
+              <div class="grid flex-1 text-left text-sm leading-tight">
+                <span class="truncate font-semibold">{{ page.props.instructor.name }}</span>
+                <span class="truncate text-xs">{{ $t('Instructor') }}</span>
+              </div>
+            </Link>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+
       <SidebarContent>
         <SidebarNavigation
           :menu="page.props.sidebar"
@@ -46,15 +69,18 @@
 </template>
 
 <script setup lang="ts">
+import { useInitials } from "@/Composables";
 import { Head, Link, usePage } from '@inertiajs/vue3'
 import { type AppPageProps } from '@/Types'
 import { type Menu } from '@stacktrace/ui'
 import {
   Sidebar, SidebarContent, SidebarNavigation, SidebarProvider, SidebarInset, SidebarTrigger,
   SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton,
-} from '@/Components/Sidebar'
+  SidebarHeader
+} from "@/Components/Sidebar";
 import { BreadcrumbNavigation } from '@/Components/Breadcrumb'
 import { ArrowLeftIcon } from 'lucide-vue-next'
+import { Avatar, AvatarFallback } from "@/Components/Avatar";
 
 defineProps<{
   title?: string | null | undefined
@@ -63,5 +89,11 @@ defineProps<{
 const page = usePage<AppPageProps & {
   sidebar: Menu
   breadcrumbs: Menu
+  instructor: {
+    name: string
+    avatarUrl: string | null
+  }
 }>()
+
+const { getInitials } = useInitials()
 </script>

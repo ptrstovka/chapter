@@ -36,7 +36,7 @@ export const tabsListItemVariants = cva(
   {
     variants: {
       variant: {
-        default: 'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground',
+        default: 'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground dark:data-[state=active]:text-foreground',
         ghost: 'hover:bg-accent py-2 hover:text-accent-foreground dark:hover:bg-accent/50 data-[state=active]:bg-muted data-[state=active]:text-foreground',
       },
       orientation: {

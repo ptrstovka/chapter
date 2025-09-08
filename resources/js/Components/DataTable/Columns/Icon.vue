@@ -1,5 +1,5 @@
 <template>
-  <Icon v-if="src" :src="src" :style="{ width: `${size}rem`, height: `${size}rem`, }" />
+  <Icon class="inline" v-if="src" :src="src" :style="{ width: `${size}rem`, height: `${size}rem`, }" />
 </template>
 
 <script setup lang="ts">

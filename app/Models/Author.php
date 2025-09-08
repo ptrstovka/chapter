@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\TextContentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -13,12 +14,19 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $avatar_file_path
  *
  * @method static \Database\Factories\AuthorFactory factory($count = null, $state = [])
+ *
+ * TODO: Rename to Instructor
  */
 class Author extends Model
 {
     use HasFactory;
 
     protected $guarded = false;
+
+    public function courses(): HasMany
+    {
+        return $this->hasMany(Course::class);
+    }
 
     /**
      * Retrieve URL to author avatar.

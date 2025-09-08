@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Dimensions;
 
 /**
  * @property string $disk
@@ -125,6 +126,31 @@ class TemporaryUpload extends Model
             'CourseResource' => [
                 Rule::file()
                     ->max(2 * 1024 * 1024), // 2 GB
+            ],
+            'AppLogo' => [
+                Rule::imageFile()
+                    ->extensions(['jpg', 'png'])
+                    ->max(2048)
+                    ->dimensions(
+                        (new Dimensions)
+                            ->minWidth(64)
+                            ->minHeight(64)
+                            ->maxWidth(1024)
+                            ->maxHeight(1024)
+                            ->ratio(1)
+                    ),
+            ],
+            'InstructorAvatar' => [
+                Rule::imageFile()
+                    ->extensions(['jpg', 'png'])
+                    ->max(2048)
+                    ->dimensions(
+                        (new Dimensions)
+                            ->minWidth(128)
+                            ->minHeight(128)
+                            ->maxWidth(2048)
+                            ->maxHeight(2048)
+                    ),
             ],
         ];
     }

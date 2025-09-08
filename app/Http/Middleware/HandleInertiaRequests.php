@@ -2,6 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Preference;
+use App\Facades\Settings;
+use App\Support\Theme;
 use App\View\Models\UserViewViewModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -13,7 +16,12 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            'locale' => fn () => App::getLocale(),
+            'app' => fn () => [
+                'name' => Settings::get(Preference::PlatformName),
+                'locale' => App::getLocale(),
+                'enableExplorePage' => Settings::boolean(Preference::EnableExplorePage),
+                'logo' => Theme::logo(),
+            ],
             'auth' => fn () => [
                 'user' => UserViewViewModel::from($request->user()),
             ],

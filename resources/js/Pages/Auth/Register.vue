@@ -1,18 +1,12 @@
 <template>
   <Head :title="$t('Register')" />
 
-  <GuestLayout>
+  <GuestLayout :title="$t('Create an account')">
     <Button :as="Link" :href="route('login')" variant="ghost" class="absolute right-4 top-4 md:right-8 md:top-8">
       {{ $t('Login') }}
     </Button>
 
-    <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-      <div class="flex flex-col space-y-2 text-center">
-        <h1 class="text-2xl font-semibold tracking-tight">
-          {{ $t('Create an account') }}
-        </h1>
-      </div>
-
+    <div class="mx-auto flex w-full flex-col justify-center space-y-6">
       <form @submit.prevent="submit" class="grid gap-5">
         <FormControl :label="$t('Name')" :error="form.errors.name" for="name">
           <Input v-model="form.name" autocomplete="name" required autofocus id="name" />

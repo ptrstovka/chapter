@@ -8,7 +8,9 @@
             <!-- Logo -->
             <div class="flex items-center shrink-0">
               <Link :href="route('home')" class="inline-flex flex-row items-center gap-4 font-medium">
-                <Logo class="block w-auto h-6 text-foreground" />
+                <Logo />
+
+                <span>{{ $page.props.app.name }}</span>
               </Link>
             </div>
 
@@ -16,12 +18,12 @@
             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
               <NavigationMenu>
                 <NavigationMenuList>
-                  <NavigationMenuItem>
+                  <NavigationMenuItem v-if="$page.props.app.enableExplorePage">
                     <NavigationMenuLink
-                      :href="route('home')"
+                      :href="route('explore')"
                       :class="navigationMenuTriggerStyle()"
-                      :active="route().current('home')"
-                    >{{ $t('Home') }}</NavigationMenuLink>
+                      :active="route().current('explore')"
+                    >{{ $t('Explore') }}</NavigationMenuLink>
                   </NavigationMenuItem>
 
                   <NavigationMenuItem>
@@ -65,11 +67,15 @@
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger><SunMoonIcon />{{ $t('Theme') }}</DropdownMenuSubTrigger>
                   <DropdownMenuSubContent>
-                    <DropdownMenuCheckboxItem @select="mode = 'dark'" :model-value="mode == 'dark'">{{ $t('Dark') }}</DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem @select="mode = 'light'" :model-value="mode == 'light'">{{ $t('Light') }}</DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem @select="mode = 'system'" :model-value="mode == 'system'">{{ $t('System') }}</DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem @select="updateAppearance('dark')" :model-value="appearance == 'dark'">{{ $t('Dark') }}</DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem @select="updateAppearance('light')" :model-value="appearance == 'light'">{{ $t('Light') }}</DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem @select="updateAppearance('system')" :model-value="appearance == 'system'">{{ $t('System') }}</DropdownMenuCheckboxItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
+
+                <template v-if="$page.props.auth.user.can.viewAdmin">
+                  <DropdownMenuLink :href="route('admin')"><WrenchIcon /> {{ $t('Admin') }}</DropdownMenuLink>
+                </template>
 
                 <DropdownMenuLink :href="route('logout')" method="post" as="button"><LogOutIcon /> {{ $t('Log Out') }}</DropdownMenuLink>
               </DropdownMenuContent>
@@ -140,11 +146,11 @@
 </template>
 
 <script setup lang="ts">
-import { useDarkMode } from '@/Composables'
+import { useAppearance } from "@/Composables";
 import { useToggle } from '@stacktrace/ui'
 import { ref } from 'vue'
 import { navigationMenuTriggerStyle } from '@/Components/NavigationMenu'
-import { ChevronDownIcon, MenuIcon, XIcon, SearchIcon, UserRoundCogIcon, ClapperboardIcon, LogOutIcon, SunMoonIcon } from 'lucide-vue-next'
+import { ChevronDownIcon, MenuIcon, XIcon, SearchIcon, UserRoundCogIcon, ClapperboardIcon, LogOutIcon, SunMoonIcon, WrenchIcon } from 'lucide-vue-next'
 import { cn } from '@/Utils'
 import { Link } from '@inertiajs/vue3'
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from '@/Components/NavigationMenu'
@@ -159,7 +165,7 @@ import { SearchDialog } from '@/Components/Search'
 
 const showingNavigationDropdown = ref(false)
 
-const { mode } = useDarkMode()
+const { appearance, updateAppearance } = useAppearance()
 
 const search = useToggle()
 

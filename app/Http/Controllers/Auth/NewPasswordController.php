@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\Preference;
+use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
@@ -21,6 +23,8 @@ class NewPasswordController extends Controller
      */
     public function create(Request $request): Response
     {
+        abort_unless(Settings::boolean(Preference::EnablePasswordLogin), 404);
+
         return Inertia::render('Auth/ResetPassword', [
             'email' => $request->email,
             'token' => $request->route('token'),
@@ -34,6 +38,8 @@ class NewPasswordController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        abort_unless(Settings::boolean(Preference::EnablePasswordLogin), 404);
+
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',

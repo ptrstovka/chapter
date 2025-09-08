@@ -95,6 +95,8 @@ export const createCellStyle = (style: TextStyle) => configureStyle(style, {
   color: {
     foreground: 'text-foreground',
     muted: 'text-muted-foreground',
+    destructive: 'text-destructive',
+    positive: 'text-positive',
   },
 })
 

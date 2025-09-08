@@ -14,8 +14,8 @@ import { type SelectOption } from '@stacktrace/ui'
 import type { SelectRootEmits, SelectRootProps } from 'reka-ui'
 import { useForwardProps } from 'reka-ui'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Components/Select'
-import { computed, type HTMLAttributes } from "vue";
-import { useVModel } from "@vueuse/core";
+import { type HTMLAttributes } from "vue";
+import { reactiveOmit, useVModel } from "@vueuse/core";
 
 const props = defineProps<SelectRootProps & {
   options: Array<SelectOption>
@@ -25,11 +25,7 @@ const props = defineProps<SelectRootProps & {
 }>()
 const emits = defineEmits<SelectRootEmits>()
 
-const delegatedProps = computed(() => {
-  const { options, placeholder, class: _, modelValue, ...delegated } = props
-
-  return delegated
-})
+const delegatedProps = reactiveOmit(props, 'options', 'placeholder', 'class', 'modelValue')
 
 const value = useVModel(props, 'modelValue', emits)
 

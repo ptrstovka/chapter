@@ -1,10 +1,48 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"  @class(['dark' => \App\Support\Theme::appearance() == 'dark'])>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="appName" content="{{ \App\Facades\Settings::get(\App\Enums\Preference::PlatformName) }}">
+    <title inertia>{{ \App\Facades\Settings::get(\App\Enums\Preference::PlatformName) }}</title>
 
-    <title inertia>{{ config('app.name', 'Laravel') }}</title>
+    <script>
+        (function() {
+            const appearance = '{{ \App\Support\Theme::appearance() }}';
+
+            if (appearance === 'system') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                if (prefersDark) {
+                    document.documentElement.classList.add('dark');
+                }
+            }
+        })();
+    </script>
+
+    <style>
+        :root {
+            --primary: {{ \App\Support\Theme::primaryLightBackgroundColor() }};
+            --primary-foreground: {{ \App\Support\Theme::primaryLightForegroundColor() }};
+        }
+
+        .dark {
+            --primary: {{ \App\Support\Theme::primaryDarkBackgroundColor() }};
+            --primary-foreground: {{ \App\Support\Theme::primaryDarkForegroundColor() }};
+        }
+
+        html {
+            background-color: oklch(1 0 0);
+        }
+
+        html.dark {
+            background-color: oklch(0.141 0.005 285.823);
+        }
+    </style>
+
+    @if($logo = \App\Support\Theme::logo())
+    <link rel="icon" href="{{ $logo }}" />
+    @endif
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">

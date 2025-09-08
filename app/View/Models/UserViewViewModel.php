@@ -21,6 +21,7 @@ class UserViewViewModel extends ViewModel
             'emailVerifiedAt' => $this->user->email_verified_at,
             'can' => [
                 'accessStudio' => Gate::allows('accessStudio'),
+                'viewAdmin' => Gate::allows('viewAdmin'),
             ],
         ];
     }

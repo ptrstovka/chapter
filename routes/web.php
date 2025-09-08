@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin;
 use App\Http\Controllers\BeginCourseController;
 use App\Http\Controllers\CompletedLessonController;
 use App\Http\Controllers\CourseController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\MyCourses\CompletedController;
 use App\Http\Controllers\MyCourses\FavoriteController;
 use App\Http\Controllers\MyCourses\InProgressController;
 use App\Http\Controllers\NextLessonController;
+use App\Http\Controllers\Platform\ExploreController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResetProgressController;
 use App\Http\Controllers\ResourceController;
@@ -18,6 +20,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Studio;
 use App\Http\Controllers\TemporaryUploadController;
 use App\Http\Controllers\TiptapImageController;
+use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\StudioMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +28,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', HomeController::class)->name('home');
+
+    Route::get('/explore', ExploreController::class)->name('explore');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -50,6 +55,46 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-courses', InProgressController::class)->name('mycourses.inprogress');
     Route::get('/my-courses/favorites', FavoriteController::class)->name('mycourses.favorite');
     Route::get('/my-courses/completed', CompletedController::class)->name('mycourses.completed');
+
+    Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
+        Route::get('/', Admin\AdminController::class)->name('admin');
+
+        Route::name('admin.')->group(function () {
+            Route::get('/settings', [Admin\SettingsController::class, 'index'])->name('settings');
+            Route::patch('/settings', [Admin\SettingsController::class, 'update'])->name('settings.update');
+
+            Route::get('/single-sign-on', [Admin\SSOProviderController::class, 'index'])->name('sso');
+            Route::get('/single-sign-on/create', [Admin\SSOProviderController::class, 'create'])->name('sso.create');
+            Route::get('/single-sign-on/{provider:uuid}', [Admin\SSOProviderController::class, 'edit'])->name('sso.edit');
+            Route::patch('/single-sign-on/{provider:uuid}', [Admin\SSOProviderController::class, 'update'])->name('sso.update');
+            Route::delete('/single-sign-on/{provider:uuid}', [Admin\SSOProviderController::class, 'destroy'])->name('sso.destroy');
+            Route::post('/single-sign-on/{provider:uuid}/activate', Admin\ToggleSSOProviderController::class)->name('sso.activate');
+            Route::post('/single-sign-on', [Admin\SSOProviderController::class, 'store'])->name('sso.store');
+
+            Route::get('/invitations', [Admin\InvitationController::class, 'index'])->name('invitations');
+            Route::post('/invitations', [Admin\InvitationController::class, 'store'])->name('invitations.store');
+
+            Route::get('/users', [Admin\UserController::class, 'index'])->name('users');
+            Route::get('/users/{user}', [Admin\UserController::class, 'edit'])->name('users.edit');
+            Route::patch('/users/{user}', [Admin\UserController::class, 'update'])->name('users.update');
+
+            Route::get('/categories', [Admin\CategoryController::class, 'index'])->name('categories');
+            Route::get('/categories/create', [Admin\CategoryController::class, 'create'])->name('categories.create');
+            Route::post('/categories', [Admin\CategoryController::class, 'store'])->name('categories.store');
+            Route::get('/categories/{category}', [Admin\CategoryController::class, 'edit'])->name('categories.edit');
+            Route::patch('/categories/{category}', [Admin\CategoryController::class, 'update'])->name('categories.update');
+            Route::delete('/categories/{category}', [Admin\CategoryController::class, 'destroy'])->name('categories.destroy');
+
+            Route::get('/instructors', [Admin\InstructorController::class, 'index'])->name('instructors');
+            Route::post('/instructors', [Admin\InstructorController::class, 'store'])->name('instructors.store');
+            Route::get('/instructors/create', [Admin\InstructorController::class, 'create'])->name('instructors.create');
+            Route::get('/instructors/{instructor}', [Admin\InstructorController::class, 'edit'])->name('instructors.edit');
+            Route::patch('/instructors/{instructor}', [Admin\InstructorController::class, 'update'])->name('instructors.update');
+            Route::delete('/instructors/{instructor}', [Admin\InstructorController::class, 'destroy'])->name('instructors.destroy');
+
+            Route::get('/courses', [Admin\CourseController::class, 'index'])->name('courses');
+        });
+    });
 
     Route::prefix('studio')->middleware(StudioMiddleware::class)->group(function () {
         Route::get('/', Studio\StudioController::class)->name('studio');

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\Preference;
+use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Invitation;
 use App\Models\User;
@@ -24,6 +26,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
+        abort_unless(Settings::boolean(Preference::EnableRegistration), 404);
+
         return Inertia::render('Auth/Register');
     }
 
@@ -34,6 +38,8 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        abort_unless(Settings::boolean(Preference::EnableRegistration), 404);
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,

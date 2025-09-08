@@ -1,14 +1,8 @@
 <template>
   <Head :title="$t('Reset Password')" />
 
-  <GuestLayout>
-    <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-      <div class="flex flex-col space-y-2 text-center">
-        <h1 class="text-2xl font-semibold tracking-tight">
-          {{ $t('Reset Password') }}
-        </h1>
-      </div>
-
+  <GuestLayout :title="$t('Reset Password')">
+    <div class="mx-auto flex w-full flex-col justify-center space-y-6">
       <form @submit.prevent="submit" class="grid gap-5">
         <FormControl :label="$t('E-Mail')" :error="form.errors.email" for="email">
           <Input v-model="form.email" autocomplete="username" type="email" required autofocus id="email" />

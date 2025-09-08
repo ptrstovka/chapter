@@ -9,11 +9,12 @@ import { RootLayout } from '@/Layouts'
 import { MotionPlugin } from '@vueuse/motion'
 import { i18nVue } from 'laravel-vue-i18n'
 import { DataTablePlugin } from '@/Components/DataTable'
+import { initializeTheme, useAppTitle } from "@/Composables";
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const resolveAppTitle = useAppTitle()
 
 createInertiaApp({
-  title: (title) => `${title} - ${appName}`,
+  title: resolveAppTitle,
   resolve: async (name) => {
     const page = await resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob<DefineComponent>('./Pages/**/*.vue'))
     page.default.layout = page.default.layout || RootLayout
@@ -26,7 +27,7 @@ createInertiaApp({
       .use(DataTablePlugin)
       .use(ZiggyVue)
       .use(i18nVue, {
-        lang: props.initialPage?.props.locale || 'en',
+        lang: props.initialPage?.props.app.locale || 'en',
         resolve: async (lang: string) => {
           const files = import.meta.glob('../../lang/*.json');
           return await files[`../../lang/${lang}.json`]();
@@ -35,6 +36,8 @@ createInertiaApp({
       .mount(el);
   },
   progress: {
-    color: '#4B5563',
+    color: 'var(--primary)',
   },
 });
+
+initializeTheme()
