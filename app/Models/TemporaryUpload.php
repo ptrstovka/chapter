@@ -146,8 +146,8 @@ class TemporaryUpload extends Model
                     ->max(2048)
                     ->dimensions(
                         (new Dimensions)
-                            ->minWidth(128)
-                            ->minHeight(128)
+                            ->minWidth(100)
+                            ->minHeight(100)
                             ->maxWidth(2048)
                             ->maxHeight(2048)
                     ),
