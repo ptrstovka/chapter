@@ -49,8 +49,14 @@ jobs:
       - name: Copy environment file
         run: cp .env.example .env
 
+      - name: Setup SQLite database
+        run: touch database/database.sqlite
+
       - name: Generate app key
         run: php artisan key:generate
+
+      - name: Run migrations
+        run: php artisan migrate --force
 
       - name: Build frontend assets
         run: npm run build
