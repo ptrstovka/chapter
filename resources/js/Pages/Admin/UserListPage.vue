@@ -1,9 +1,14 @@
 <template>
   <AdminLayout :title="$t('Users')">
-    <p>Users</p>
+    <DataTable :table="users" />
   </AdminLayout>
 </template>
 
 <script setup lang="ts">
+import { DataTable, type DataTableValue } from "@/Components/DataTable";
 import { AdminLayout } from "@/Layouts";
+
+defineProps<{
+  users: DataTableValue
+}>()
 </script>

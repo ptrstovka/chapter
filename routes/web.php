@@ -75,6 +75,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/invitations', [Admin\InvitationController::class, 'store'])->name('invitations.store');
 
             Route::get('/users', [Admin\UserController::class, 'index'])->name('users');
+            Route::get('/users/{user}', [Admin\UserController::class, 'edit'])->name('users.edit');
+            Route::patch('/users/{user}', [Admin\UserController::class, 'update'])->name('users.update');
 
             Route::get('/categories', [Admin\CategoryController::class, 'index'])->name('categories');
             Route::get('/categories/create', [Admin\CategoryController::class, 'create'])->name('categories.create');
