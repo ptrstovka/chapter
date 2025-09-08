@@ -1,21 +1,18 @@
 <template>
   <Head :title="$t('Log in')" />
 
-  <GuestLayout>
+  <GuestLayout
+    :title="$t('Sign In')"
+    :description="$t('Continue by logging into your account.')"
+  >
     <Button :as="Link" v-if="canRegister" :href="route('register')" variant="ghost" class="absolute right-4 top-4 md:right-8 md:top-8">
       {{ $t('Register') }}
     </Button>
 
-    <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+    <div class="mx-auto flex w-full flex-col justify-center space-y-6">
       <Alert v-if="status" variant="positive">
         <AlertDescription>{{ status }}</AlertDescription>
       </Alert>
-
-      <div class="flex flex-col space-y-2 text-center">
-        <h1 class="text-2xl font-semibold tracking-tight">
-          {{ $t('Log in') }}
-        </h1>
-      </div>
 
       <form v-if="passwordLoginEnabled" @submit.prevent="submit" class="grid gap-5">
         <FormControl :label="$t('E-Mail')" :error="form.errors.email" for="email">
