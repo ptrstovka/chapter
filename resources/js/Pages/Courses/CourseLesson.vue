@@ -45,7 +45,7 @@
     />
   </div>
 
-  <div class="flex flex-row justify-between items-start gap-6">
+  <div class="flex flex-col lg:flex-row justify-between items-start gap-4 lg:gap-6">
     <h2 class="font-semibold text-xl leading-tight">{{ lessonTitle }}</h2>
 
     <div class="inline-flex flex-row gap-3">
@@ -73,16 +73,16 @@
     </div>
   </div>
 
-  <Tabs v-if="description || resources.length > 0" :default-value="description ? 'description' : 'resources'">
-    <TabsList class="mt-6">
-      <TabsTrigger v-if="description" value="description">{{ $t('Description') }}</TabsTrigger>
-      <TabsTrigger v-if="resources.length > 0" value="resources">{{ $t('Resources') }}</TabsTrigger>
+  <Tabs v-if="description || resources.length > 0" v-model="visibleTab">
+    <TabsList v-if="description && resources.length > 0" class="mt-6 w-full md:w-1/2">
+      <TabsTrigger class="flex-1 justify-center" v-if="description" value="description">{{ $t('Description') }}</TabsTrigger>
+      <TabsTrigger class="flex-1 justify-center" v-if="resources.length > 0" value="resources">{{ $t('Resources') }}</TabsTrigger>
     </TabsList>
     <TabsContent value="description" v-if="description">
       <div class="prose dark:prose-invert mt-4" v-html="description"></div>
     </TabsContent>
     <TabsContent value="resources">
-      <ul class="max-w-xs flex flex-col gap-2 mt-4">
+      <ul class="lg:max-w-xs flex flex-col gap-2 mt-4">
         <ResourceItem v-for="resource in resources" :resource="resource" />
       </ul>
     </TabsContent>
@@ -164,6 +164,11 @@ const shouldPlayNextLesson = useLocalStorage('PlayNextLesson', 'on')
 const lessons = computed<Array<Lesson>>(() => sortBy(props.chapters.map(it => it.lessons).flatMap(it => it), it => it.no))
 
 const courseCompleted = computed(() => props.remainingLessons === 0)
+
+const visibleTab = ref(props.description ? 'description' : 'resources')
+watch(() => props.id, () => {
+  visibleTab.value = props.description ? 'description' : 'resources'
+})
 
 const prevLesson = computed<Lesson | null>(() => {
   const idx = lessons.value.findIndex(it => it.isCurrent)

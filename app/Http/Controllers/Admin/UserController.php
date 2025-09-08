@@ -58,7 +58,7 @@ class UserController
                     ->sortable(using: 'created_at', default: Table\Direction::Desc),
             ])
             ->withActions([
-                // Actions\Link::make(__('Edit'), fn (User $user) => Link::to(route('admin.users.edit', $user))),
+                Actions\Link::make(__('Edit'), fn (User $user) => route('admin.users.edit', $user)),
             ]);
 
         return Inertia::render('Admin/UserListPage', AdminLayout::make([

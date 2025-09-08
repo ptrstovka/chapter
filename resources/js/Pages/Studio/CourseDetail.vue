@@ -92,6 +92,7 @@ import { Button } from "@/Components/Button";
 import { FormCombobox, FormControl } from "@/Components/Form";
 import { Input } from "@/Components/Input";
 import { TextEditor } from "@/Components/TextEditor";
+import { useSaveShortcut } from "@/Composables/useKeyboard.ts";
 import type { TextContentType } from "@/Types";
 import { useForm } from "@inertiajs/vue3";
 import type { SelectOption } from "@stacktrace/ui";
@@ -129,6 +130,10 @@ const form = useForm(() => ({
 }))
 
 const save = () => {
+  if (disabled.value) {
+    return
+  }
+
   form.patch(route('studio.courses.update', props.id), {
     preserveScroll: true,
     onSuccess: () => {
@@ -136,4 +141,6 @@ const save = () => {
     }
   })
 }
+
+useSaveShortcut(() => save())
 </script>

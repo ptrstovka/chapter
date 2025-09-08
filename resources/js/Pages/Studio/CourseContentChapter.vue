@@ -60,6 +60,7 @@ import {
 } from "@/Components/DropdownMenu";
 import { FormControl } from "@/Components/Form";
 import { Input } from "@/Components/Input";
+import { useSaveShortcut } from "@/Composables/useKeyboard.ts";
 import { useForm } from "@inertiajs/vue3";
 import { asyncRouter } from "@stacktrace/ui";
 import { trans } from "laravel-vue-i18n";
@@ -80,10 +81,16 @@ const form = useForm(() => ({
   title: props.chapter.title || '',
 }))
 const save = () => {
+  if (!props.chapter.isEditable) {
+    return
+  }
+
   form.patch(route('studio.course.chapters.update', [props.id, props.chapter.id]), {
     preserveScroll: true,
   })
 }
+
+useSaveShortcut(() => save())
 
 const { confirm } = useConfirmable()
 const destroy = () => confirm(trans('Are you sure you want to delete this chapter? All lessons within the chapter including their resources and videos will be permanently deleted.'), async () => {

@@ -39,9 +39,9 @@
           </Tabs>
         </div>
 
-        <div class="flex-shrink-0 lg:w-96">
+        <div class="flex-shrink-0 mt-4 lg:mt-0 lg:w-96">
           <Card class="w-full">
-            <CardContent class="flex flex-col items-center p-6 max-w-md mx-auto">
+            <CardContent class="flex flex-col items-center p-6 max-w-md w-full mx-auto">
               <Avatar class="size-12">
                 <AvatarImage v-if="author.avatarUrl" :src="author.avatarUrl" />
                 <AvatarFallback>

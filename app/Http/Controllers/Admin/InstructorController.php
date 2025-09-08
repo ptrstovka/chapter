@@ -39,7 +39,7 @@ class InstructorController
                     ->sortable(using: 'created_at', default: Table\Direction::Desc),
             ])
             ->withActions([
-                Actions\Link::make(__('Edit'), fn (Author $author) => Link::to(route('admin.instructors.edit', $author))),
+                Actions\Link::make(__('Edit'), fn (Author $author) => route('admin.instructors.edit', $author)),
             ]);
 
         return Inertia::render('Admin/InstructorListPage', AdminLayout::make([

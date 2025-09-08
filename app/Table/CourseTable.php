@@ -146,7 +146,7 @@ class CourseTable extends Table
     {
         return collect([
             $this->author
-                ? Actions\Link::make(__('Manage'), fn (Course $course) => Link::to(route('studio.courses.show', $course)))
+                ? Actions\Link::make(__('Manage'), fn (Course $course) => route('studio.courses.show', $course))
                 : null,
 
             PublishCourseAction::make()
@@ -157,7 +157,7 @@ class CourseTable extends Table
                 ->can(fn (Course $course) => Gate::allows('unpublish', $course) && $course->canBeUnpublished())
                 ->bulk(),
 
-            Actions\Link::make(__('View on Platform'), fn (Course $course) => $course->slug ? Link::to(route('courses.show', $course)) : '')
+            Actions\Link::make(__('View on Platform'), fn (Course $course) => $course->slug ? route('courses.show', $course->slug) : '')
                 ->can(fn (Course $course) => $course->slug && $course->status === CourseStatus::Published),
         ])->filter()->values()->all();
     }

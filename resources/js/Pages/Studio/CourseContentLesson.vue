@@ -100,6 +100,7 @@ import { Input } from "@/Components/Input";
 import { Player } from "@/Components/Player";
 import { TemporaryFileInput } from "@/Components/TemporaryFileInput";
 import { TextEditor } from "@/Components/TextEditor";
+import { useSaveShortcut } from "@/Composables/useKeyboard.ts";
 import type { TextContentType } from "@/Types";
 import { useForm } from "@inertiajs/vue3";
 import { asyncRouter } from "@stacktrace/ui";
@@ -137,7 +138,12 @@ const form = useForm(() => ({
   remove_video: false,
   resources: props.lesson.resources.map(it => ({...it})),
 }))
+
 const save = () => {
+  if (disabled.value) {
+    return
+  }
+
   form.patch(route('studio.course.lessons.update', [props.id, props.chapter.id, props.lesson.id]), {
     preserveScroll: true,
     onSuccess: () => {
@@ -145,6 +151,8 @@ const save = () => {
     }
   })
 }
+
+useSaveShortcut(() => save())
 
 const { confirm } = useConfirmable()
 const destroy = () => confirm(trans('Are you sure you want to delete this lesson? All resources including video will be permanently deleted.'), async () => {

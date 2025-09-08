@@ -36,7 +36,7 @@ class CategoryController
                     ->width(24),
             ])
             ->withActions([
-                Actions\Link::make(__('Edit'), fn (Category $category) => Link::to(route('admin.categories.edit', $category))),
+                Actions\Link::make(__('Edit'), fn (Category $category) => route('admin.categories.edit', $category)),
             ]);
 
         return Inertia::render('Admin/CategoryListPage', AdminLayout::make([
