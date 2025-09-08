@@ -36,7 +36,7 @@ class ExploreController
             ->whereNull('course_enrollments.completed_at')
             ->where('status', CourseStatus::Published)
             ->latest('course_enrollments.updated_at')
-            ->take(4)
+            ->take(3)
             ->get();
 
         // Latest Courses
@@ -48,7 +48,7 @@ class ExploreController
             ->where('status', CourseStatus::Published)
             ->whereNotIn('id', $inProgress->pluck('id'))
             ->latest()
-            ->take(4)
+            ->take(3)
             ->get();
 
         // Popular Courses
@@ -70,7 +70,7 @@ class ExploreController
             ->whereNull('course_enrollments.completed_at')
             ->withCount('enrollments')
             ->orderByDesc('enrollments_count')
-            ->take(4)
+            ->take(3)
             ->get();
 
         // Discover
@@ -91,7 +91,7 @@ class ExploreController
                     ...$popular->pluck('id')->all(),
                 ])
                 ->inRandomOrder()
-                ->take(8)
+                ->take(6)
                 ->get(['id'])
                 ->pluck('id');
         });
