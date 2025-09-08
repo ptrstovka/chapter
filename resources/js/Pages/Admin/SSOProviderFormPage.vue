@@ -23,6 +23,7 @@
 
         <PanelContent>
           <PanelItem v-if="!provider" :label="$t('Type')">
+            <!-- @vue-ignore FIXME: Type instantiation is excessively deep and possibly infinite. -->
             <FormControl :error="form.errors.type">
               <FormSelect :options="types" v-model="form.type" class="w-full sm:max-w-md" />
             </FormControl>
@@ -159,7 +160,7 @@ const form = useForm(() => ({
   authorize_url: props.provider?.configuration.authorize_url || '',
   token_url: props.provider?.configuration.token_url || '',
   user_url: props.provider?.configuration.user_url || '',
-  request_parameters: props.provider?.configuration.request_parameters || {},
+  request_parameters: props.provider?.configuration.request_parameters || {} as any,
   user_id_field: props.provider?.configuration.user_id_field || '',
   user_email_field: props.provider?.configuration.user_email_field || '',
   user_name_field: props.provider?.configuration.user_name_field || '',
