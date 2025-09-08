@@ -126,6 +126,7 @@ import { FormControl, FormSelect } from "@/Components/Form";
 import { Input } from "@/Components/Input";
 import { Panel, PanelContent, PanelFooter, PanelHeader, PanelItem, PanelTitle } from "@/Components/Panel";
 import { SwitchToggle } from "@/Components/Switch";
+import { useSaveShortcut } from "@/Composables/useKeyboard.ts";
 import { AdminLayout } from "@/Layouts";
 import { useForm } from "@inertiajs/vue3";
 import { asyncRouter, type SelectOption } from "@stacktrace/ui";
@@ -191,4 +192,6 @@ const destroy = () => confirm(
   },
   { title: trans('Delete SSO Provider'), confirmLabel: trans('Delete'), cancelLabel: trans('Keep'), destructive: true },
 )
+
+useSaveShortcut(() => save())
 </script>

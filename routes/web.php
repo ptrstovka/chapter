@@ -85,6 +85,13 @@ Route::middleware('auth')->group(function () {
             Route::patch('/categories/{category}', [Admin\CategoryController::class, 'update'])->name('categories.update');
             Route::delete('/categories/{category}', [Admin\CategoryController::class, 'destroy'])->name('categories.destroy');
 
+            Route::get('/instructors', [Admin\InstructorController::class, 'index'])->name('instructors');
+            Route::post('/instructors', [Admin\InstructorController::class, 'store'])->name('instructors.store');
+            Route::get('/instructors/create', [Admin\InstructorController::class, 'create'])->name('instructors.create');
+            Route::get('/instructors/{instructor}', [Admin\InstructorController::class, 'edit'])->name('instructors.edit');
+            Route::patch('/instructors/{instructor}', [Admin\InstructorController::class, 'update'])->name('instructors.update');
+            Route::delete('/instructors/{instructor}', [Admin\InstructorController::class, 'destroy'])->name('instructors.destroy');
+
             Route::get('/courses', [Admin\CourseController::class, 'index'])->name('courses');
         });
     });

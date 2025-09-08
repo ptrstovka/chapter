@@ -1,5 +1,5 @@
 <template>
-  <FormControl class="group/temporary-file-input" :error="error || errorMessage" :data-preview="preview ? '' : undefined">
+  <FormControl class="group/temporary-file-input" :error="error || errorMessage" :data-preview="(preview && !props.remove) ? '' : undefined">
     <Dropzone
       v-if="showDropZone"
       :class="cn($attrs.class || '')"

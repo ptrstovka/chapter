@@ -68,6 +68,7 @@ import { Panel, PanelContent, PanelFooter, PanelHeader, PanelItem, PanelTitle } 
 import { RadioGroup, RadioGroupItem } from "@/Components/RadioGroup";
 import { Switch } from "@/Components/Switch";
 import { Label } from "@/Components/Label";
+import { useSaveShortcut } from "@/Composables/useKeyboard.ts";
 import { AdminLayout } from "@/Layouts";
 import { useForm } from "@inertiajs/vue3";
 import type { SelectOption } from "@stacktrace/ui";
@@ -100,4 +101,6 @@ const save = () => {
     }
   })
 }
+
+useSaveShortcut(() => save())
 </script>

@@ -29,6 +29,7 @@ import { useConfirmable } from "@/Components/ConfirmationDialog";
 import { FormControl } from "@/Components/Form";
 import { Input } from "@/Components/Input";
 import { Panel, PanelContent, PanelFooter, PanelHeader, PanelItem, PanelTitle } from "@/Components/Panel";
+import { useSaveShortcut } from "@/Composables/useKeyboard.ts";
 import { AdminLayout } from "@/Layouts";
 import { useForm } from "@inertiajs/vue3";
 import { asyncRouter } from "@stacktrace/ui";
@@ -69,4 +70,6 @@ const destroy = () => confirm(
   },
   { title: trans('Delete Category'), confirmLabel: trans('Delete'), cancelLabel: trans('Keep'), destructive: true },
 )
+
+useSaveShortcut(() => save())
 </script>

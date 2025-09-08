@@ -33,10 +33,6 @@ class UserController
                 $builder->where(DB::raw("lower({$column})"), 'like', '%'.Str::lower($term).'%');
             })
             ->withColumns([
-                Columns\Text::make('#', 'id')
-                    ->width(8)
-                    ->numsTabular(),
-
                 Columns\Text::make(__('Name'), 'name')
                     ->fontMedium()
                     ->link(fn (User $user) => Link::to(route('admin.users.edit', $user))),
@@ -58,10 +54,11 @@ class UserController
                     })
                     ->width(10),
 
-                Columns\DateTime::make(__('Created At'), 'created_at'),
+                Columns\DateTime::make(__('Created At'), 'created_at')
+                    ->sortable(using: 'created_at', default: Table\Direction::Desc),
             ])
             ->withActions([
-                Actions\Link::make(__('Edit'), fn (User $user) => Link::to(route('admin.users.edit', $user))),
+                // Actions\Link::make(__('Edit'), fn (User $user) => Link::to(route('admin.users.edit', $user))),
             ]);
 
         return Inertia::render('Admin/UserListPage', AdminLayout::make([

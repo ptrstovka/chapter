@@ -140,6 +140,18 @@ class TemporaryUpload extends Model
                             ->ratio(1)
                     ),
             ],
+            'InstructorAvatar' => [
+                Rule::imageFile()
+                    ->extensions(['jpg', 'png'])
+                    ->max(2048)
+                    ->dimensions(
+                        (new Dimensions)
+                            ->minWidth(128)
+                            ->minHeight(128)
+                            ->maxWidth(2048)
+                            ->maxHeight(2048)
+                    ),
+            ],
         ];
     }
 }

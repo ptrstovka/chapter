@@ -74,6 +74,15 @@ class AdminLayout extends Layout
                     )
                     ->addChild(
                         MenuItem::make(
+                            title: __('Instructors'),
+                            action: Link::to(route('admin.instructors')),
+                            icon: new Icon('contact'),
+                        )->active(routes: [
+                            'admin.instructors*',
+                        ])
+                    )
+                    ->addChild(
+                        MenuItem::make(
                             title: __('Categories'),
                             action: Link::to(route('admin.categories')),
                             icon: new Icon('list-tree'),
@@ -109,7 +118,7 @@ class AdminLayout extends Layout
                         MenuItem::make(
                             title: __('Users'),
                             action: Link::to(route('admin.users')),
-                            icon: new Icon('user'),
+                            icon: new Icon('users'),
                         )->active(routes: [
                             'admin.users',
                         ])
