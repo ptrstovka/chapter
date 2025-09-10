@@ -19,8 +19,9 @@
       <input ref="inputEl" type="file" class="hidden" :multiple="multiple" :accept="accept" @change="onInputChange">
 
       <div v-if="processing" class="bg-background absolute inset-0 flex flex-col items-center justify-center">
-        <span class="font-medium mb-4">{{ $t('Uploading…') }}</span>
+        <span class="font-medium mb-4">{{ progress !== undefined ? $t('Uploading :value%', { value: `${progress}` }) : $t('Uploading…',) }}</span>
         <Spinner class="size-4" />
+        <Button @click="emit('cancel')" variant="ghost-desctructive" class="mt-3" :label="$t('Cancel')" />
       </div>
     </slot>
   </div>
@@ -35,7 +36,8 @@ import { computed, ref } from "vue";
 import { Spinner } from '@/Components/Spinner'
 
 const emit = defineEmits<{
-  (e: 'files', file: Array<File>): void
+  (e: 'files', file: Array<File>): void,
+  (e: 'cancel'): void
 }>()
 const props = withDefaults(defineProps<{
   multiple?: boolean
@@ -46,12 +48,15 @@ const props = withDefaults(defineProps<{
   dragLabel?: string
   pickLabel?: string
   orLabel?: string
+  showCancel?: boolean
+  progress?: number
 }>(), {
   multiple: true,
   showIcon: true,
   dragLabel: 'Drag and drop a file',
   pickLabel: 'pick a file',
   orLabel: 'or',
+  showCancel: false,
 })
 
 const zoneEl = ref<HTMLDivElement>()

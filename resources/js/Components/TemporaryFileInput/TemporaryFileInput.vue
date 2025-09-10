@@ -10,6 +10,10 @@
       :drag-label="dragLabel"
       :pick-label="pickLabel"
       :or-label="orLabel"
+      :multiple="false"
+      show-cancel
+      @cancel="cancelUpload"
+      :progress="progress"
     />
 
     <div v-else :class="cn('relative shadow-xs border border-input rounded-md overflow-hidden', $attrs.class || '')">
@@ -64,11 +68,14 @@ interface Upload {
 const uploading = ref(false)
 const uploadedFile = ref<Upload>()
 const errorMessage = ref<string>()
+const progress = ref<number>(0)
 
 const hasOriginalFile = computed(() => !!props.source)
 const hasPendingUpload = computed(() => !!uploadedFile.value)
 
 const preview = computed(() => uploadedFile.value?.url || props.source)
+
+let controller: AbortController | undefined = undefined
 
 const showDropZone = computed(() => {
   if (uploading.value || props.remove) {
@@ -95,18 +102,41 @@ const upload = async (file: File) => {
   uploading.value = true
   uploadedFile.value = undefined
   errorMessage.value = undefined
+  progress.value = 0
 
   const formData = new FormData()
   formData.append('scope', props.scope)
   formData.append('file', file)
 
+  if (controller) {
+    controller.abort()
+    controller = undefined
+  }
+
+  controller = new AbortController()
+
   try {
-    const response = await axios.post<Upload>(route('files.store'), formData)
+    const response = await axios.post<Upload>(route('files.store'), formData, {
+      signal: controller.signal,
+      onUploadProgress: event => {
+        if (event.lengthComputable) {
+          progress.value = Math.round((event.loaded / (event.total || 1)) * 100)
+        }
+      }
+    })
+
+    progress.value = 100
 
     uploadedFile.value = response.data
 
     onNewFileUploaded(response.data)
   } catch (e: any) {
+    progress.value = 0
+
+    if (axios.isCancel(e)) {
+      return
+    }
+
     const message = e.response?.data?.message
 
     if (message) {
@@ -118,9 +148,10 @@ const upload = async (file: File) => {
     if (shouldRemove) {
       emit('update:remove', true)
     }
+  } finally {
+    controller = undefined
+    uploading.value = false
   }
-
-  uploading.value = false
 }
 
 const onNewFileUploaded = (upload: Upload) => {
@@ -147,4 +178,11 @@ watch(hasOriginalFile, (value, oldValue) => {
     uploadedFile.value = undefined
   }
 })
+
+const cancelUpload = () => {
+  if (controller) {
+    controller.abort()
+    controller = undefined
+  }
+}
 </script>
