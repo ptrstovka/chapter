@@ -115,13 +115,13 @@ class TemporaryUpload extends Model
                 // TODO: FFProbe?
                 Rule::file()
                     ->max(256 * 1024) // 256 MB
-                    ->extensions(['mp4']),
+                    ->extensions(['mp4', 'mov']),
             ],
             'CourseVideo' => [
                 // TODO: FFProbe?
                 Rule::file()
                     ->max(2 * 1024 * 1024) // 2 GB
-                    ->extensions(['mp4']),
+                    ->extensions(['mp4', 'mov']),
             ],
             'CourseResource' => [
                 Rule::file()
