@@ -17,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SetLocaleMiddleware::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+        ], remove: [
+            \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
         ]);
 
         $middleware->trustProxies('*');
