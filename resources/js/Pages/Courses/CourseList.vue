@@ -28,7 +28,7 @@
             class="mt-12"
           />
 
-          <div v-if="courses.data.length > 0" class="grid sm:grid-cols-2 my-4 lg:my-6 gap-4 w-full">
+          <div v-if="courses.data.length > 0" class="grid sm:grid-cols-2 lg:grid-cols-3 my-4 lg:my-6 gap-4 w-full">
             <CourseCard v-for="course in courses.data" :course="course" />
           </div>
 

@@ -6,6 +6,7 @@ use App\Enums\CourseStatus;
 use App\Enums\TextContentType;
 use App\Jobs\CalculateCourseDuration;
 use App\Jobs\PublishCourse;
+use App\Jobs\SortLessonsWithinCourse;
 use App\Models\Concerns\HasUuid;
 use App\Support\Duration;
 use Illuminate\Database\Eloquent\Builder;
@@ -132,6 +133,7 @@ class Course extends Model
             $chain[] = Bus::batch($jobs);
         }
 
+        $chain[] = new SortLessonsWithinCourse($this->withoutRelations());
         $chain[] = new CalculateCourseDuration($this->withoutRelations());
         $chain[] = new PublishCourse($this->withoutRelations());
 
@@ -240,5 +242,23 @@ class Course extends Model
     public function canBeDeleted(): bool
     {
         return $this->status === CourseStatus::Draft || $this->status === CourseStatus::Unpublished;
+    }
+
+    /**
+     * Sort lessons within a course.
+     */
+    public function sortLessonsWithinCourse(): void
+    {
+        $this
+            ->lessons()
+            ->select('lessons.*')
+            ->join('chapters', 'chapters.id', 'lessons.chapter_id')
+            ->orderBy('chapters.position')
+            ->orderBy('lessons.position')
+            ->get()
+            ->each(function (Lesson $lesson, int $idx) {
+                $lesson->position_within_course = $idx + 1;
+                $lesson->save();
+            });
     }
 }

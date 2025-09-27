@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * @property string $slug
@@ -20,6 +19,7 @@ use Symfony\Component\HttpFoundation\File\File;
  * @property \App\Enums\TextContentType $description_type
  * @property \App\Models\Video|null $video
  * @property int $position
+ * @property int $position_within_course
  * @property \App\Models\Chapter $chapter
  * @property \App\Models\Course $course
  * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Resource> $resources

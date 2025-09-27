@@ -20,11 +20,11 @@ class BeginCourseController
             ->select('lessons.*')
             ->leftJoin('completed_lessons', 'completed_lessons.lesson_id', 'lessons.id')
             ->whereNull('completed_lessons.id')
-            ->orderBy('position')
+            ->orderBy('position_within_course')
             ->first();
 
         if (! $nextLesson) {
-            $nextLesson = $course->lessons()->orderBy('position')->first();
+            $nextLesson = $course->lessons()->orderBy('position_within_course')->first();
         }
 
         return to_route('lessons.show', [$course->slug, $nextLesson->slug_id]);

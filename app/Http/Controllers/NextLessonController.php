@@ -28,11 +28,10 @@ class NextLessonController
             $lesson->markCompletedFor($user);
         }
 
-        /** @var Lesson $nextLesson */
         $nextLesson = $course
             ->lessons()
-            ->where('position', '>', $lesson->position)
-            ->orderBy('position')
+            ->where('position_within_course', '>', $lesson->position_within_course)
+            ->orderBy('position_within_course')
             ->first();
 
         if ($nextLesson) {
