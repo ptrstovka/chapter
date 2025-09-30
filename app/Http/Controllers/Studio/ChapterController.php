@@ -23,6 +23,7 @@ class ChapterController
                 $lesson = new Lesson([
                     'position' => 1,
                     'description_type' => $course->author->getDefaultTextContentType(),
+                    'position_within_course' => 0,
                 ]);
                 $lesson->course()->associate($course);
                 $lesson->chapter()->associate($chapter);
