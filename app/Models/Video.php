@@ -6,6 +6,7 @@ use App\Jobs\CalculateVideoDuration;
 use App\Jobs\ExtractVideoPoster;
 use App\Support\Duration;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -20,13 +21,15 @@ class Video extends Model
     protected static function booted(): void
     {
         static::deleted(function (Video $video) {
-            if (Storage::disk('public')->exists($video->file_path)) {
-                Storage::disk('public')->delete($video->file_path);
+            $disk = App::contentDisk();
+
+            if (Storage::disk($disk)->exists($video->file_path)) {
+                Storage::disk($disk)->delete($video->file_path);
             }
 
             if ($poster = $video->poster_image_file_path) {
-                if (Storage::disk('public')->exists($poster)) {
-                    Storage::disk('public')->delete($poster);
+                if (Storage::disk($disk)->exists($poster)) {
+                    Storage::disk($disk)->delete($poster);
                 }
             }
         });
@@ -57,7 +60,7 @@ class Video extends Model
      */
     public function getUrl(): ?string
     {
-        return Storage::disk(config('filesystems.content_disk'))->url($this->file_path);
+        return Storage::disk(App::contentDisk())->url($this->file_path);
     }
 
     /**
@@ -66,7 +69,7 @@ class Video extends Model
     public function getPosterImageUrl(): ?string
     {
         if ($this->poster_image_file_path) {
-            return Storage::disk(config('filesystems.content_disk'))->url($this->poster_image_file_path);
+            return Storage::disk(App::contentDisk())->url($this->poster_image_file_path);
         }
 
         return null;

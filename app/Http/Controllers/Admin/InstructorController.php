@@ -8,6 +8,7 @@ use App\Rules\TemporaryUploadRule;
 use App\View\Layouts\AdminLayout;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -72,7 +73,7 @@ class InstructorController
 
         if ($avatarSource = $request->input('avatar')) {
             $avatarUpload = TemporaryUpload::findOrFailByUuid($avatarSource);
-            $instructor->avatar_file_path = $avatarUpload->copyTo('public', 'author-avatars');
+            $instructor->avatar_file_path = $avatarUpload->copyToContentDisk('author-avatars');
             $avatarUploadToRemove = $avatarUpload;
         }
 
@@ -128,14 +129,14 @@ class InstructorController
                 }
 
                 $avatarUpload = TemporaryUpload::findOrFailByUuid($avatarSource);
-                $instructor->avatar_file_path = $avatarUpload->copyTo('public', 'author-avatars');
+                $instructor->avatar_file_path = $avatarUpload->copyToContentDisk('author-avatars');
                 $avatarUploadToRemove = $avatarUpload;
             }
 
             $instructor->save();
 
             if ($avatarToRemove) {
-                Storage::disk('public')->delete($avatarToRemove);
+                Storage::disk(App::contentDisk())->delete($avatarToRemove);
             }
 
             $avatarUploadToRemove?->delete();

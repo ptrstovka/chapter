@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -178,7 +179,7 @@ class Course extends Model
     public function getCoverImageUrl(): ?string
     {
         if ($this->cover_image_file_path) {
-            return Storage::disk(config('filesystems.content_disk'))->url($this->cover_image_file_path);
+            return Storage::disk(App::contentDisk())->url($this->cover_image_file_path);
         }
 
         return null;

@@ -6,6 +6,7 @@ use App\Enums\TextContentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -34,7 +35,7 @@ class Author extends Model
     public function getAvatarUrl(): ?string
     {
         if ($this->avatar_file_path) {
-            return Storage::disk(config('filesystems.content_disk'))->url($this->avatar_file_path);
+            return Storage::disk(App::contentDisk())->url($this->avatar_file_path);
         }
 
         return null;

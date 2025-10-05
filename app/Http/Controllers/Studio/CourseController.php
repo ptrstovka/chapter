@@ -14,6 +14,7 @@ use App\Table\CourseTable;
 use App\View\Layouts\CourseLayout;
 use App\View\Layouts\StudioLayout;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -120,7 +121,7 @@ class CourseController
                 }
 
                 $coverImageUpload = TemporaryUpload::findOrFailByUuid($coverImage);
-                $course->cover_image_file_path = $coverImageUpload->copyTo('public', 'course-covers');
+                $course->cover_image_file_path = $coverImageUpload->copyToContentDisk('course-covers');
                 $coverImageUploadToRemove = $coverImageUpload;
             }
 
@@ -139,7 +140,7 @@ class CourseController
 
                 $trailerVideoUpload = TemporaryUpload::findOrFailByUuid($trailerVideo);
                 $trailer = Video::create([
-                    'file_path' => $trailerVideoUpload->copyTo('public', 'course-videos'),
+                    'file_path' => $trailerVideoUpload->copyToContentDisk('course-videos'),
                 ]);
                 $course->trailer()->associate($trailer);
                 $trailerVideoUploadToRemove = $trailerVideoUpload;
@@ -148,7 +149,7 @@ class CourseController
             $course->save();
 
             if ($coverImageToRemove) {
-                Storage::disk('public')->delete($coverImageToRemove);
+                Storage::disk(App::contentDisk())->delete($coverImageToRemove);
             }
             $coverImageUploadToRemove?->delete();
             $trailerVideoToRemove?->delete();

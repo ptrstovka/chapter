@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
@@ -88,6 +89,14 @@ class TemporaryUpload extends Model
         Storage::disk($disk)->writeStream(path: $path, resource: Storage::disk($this->disk)->readStream($this->path));
 
         return $path;
+    }
+
+    /**
+     * Copy file to a content disk.
+     */
+    public function copyToContentDisk(?string $directory = null, ?string $name = null): string
+    {
+        return $this->copyTo(App::contentDisk(), $directory, $name);
     }
 
     /**

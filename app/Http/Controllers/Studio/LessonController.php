@@ -98,7 +98,7 @@ class LessonController
 
                 $videoUpload = TemporaryUpload::findOrFailByUuid($video);
                 $lessonVideo = Video::create([
-                    'file_path' => $videoUpload->copyTo('public', 'course-videos'),
+                    'file_path' => $videoUpload->copyToContentDisk('course-videos'),
                 ]);
                 $lesson->video()->associate($lessonVideo);
                 $videoUploadToRemove = $videoUpload;

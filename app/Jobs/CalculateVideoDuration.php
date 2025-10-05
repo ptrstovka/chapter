@@ -6,6 +6,7 @@ use App\Models\Video;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\App;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class CalculateVideoDuration implements ShouldQueue
@@ -23,7 +24,7 @@ class CalculateVideoDuration implements ShouldQueue
         }
 
         $this->video->update([
-            'duration_seconds' => FFMpeg::fromDisk(config('filesystems.content_disk'))
+            'duration_seconds' => FFMpeg::fromDisk(App::contentDisk())
                 ->open($this->video->file_path)
                 ->getDurationInSeconds(),
         ]);

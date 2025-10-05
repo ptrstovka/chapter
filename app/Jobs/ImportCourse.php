@@ -12,6 +12,7 @@ use App\Models\Video;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -47,7 +48,7 @@ class ImportCourse implements ShouldQueue
             'root' => realpath($this->folder),
         ]);
 
-        $destinationStorage = Storage::disk(config('filesystems.content_disk'));
+        $destinationStorage = Storage::disk(App::contentDisk());
 
         if (! $sourceStorage->exists('manifest.json')) {
             $this->fail('The manifest file does not exist.');

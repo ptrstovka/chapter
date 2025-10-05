@@ -29,7 +29,7 @@ class LessonResourceFileListAdapter implements FileListAdapter
 
     public function create(TemporaryUpload $upload): void
     {
-        $filePath = $upload->copyTo(Resource::disk(), Resource::dir());
+        $filePath = $upload->copyToContentDisk(Resource::dir());
 
         $resource = new Resource([
             'file_path' => $filePath,

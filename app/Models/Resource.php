@@ -6,6 +6,7 @@ use App\Models\Concerns\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -26,7 +27,7 @@ class Resource extends Model
     protected static function booted(): void
     {
         static::deleted(function (Resource $resource) {
-            $disk = static::disk();
+            $disk = App::contentDisk();
 
             if (Storage::disk($disk)->exists($resource->file_path)) {
                 Storage::disk($disk)->delete($resource->file_path);
@@ -49,7 +50,7 @@ class Resource extends Model
      */
     public function getDirectUrl(): string
     {
-        return Storage::disk(static::disk())->url($this->file_path);
+        return Storage::disk(App::contentDisk())->url($this->file_path);
     }
 
     /**
@@ -65,15 +66,7 @@ class Resource extends Model
      */
     public function download(): StreamedResponse
     {
-        return Storage::disk(static::disk())->download($this->file_path, $this->client_file_name);
-    }
-
-    /**
-     * Get the disk where the resources are stored.
-     */
-    public static function disk(): string
-    {
-        return config('filesystems.content_disk');
+        return Storage::disk(App::contentDisk())->download($this->file_path, $this->client_file_name);
     }
 
     /**

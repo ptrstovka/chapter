@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\User;
 use App\Support\SettingsRepository;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -12,6 +13,10 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        App::macro('contentDisk', function (): string {
+            return config('filesystems.content_disk');
+        });
+
         Arr::macro('insert', function (array $array, mixed $item, int $index) {
             $count = count($array);
 
