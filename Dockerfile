@@ -18,7 +18,7 @@ COPY --from=vendor /var/www/html/vendor vendor
 ENV VITE_APP_NAME=Chapter
 RUN npm install --ci --no-audit && npm run build
 
-FROM serversideup/php:8.4-fpm-nginx
+FROM serversideup/php:8.5-fpm-nginx
 
 USER root
 
