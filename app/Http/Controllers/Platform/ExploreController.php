@@ -93,11 +93,12 @@ class ExploreController
                 ->inRandomOrder()
                 ->take(6)
                 ->get(['id'])
-                ->pluck('id');
+                ->pluck('id')
+                ->all();
         });
 
         $discover = collect();
-        if ($discoverIds->isNotEmpty()) {
+        if ($discoverIds !== []) {
             $discover = Course::query()
                 ->with(['author'])
                 ->withExists([
