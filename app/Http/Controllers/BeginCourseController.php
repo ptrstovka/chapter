@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class BeginCourseController
 {
     public function __invoke(Course $course)
     {
+        Gate::authorize('study', $course);
+
         $user = Auth::user();
 
         $enrollment = $user->findEnrollmentFor($course);
@@ -18,7 +22,10 @@ class BeginCourseController
         $nextLesson = $course
             ->lessons()
             ->select('lessons.*')
-            ->leftJoin('completed_lessons', 'completed_lessons.lesson_id', 'lessons.id')
+            ->leftJoin('completed_lessons', function (JoinClause $join) use ($user): void {
+                $join->on('completed_lessons.lesson_id', 'lessons.id')
+                    ->where('completed_lessons.user_id', $user->id);
+            })
             ->whereNull('completed_lessons.id')
             ->orderBy('position_within_course')
             ->first();

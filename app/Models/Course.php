@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CourseAccessMode;
 use App\Enums\CourseStatus;
 use App\Enums\TextContentType;
 use App\Jobs\CalculateCourseDuration;
@@ -10,6 +11,7 @@ use App\Jobs\SortLessonsWithinCourse;
 use App\Models\Concerns\HasUuid;
 use App\Support\Duration;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,19 +28,23 @@ use Throwable;
 
 /**
  * @property string $title
- * @property \App\Enums\CourseStatus $status
+ * @property CourseStatus $status
+ * @property CourseAccessMode $access_mode
  * @property string|null $description
  * @property int|null $duration_seconds
  * @property string|null $cover_image_file_path
- * @property \App\Models\Author $author
- * @property \App\Models\Video|null $trailer
- * @property \App\Models\Category|null $category
- * @property \App\Enums\TextContentType $description_type
+ * @property Author $author
+ * @property Video|null $trailer
+ * @property Category|null $category
+ * @property TextContentType $description_type
  * @property string|null $slug
- * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chapter> $chapters
- * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Resource> $resources
- * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Lesson> $lessons
- * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\CourseEnrollment> $enrollments
+ * @property Collection<int, Chapter> $chapters
+ * @property Collection<int, \App\Models\Resource> $resources
+ * @property Collection<int, Lesson> $lessons
+ * @property Collection<int, CourseEnrollment> $enrollments
+ * @property Collection<int, CourseUserAccess> $userAccessGrants
+ * @property Collection<int, CourseGroupAccess> $groupAccessGrants
+ * @property Collection<int, CourseAccessRequest> $accessRequests
  *
  * @method static \Database\Factories\CourseFactory factory($count = null, $state = [])
  */
@@ -50,10 +56,15 @@ class Course extends Model
 
     protected $guarded = false;
 
+    protected $attributes = [
+        'access_mode' => 'public',
+    ];
+
     protected function casts(): array
     {
         return [
             'status' => CourseStatus::class,
+            'access_mode' => CourseAccessMode::class,
             'description_type' => TextContentType::class,
         ];
     }
@@ -93,6 +104,21 @@ class Course extends Model
         return $this->hasMany(CourseEnrollment::class);
     }
 
+    public function userAccessGrants(): HasMany
+    {
+        return $this->hasMany(CourseUserAccess::class);
+    }
+
+    public function groupAccessGrants(): HasMany
+    {
+        return $this->hasMany(CourseGroupAccess::class);
+    }
+
+    public function accessRequests(): HasMany
+    {
+        return $this->hasMany(CourseAccessRequest::class);
+    }
+
     public function favoritedBy(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'favorite_courses');
@@ -103,6 +129,70 @@ class Course extends Model
         // TODO: Add full text search
 
         $builder->where(DB::raw('lower(title)'), 'like', '%'.Str::lower($term).'%');
+    }
+
+    public function scopeVisibleToLearner(Builder $builder, User $user): void
+    {
+        $builder->where(function (Builder $builder) use ($user) {
+            $builder
+                ->whereIn('access_mode', [
+                    CourseAccessMode::Public->value,
+                    CourseAccessMode::RequestOnly->value,
+                ])
+                ->orWhere(function (Builder $builder) use ($user) {
+                    $builder->withAccessGrantFor($user);
+                });
+        });
+    }
+
+    public function scopeAccessibleToLearner(Builder $builder, User $user): void
+    {
+        $builder->where(function (Builder $builder) use ($user) {
+            $builder
+                ->where('access_mode', CourseAccessMode::Public->value)
+                ->orWhere(function (Builder $builder) use ($user) {
+                    $builder->withAccessGrantFor($user);
+                });
+        });
+    }
+
+    public function scopeWithAccessGrantFor(Builder $builder, User $user): void
+    {
+        $builder->where(function (Builder $builder) use ($user) {
+            $builder
+                ->whereHas('userAccessGrants', fn (Builder $builder) => $builder->where('user_id', $user->id))
+                ->orWhereHas('groupAccessGrants.accessGroup.users', fn (Builder $builder) => $builder->where('users.id', $user->id));
+        });
+    }
+
+    public function isVisibleToLearner(User $user): bool
+    {
+        if ($this->access_mode === CourseAccessMode::Public || $this->access_mode === CourseAccessMode::RequestOnly) {
+            return true;
+        }
+
+        return $this->hasAccessGrantFor($user);
+    }
+
+    public function isAccessibleToLearner(User $user): bool
+    {
+        if ($this->access_mode === CourseAccessMode::Public) {
+            return true;
+        }
+
+        return $this->hasAccessGrantFor($user);
+    }
+
+    public function hasAccessGrantFor(User $user): bool
+    {
+        if ($this->userAccessGrants()->where('user_id', $user->id)->exists()) {
+            return true;
+        }
+
+        return $this
+            ->groupAccessGrants()
+            ->whereHas('accessGroup.users', fn (Builder $builder) => $builder->where('users.id', $user->id))
+            ->exists();
     }
 
     /**

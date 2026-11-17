@@ -29,7 +29,7 @@ export function useBackendSonner() {
   }
 
 
-  const toasts = computed(() => page.props.toasts)
+  const toasts = computed(() => page.props.toasts ?? [])
   flash(toasts.value)
   watch(toasts, toasts => flash(toasts))
 }

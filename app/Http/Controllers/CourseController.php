@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\CourseAccessMode;
 use App\Enums\CourseStatus;
 use App\Models\Category;
 use App\Models\Chapter;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use StackTrace\Ui\SelectOption;
 
@@ -57,6 +59,7 @@ class CourseController
                 $request->boolean('onlyFavorite'),
                 fn (Builder $builder) => $builder->whereHas('favoritedBy', fn (Builder $builder) => $builder->where('id', $user->id))
             )
+            ->visibleToLearner($user)
             ->where('status', CourseStatus::Published);
 
         match ($request->input('sort')) {
@@ -91,16 +94,30 @@ class CourseController
 
     public function show(Course $course)
     {
-        $course->load('chapters.lessons.video');
-
         $user = Auth::user();
 
+        abort_unless($course->status === CourseStatus::Published && $course->isVisibleToLearner($user), 404);
+
+        $course->load('chapters.lessons.video');
+
         $enrollment = $user->findEnrollmentFor($course);
+        $canEnroll = Gate::allows('enroll', $course);
+        $hasPendingAccessRequest = $course
+            ->accessRequests()
+            ->whereBelongsTo($user)
+            ->where('status', 'pending')
+            ->exists();
 
         return Inertia::render('Courses/CourseDetail', [
             'id' => $course->uuid,
             'slug' => $course->slug,
             'title' => $course->title,
+            'access' => [
+                'mode' => $course->access_mode->value,
+                'canEnroll' => $canEnroll,
+                'canRequest' => $course->access_mode === CourseAccessMode::RequestOnly && ! $canEnroll && ! $hasPendingAccessRequest,
+                'hasPendingRequest' => $hasPendingAccessRequest,
+            ],
             'trailer' => VideoSource::for($course->trailer),
             'description' => $course->description
                 ? (new TextRenderer)->toHtml($course->description, $course->description_type)

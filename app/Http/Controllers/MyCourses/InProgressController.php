@@ -35,6 +35,7 @@ class InProgressController extends Controller
                     ->whereNull('course_enrollments.completed_at');
             })
             ->where('status', CourseStatus::Published)
+            ->accessibleToLearner($user)
             ->latest('course_enrollments.updated_at')
             ->paginate(16);
 

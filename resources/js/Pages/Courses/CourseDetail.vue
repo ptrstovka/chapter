@@ -57,13 +57,15 @@
               </div>
 
               <div class="flex flex-col w-full gap-2 mt-4">
-                <LinkButton v-if="enrollment" :href="route('courses.begin', slug)">
+                <LinkButton v-if="enrollment && access.canEnroll" :href="route('courses.begin', slug)">
                   {{ enrollment.isCompleted ? $t('Browse Lessons') : (enrollment.completedLessons === 0 ? $t('Start Learning') : $t('Continue Learning')) }}
                 </LinkButton>
-                <Button v-else :processing="enrollForm.processing" @click="enroll">{{ $t('Enroll') }}</Button>
+                <Button v-else-if="access.canEnroll" :processing="enrollForm.processing" @click="enroll">{{ $t('Enroll') }}</Button>
+                <Button v-else-if="access.canRequest" :processing="accessRequestForm.processing" @click="requestAccess">{{ $t('Request Access') }}</Button>
+                <p v-else-if="access.hasPendingRequest" role="status" class="py-2 text-center text-sm text-muted-foreground">{{ $t('Request Pending') }}</p>
               </div>
 
-              <Button @click="resetProgress" v-if="enrollment && enrollment.completedLessons > 0" class="w-full mt-3" variant="ghost">{{ $t('Start Over') }}</Button>
+              <Button @click="resetProgress" v-if="enrollment && access.canEnroll && enrollment.completedLessons > 0" class="w-full mt-3" variant="ghost">{{ $t('Start Over') }}</Button>
             </CardContent>
           </Card>
         </div>
@@ -92,6 +94,12 @@ const props = defineProps<{
   id: string
   slug: string
   title: string
+  access: {
+    mode: 'public' | 'request-only' | 'private'
+    canEnroll: boolean
+    canRequest: boolean
+    hasPendingRequest: boolean
+  }
   trailer: VideoSource | null
   description: string | null
   author: {
@@ -122,6 +130,15 @@ const enroll = () => {
   }
 
   enrollForm.post(route('courses.enroll', props.id))
+}
+
+const accessRequestForm = useForm({})
+const requestAccess = () => {
+  if (accessRequestForm.processing) {
+    return
+  }
+
+  accessRequestForm.post(route('courses.access-requests.store', props.id))
 }
 
 const { confirm } = useConfirmable()

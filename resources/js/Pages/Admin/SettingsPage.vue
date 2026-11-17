@@ -75,6 +75,13 @@
             <PanelItem :label="$t('Password Login')" :description="$t('Enable users to login with email and password.')" :wrap="false">
               <AutoSaveFormSwitchField name="enable_password_login" />
             </PanelItem>
+            <PanelItem
+              :label="$t('Studio User Directory')"
+              :description="$t('Allow course creators to search users by name or email when granting course access.')"
+              :wrap="false"
+            >
+              <AutoSaveFormSwitchField name="enable_studio_user_directory" />
+            </PanelItem>
           </PanelContent>
         </Panel>
       </div>
@@ -99,6 +106,7 @@ const props = defineProps<{
   enableInvitations: boolean
   enableSingleSignOn: boolean
   enablePasswordLogin: boolean
+  enableStudioUserDirectory: boolean
   enableExplorePage: boolean
   primaryColorForeground: string | null
   primaryColorBackground: string | null
@@ -118,6 +126,7 @@ const form = useAutoSaveForm(() => ({
   enable_invitations: props.enableInvitations,
   enable_single_sign_on: props.enableSingleSignOn,
   enable_password_login: props.enablePasswordLogin,
+  enable_studio_user_directory: props.enableStudioUserDirectory,
   enable_explore_page: props.enableExplorePage,
   logo: props.logo,
 }), {

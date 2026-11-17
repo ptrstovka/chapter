@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\BeginCourseController;
 use App\Http\Controllers\CompletedLessonController;
+use App\Http\Controllers\CourseAccessRequestController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollCourseController;
 use App\Http\Controllers\FavoriteCourseController;
@@ -38,6 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/courses', [CourseController::class, 'index'])->name('courses');
     Route::get('/courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
     Route::post('/courses/{course:uuid}/enroll', EnrollCourseController::class)->name('courses.enroll');
+    Route::post('/courses/{course:uuid}/access-requests', CourseAccessRequestController::class)->name('courses.access-requests.store');
     Route::get('/courses/{course:slug}/begin', BeginCourseController::class)->name('courses.begin');
     Route::post('/courses/{course:slug}/reset', ResetProgressController::class)->name('courses.reset-progress');
     Route::post('/courses/{course:slug}/favorite', [FavoriteCourseController::class, 'store'])->name('courses.favorite');
@@ -78,6 +80,16 @@ Route::middleware('auth')->group(function () {
             Route::get('/users/{user}', [Admin\UserController::class, 'edit'])->name('users.edit');
             Route::patch('/users/{user}', [Admin\UserController::class, 'update'])->name('users.update');
 
+            Route::get('/groups', [Admin\AccessGroupController::class, 'index'])->name('groups');
+            Route::get('/groups/create', [Admin\AccessGroupController::class, 'create'])->name('groups.create');
+            Route::post('/groups', [Admin\AccessGroupController::class, 'store'])->name('groups.store');
+            Route::get('/groups/{accessGroup}', [Admin\AccessGroupController::class, 'edit'])->name('groups.edit');
+            Route::patch('/groups/{accessGroup}', [Admin\AccessGroupController::class, 'update'])->name('groups.update');
+            Route::delete('/groups/{accessGroup}', [Admin\AccessGroupController::class, 'destroy'])->name('groups.destroy');
+            Route::get('/groups/{accessGroup}/available-users', [Admin\AccessGroupController::class, 'availableUsers'])->name('groups.users.available');
+            Route::post('/groups/{accessGroup}/users', [Admin\AccessGroupController::class, 'attachUsers'])->name('groups.users.store');
+            Route::delete('/groups/{accessGroup}/users', [Admin\AccessGroupController::class, 'detachUsers'])->name('groups.users.destroy');
+
             Route::get('/categories', [Admin\CategoryController::class, 'index'])->name('categories');
             Route::get('/categories/create', [Admin\CategoryController::class, 'create'])->name('categories.create');
             Route::post('/categories', [Admin\CategoryController::class, 'store'])->name('categories.store');
@@ -96,6 +108,9 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    Route::get('/studio/users/lookup', Studio\UserLookupController::class)->name('studio.users.lookup');
+    Route::get('/studio/users/search', Studio\UserLookupController::class)->name('studio.users.search');
+
     Route::prefix('studio')->middleware(StudioMiddleware::class)->group(function () {
         Route::get('/', Studio\StudioController::class)->name('studio');
 
@@ -108,6 +123,14 @@ Route::middleware('auth')->group(function () {
             Route::patch('/courses/{course:uuid}', [Studio\CourseController::class, 'update'])->name('courses.update');
             Route::delete('/courses/{course:uuid}', [Studio\CourseController::class, 'destroy'])->name('courses.destroy');
             Route::get('/courses/{course:uuid}/content', Studio\CourseContentController::class)->name('courses.content');
+            Route::get('/courses/{course:uuid}/access', [Studio\CourseAccessController::class, 'show'])->name('courses.access');
+            Route::patch('/courses/{course:uuid}/access', [Studio\CourseAccessController::class, 'update'])->name('courses.access.update');
+            Route::post('/courses/{course:uuid}/access/users', [Studio\CourseUserAccessController::class, 'store'])->name('courses.access.users.store');
+            Route::delete('/courses/{course:uuid}/access/users', [Studio\CourseUserAccessController::class, 'destroy'])->name('courses.access.users.destroy');
+            Route::post('/courses/{course:uuid}/access/groups', [Studio\CourseGroupAccessController::class, 'store'])->name('courses.access.groups.store');
+            Route::delete('/courses/{course:uuid}/access/groups', [Studio\CourseGroupAccessController::class, 'destroy'])->name('courses.access.groups.destroy');
+            Route::post('/courses/{course:uuid}/access/requests/{courseAccessRequest}/approve', [Studio\CourseAccessRequestController::class, 'approve'])->name('courses.access.requests.approve');
+            Route::post('/courses/{course:uuid}/access/requests/{courseAccessRequest}/deny', [Studio\CourseAccessRequestController::class, 'deny'])->name('courses.access.requests.deny');
             Route::post('/courses/{course:uuid}/unpublish', Studio\UnpublishCourseController::class)->name('courses.unpublish');
             Route::post('/courses/{course:uuid}/publish', Studio\PublishCourseController::class)->name('courses.publish');
             Route::post('/courses/{course:uuid}/chapters', [Studio\ChapterController::class, 'store'])->name('course.chapters.store');

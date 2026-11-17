@@ -83,14 +83,15 @@ class StudioLayout extends Layout
 
     public function toLayout(): array
     {
-        $instructor = Auth::user()->author;
+        $user = Auth::user();
+        $instructor = $user->author;
 
         return [
             'sidebar' => $this->sidebar(),
             'breadcrumbs' => $this->breadcrumbs,
             'instructor' => [
-                'name' => $instructor->name,
-                'avatarUrl' => $instructor->getAvatarUrl(),
+                'name' => $instructor?->name ?? $user->name,
+                'avatarUrl' => $instructor?->getAvatarUrl(),
             ],
         ];
     }

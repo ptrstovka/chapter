@@ -35,6 +35,7 @@ class ExploreController
             })
             ->whereNull('course_enrollments.completed_at')
             ->where('status', CourseStatus::Published)
+            ->accessibleToLearner($user)
             ->latest('course_enrollments.updated_at')
             ->take(3)
             ->get();
@@ -46,6 +47,7 @@ class ExploreController
                 'favoritedBy' => fn (Builder $builder) => $builder->where('id', $user->id),
             ])
             ->where('status', CourseStatus::Published)
+            ->visibleToLearner($user)
             ->whereNotIn('id', $inProgress->pluck('id'))
             ->latest()
             ->take(3)
@@ -59,6 +61,7 @@ class ExploreController
                 'favoritedBy' => fn (Builder $builder) => $builder->where('id', $user->id),
             ])
             ->where('status', CourseStatus::Published)
+            ->visibleToLearner($user)
             ->whereNotIn('courses.id', [
                 ...$latest->pluck('id')->all(),
                 ...$inProgress->pluck('id')->all(),
@@ -76,15 +79,17 @@ class ExploreController
         // Discover
         $discoverKey = 'Discover:'.sha1(
             'Courses'.collect([
+                $user->id,
                 ...$inProgress->pluck('id')->all(),
                 ...$latest->pluck('id')->all(),
                 ...$popular->pluck('id')->all(),
             ])->sort()->values()->join('')
         );
 
-        $discoverIds = Cache::remember($discoverKey, now()->addMinutes(15), function () use ($latest, $inProgress, $popular) {
+        $discoverIds = Cache::remember($discoverKey, now()->addMinutes(15), function () use ($latest, $inProgress, $popular, $user) {
             return Course::query()
                 ->where('status', CourseStatus::Published)
+                ->visibleToLearner($user)
                 ->whereNotIn('id', [
                     ...$latest->pluck('id')->all(),
                     ...$inProgress->pluck('id')->all(),
@@ -105,6 +110,7 @@ class ExploreController
                     'favoritedBy' => fn (Builder $builder) => $builder->where('id', $user->id),
                 ])
                 ->where('status', CourseStatus::Published)
+                ->visibleToLearner($user)
                 ->whereIn('id', $discoverIds)
                 ->get();
         }

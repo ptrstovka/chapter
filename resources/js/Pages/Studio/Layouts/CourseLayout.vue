@@ -67,6 +67,7 @@ const page = usePage<AppPageProps & {
   canUnpublish: boolean
   canDelete: boolean
   canBeDeleted: boolean
+  canManageAccess: boolean
 }>()
 
 const course = computed(() => page.props)
@@ -85,6 +86,13 @@ const menu = useNavigation(computed(() => [
       { route: 'studio.course.chapters*' },
     ]
   },
+  ...(page.props.canManageAccess ? [{
+    title: trans('Access'),
+    action: { route: 'studio.courses.access', params: [page.props.id] },
+    active: [
+      { route: 'studio.courses.access*' },
+    ],
+  }] : []),
 ]))
 
 const { confirm } = useConfirmable()

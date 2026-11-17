@@ -9,6 +9,7 @@ use App\Models\Lesson;
 use App\Models\Resource;
 use App\Support\TextRenderer;
 use App\View\Models\VideoSource;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Number;
@@ -18,6 +19,8 @@ class LessonController
 {
     public function show(Course $course, Lesson $lesson)
     {
+        abort_unless($lesson->course_id === $course->id, 404);
+
         Gate::authorize('study', $course);
 
         $user = Auth::user();
@@ -25,7 +28,7 @@ class LessonController
         $course->load(['chapters.lessons.video']);
         $course->loadCount('lessons');
 
-        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\CompletedLesson> $completions */
+        /** @var Collection<int, CompletedLesson> $completions */
         $completions = $user->completedLessons()
             ->whereRelation('lesson.course', 'courses.id', $course->id)
             ->get()

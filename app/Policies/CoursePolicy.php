@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\CourseStatus;
 use App\Models\Course;
 use App\Models\User;
 
@@ -27,7 +28,7 @@ class CoursePolicy
 
     public function create(User $user): bool
     {
-        return $user->is_admin || $user->isAuthor();
+        return $user->isAuthor();
     }
 
     public function update(User $user, Course $course): bool
@@ -58,12 +59,15 @@ class CoursePolicy
 
     public function enroll(User $user, Course $course): bool
     {
-        return true;
+        return $course->status === CourseStatus::Published
+            && $course->isAccessibleToLearner($user);
     }
 
     public function study(User $user, Course $course): bool
     {
-        return $user->isEnrolledIn($course);
+        return $course->status === CourseStatus::Published
+            && $user->isEnrolledIn($course)
+            && $course->isAccessibleToLearner($user);
     }
 
     public function publish(User $user, Course $course): bool

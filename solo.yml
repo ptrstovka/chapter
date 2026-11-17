@@ -1,23 +1,8 @@
-# Visit https://soloterm.com to learn more
 name: chapter
 icon: null
 processes:
   Pail:
     command: php artisan pail
-    working_dir: null
-    auto_start: false
-    auto_restart: false
-    restart_when_changed: []
-    env: {}
-  npm:build:
-    command: npm run build
-    working_dir: null
-    auto_start: false
-    auto_restart: false
-    restart_when_changed: []
-    env: {}
-  npm:dev:
-    command: npm run dev
     working_dir: null
     auto_start: false
     auto_restart: false
@@ -32,6 +17,20 @@ processes:
     env: {}
   Scheduler:
     command: php artisan schedule:work
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  Vite:
+    command: npm run dev
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  npm:build:
+    command: npm run build
     working_dir: null
     auto_start: false
     auto_restart: false

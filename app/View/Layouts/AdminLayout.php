@@ -123,6 +123,15 @@ class AdminLayout extends Layout
                             'admin.users',
                         ])
                     )
+                    ->addChild(
+                        MenuItem::make(
+                            title: __('Groups'),
+                            action: Link::to(route('admin.groups')),
+                            icon: new Icon('users-round'),
+                        )->active(routes: [
+                            'admin.groups*',
+                        ])
+                    )
             );
     }
 

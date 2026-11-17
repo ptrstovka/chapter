@@ -33,6 +33,7 @@ class CompletedController extends Controller
                     ->whereNotNull('course_enrollments.completed_at');
             })
             ->where('status', CourseStatus::Published)
+            ->accessibleToLearner($user)
             ->orderByDesc('completed_at')
             ->paginate(16);
 

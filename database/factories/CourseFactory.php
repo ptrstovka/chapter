@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Course>
+ * @extends Factory<Course>
  */
 class CourseFactory extends Factory
 {
@@ -59,7 +59,8 @@ class CourseFactory extends Factory
 
                 for ($j = 0; $j < rand(3, 8); $j++) {
                     Lesson::factory()->for($chapter)->for($course)->create([
-                        'position' => $lessons,
+                        'position' => $j + 1,
+                        'position_within_course' => $lessons,
                     ]);
 
                     $lessons++;

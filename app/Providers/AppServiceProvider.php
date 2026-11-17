@@ -57,7 +57,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('accessStudio', function (User $user) {
-            return $user->author != null;
+            return $user->is_admin || $user->author != null;
         });
 
         Gate::define('viewAdmin', function (User $user) {

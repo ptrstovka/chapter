@@ -36,6 +36,7 @@ class CourseLayout extends StudioLayout
             'canBePublished' => $this->course->canBePublished(),
             'canUnpublish' => Gate::allows('unpublish', $this->course),
             'canBeUnpublished' => $this->course->canBeUnpublished(),
+            'canManageAccess' => Gate::allows('update', $this->course),
         ];
     }
 }

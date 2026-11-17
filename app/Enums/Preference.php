@@ -16,9 +16,9 @@ enum Preference: string
     case EnableInvitations = 'Access.Invitations';
     case EnableSingleSignOn = 'Access.SingleSignOn';
     case EnablePasswordLogin = 'Access.PasswordLogin';
+    case EnableStudioUserDirectory = 'Access.StudioUserDirectory';
 
     case EnableExplorePage = 'Explore.Show';
-
 
     /**
      * Get the default value of the preference.
@@ -38,6 +38,7 @@ enum Preference: string
             Preference::EnableInvitations => false,
             Preference::EnableSingleSignOn => false,
             Preference::EnablePasswordLogin => true,
+            Preference::EnableStudioUserDirectory => false,
 
             default => null,
         };

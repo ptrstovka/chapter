@@ -30,6 +30,7 @@ class FavoriteController extends Controller
                 $query->where('id', $user->id);
             })
             ->where('status', CourseStatus::Published)
+            ->visibleToLearner($user)
             ->paginate(16);
 
         return Inertia::render('MyCourses/FavoriteList', [

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Admin;
-
 
 use App\Enums\Preference;
 use App\Facades\Settings;
@@ -34,6 +32,7 @@ class SettingsController
             'enableInvitations' => Settings::boolean(Preference::EnableInvitations),
             'enableSingleSignOn' => Settings::boolean(Preference::EnableSingleSignOn),
             'enablePasswordLogin' => Settings::boolean(Preference::EnablePasswordLogin),
+            'enableStudioUserDirectory' => Settings::boolean(Preference::EnableStudioUserDirectory),
             'enableExplorePage' => Settings::boolean(Preference::EnableExplorePage),
             'primaryColorForeground' => Settings::string(Preference::PrimaryColorForeground),
             'primaryColorBackground' => Settings::string(Preference::PrimaryColorBackground),
@@ -58,6 +57,7 @@ class SettingsController
             'enable_invitations' => ['sometimes', 'boolean'],
             'enable_single_sign_on' => ['sometimes', 'boolean'],
             'enable_password_login' => ['sometimes', 'boolean'],
+            'enable_studio_user_directory' => ['sometimes', 'boolean'],
             'enable_explore_page' => ['sometimes', 'boolean'],
             'logo' => ['sometimes', 'nullable', 'string'],
         ]);
@@ -75,6 +75,7 @@ class SettingsController
         $patch->present('enable_invitations', fn (bool $value) => Settings::setOrForget(Preference::EnableInvitations, $value));
         $patch->present('enable_single_sign_on', fn (bool $value) => Settings::setOrForget(Preference::EnableSingleSignOn, $value));
         $patch->present('enable_password_login', fn (bool $value) => Settings::setOrForget(Preference::EnablePasswordLogin, $value));
+        $patch->present('enable_studio_user_directory', fn (bool $value) => Settings::setOrForget(Preference::EnableStudioUserDirectory, $value));
 
         $patch->present('enable_explore_page', fn (bool $value) => Settings::setOrForget(Preference::EnableExplorePage, $value));
 
