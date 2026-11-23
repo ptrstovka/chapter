@@ -17,7 +17,7 @@ class CopyStorageDisk extends Command
                             {source : The configured source disk}
                             {destination : The configured destination disk}';
 
-    protected $description = 'Copy all files between disks, preserving paths and verifying contents with SHA-256';
+    protected $description = 'Copy all files between disks, preserving paths and checking file sizes';
 
     public function handle(): int
     {
@@ -48,7 +48,7 @@ class CopyStorageDisk extends Command
         }
 
         $this->info("Copying [{$sourceName}] to [{$destinationName}].");
-        $this->line('Identical files are skipped; different destination files are overwritten. No files are deleted.');
+        $this->line('Destination files with matching sizes are skipped; different sizes are overwritten. No files are deleted.');
         $this->line('Keep uploads, queue jobs and scheduled file changes stopped until the disk switch is complete.');
 
         $copied = 0;
@@ -94,12 +94,9 @@ class CopyStorageDisk extends Command
     {
         $size = $source->size($path);
         $this->line("Checking {$path} (".Number::fileSize($size).')');
-        $checksum = $this->checksum($source, $path);
-
         if ($destination->exists($path)
-            && $destination->size($path) === $size
-            && $this->checksum($destination, $path) === $checksum) {
-            $this->line("Skipped identical file: {$path}");
+            && $destination->size($path) === $size) {
+            $this->line("Skipped file with matching size: {$path}");
 
             return false;
         }
@@ -128,26 +125,13 @@ class CopyStorageDisk extends Command
             }
         }
 
-        $this->line("Verifying: {$path}");
-
-        if ($destination->size($path) !== $size || $this->checksum($destination, $path) !== $checksum) {
-            throw new RuntimeException('Destination size or SHA-256 checksum does not match the source.');
+        if ($destination->size($path) !== $size) {
+            throw new RuntimeException('Destination size does not match the source.');
         }
 
-        $this->line("Copied and verified: {$path}");
+        $this->line("Copied: {$path}");
 
         return true;
-    }
-
-    private function checksum(FilesystemAdapter $disk, string $path): string
-    {
-        $checksum = $disk->checksum($path, ['checksum_algo' => 'sha256']);
-
-        if ($checksum === false) {
-            throw new RuntimeException('Unable to calculate the SHA-256 checksum.');
-        }
-
-        return $checksum;
     }
 
     private function disksOverlap(FilesystemAdapter $source, FilesystemAdapter $destination): bool

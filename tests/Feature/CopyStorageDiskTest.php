@@ -46,10 +46,18 @@ it('copies all files with their original paths and bytes while retaining source 
         ->and(config('filesystems.content_disk'))->toBe($contentDisk);
 });
 
-it('resumes without rewriting verified files', function () {
-    $this->sourceDisk->put('video.mp4', 'video');
+it('skips destination files with matching sizes without reading their contents', function (string $existing) {
+    $this->sourceDisk->put('video.mp4', 'original');
+    $this->destinationDisk->put('video.mp4', $existing);
 
-    $this->artisan('storage:copy copy-source copy-destination')->assertSuccessful();
+    $source = Mockery::mock(FilesystemAdapter::class, [
+        $this->sourceDisk->getDriver(),
+        $this->sourceDisk->getAdapter(),
+        $this->sourceDisk->getConfig(),
+    ])->makePartial();
+    $source->shouldNotReceive('checksum');
+    $source->shouldNotReceive('readStream');
+    Storage::set('copy-source', $source);
 
     $destination = Mockery::mock(FilesystemAdapter::class, [
         $this->destinationDisk->getDriver(),
@@ -57,14 +65,19 @@ it('resumes without rewriting verified files', function () {
         $this->destinationDisk->getConfig(),
     ])->makePartial();
     $destination->shouldNotReceive('writeStream');
+    $destination->shouldNotReceive('checksum');
+    $destination->shouldNotReceive('readStream');
+    $destination->shouldNotReceive('get');
     Storage::set('copy-destination', $destination);
 
     $this->artisan('storage:copy copy-source copy-destination')
         ->expectsOutput('Copied: 0; skipped: 1; failed: 0.')
         ->assertSuccessful();
-});
 
-it('replaces incomplete or different destination files even when their sizes match', function (string $existing) {
+    expect($this->destinationDisk->get('video.mp4'))->toBe($existing);
+})->with(['same contents' => 'original', 'different contents' => 'modified']);
+
+it('replaces destination files whose sizes differ from the source', function (string $existing) {
     $this->sourceDisk->put('video.mp4', 'original');
     $this->destinationDisk->put('video.mp4', $existing);
 
@@ -74,7 +87,40 @@ it('replaces incomplete or different destination files even when their sizes mat
 
     expect($this->destinationDisk->get('video.mp4'))->toBe('original')
         ->and($this->sourceDisk->get('video.mp4'))->toBe('original');
-})->with(['partial copy' => 'part', 'same size different bytes' => 'modified']);
+})->with(['partial copy' => 'part', 'larger file' => 'longer contents']);
+
+it('copies with one source stream and no checksum or destination content reads', function () {
+    $this->sourceDisk->put('video.mp4', 'original');
+    $source = Mockery::mock(FilesystemAdapter::class, [
+        $this->sourceDisk->getDriver(),
+        $this->sourceDisk->getAdapter(),
+        $this->sourceDisk->getConfig(),
+    ])->makePartial();
+    $source->shouldReceive('readStream')->once()->with('video.mp4')->passthru();
+    $source->shouldNotReceive('checksum');
+    $source->shouldNotReceive('get');
+    Storage::set('copy-source', $source);
+
+    $destination = Mockery::mock(FilesystemAdapter::class, [
+        $this->destinationDisk->getDriver(),
+        $this->destinationDisk->getAdapter(),
+        $this->destinationDisk->getConfig(),
+    ])->makePartial();
+    $destination->shouldNotReceive('checksum');
+    $destination->shouldNotReceive('readStream');
+    $destination->shouldNotReceive('get');
+    Storage::set('copy-destination', $destination);
+
+    $this->artisan('storage:copy copy-source copy-destination')
+        ->expectsOutput('Copied: 1; skipped: 0; failed: 0.')
+        ->assertSuccessful();
+
+    $this->artisan('storage:copy copy-source copy-destination')
+        ->expectsOutput('Copied: 0; skipped: 1; failed: 0.')
+        ->assertSuccessful();
+
+    expect($this->destinationDisk->get('video.mp4'))->toBe('original');
+});
 
 it('rejects unknown or identical disks before copying', function (string $source, string $destination) {
     $this->sourceDisk->put('keep.txt', 'keep');
@@ -124,14 +170,14 @@ it('rejects overlapping prefixes in the same S3 bucket without contacting the se
         ->assertFailed();
 })->with(['same prefix' => 'content', 'child prefix' => 'content/nested', 'parent prefix' => '']);
 
-it('fails on unavailable source streams or checksums without writing destination files', function (string $method, mixed $result) {
+it('fails on unavailable source streams without writing destination files', function () {
     $this->sourceDisk->put('video.mp4', 'video');
     $source = Mockery::mock(FilesystemAdapter::class, [
         $this->sourceDisk->getDriver(),
         $this->sourceDisk->getAdapter(),
         $this->sourceDisk->getConfig(),
     ])->makePartial();
-    $source->shouldReceive($method)->once()->andReturn($result);
+    $source->shouldReceive('readStream')->once()->andReturnNull();
     Storage::set('copy-source', $source);
 
     $this->artisan('storage:copy copy-source copy-destination')
@@ -140,10 +186,7 @@ it('fails on unavailable source streams or checksums without writing destination
 
     $this->destinationDisk->assertMissing('video.mp4');
     expect($this->sourceDisk->get('video.mp4'))->toBe('video');
-})->with([
-    'read failure' => ['readStream', null],
-    'checksum failure' => ['checksum', false],
-]);
+});
 
 it('continues after write failures and closes source streams', function (bool $throw) {
     $this->sourceDisk->put('failed.mp4', 'failed');
@@ -184,7 +227,7 @@ it('continues after write failures and closes source streams', function (bool $t
     }
 })->with(['returned failure' => false, 'thrown failure' => true]);
 
-it('detects corrupted writes and can repair them on a subsequent run', function (string $corrupted) {
+it('detects writes with incorrect sizes and can repair them on a subsequent run', function (string $corrupted) {
     $this->sourceDisk->put('video.mp4', 'original');
     $destination = Mockery::mock(FilesystemAdapter::class, [
         $this->destinationDisk->getDriver(),
@@ -197,7 +240,7 @@ it('detects corrupted writes and can repair them on a subsequent run', function 
     Storage::set('copy-destination', $destination);
 
     $this->artisan('storage:copy copy-source copy-destination')
-        ->expectsOutputToContain('Destination size or SHA-256 checksum does not match the source.')
+        ->expectsOutputToContain('Destination size does not match the source.')
         ->assertFailed();
 
     expect($this->sourceDisk->get('video.mp4'))->toBe('original');
@@ -206,7 +249,7 @@ it('detects corrupted writes and can repair them on a subsequent run', function 
     $this->artisan('storage:copy copy-source copy-destination')->assertSuccessful();
 
     expect($this->destinationDisk->get('video.mp4'))->toBe('original');
-})->with(['truncated' => 'short', 'same size corrupted' => 'modified']);
+})->with(['truncated' => 'short', 'larger file' => 'longer contents']);
 
 it('returns failure if the source listing cannot finish', function () {
     $adapter = Mockery::mock(FlysystemAdapter::class);
