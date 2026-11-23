@@ -4,14 +4,14 @@ return [
     'ffmpeg' => [
         'binaries' => env('FFMPEG_BINARIES', 'ffmpeg'),
 
-        'threads' => 12,   // set to false to disable the default 'threads' filter
+        'threads' => (int) env('FFMPEG_THREADS', 2),
     ],
 
     'ffprobe' => [
         'binaries' => env('FFPROBE_BINARIES', 'ffprobe'),
     ],
 
-    'timeout' => 3600,
+    'timeout' => (int) env('FFMPEG_TIMEOUT', 21600),
 
     'log_channel' => env('LOG_CHANNEL', 'stack'),   // set to false to completely disable logging
 

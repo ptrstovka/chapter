@@ -1,0 +1,7 @@
+#!/command/with-contenv /bin/sh
+
+if [ "$QUEUE_WORKER_ENABLED" != true ]; then
+    exec /command/s6-svc -O .
+fi
+
+exec /usr/local/bin/php /var/www/html/artisan videos:work

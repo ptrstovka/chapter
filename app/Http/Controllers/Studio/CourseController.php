@@ -7,12 +7,12 @@ use App\Enums\TextContentType;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\TemporaryUpload;
-use App\Models\Video;
 use App\Rules\TemporaryUploadRule;
 use App\Support\Slug;
 use App\Table\CourseTable;
 use App\View\Layouts\CourseLayout;
 use App\View\Layouts\StudioLayout;
+use App\View\Models\VideoSource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -63,7 +63,7 @@ class CourseController
             'description' => $course->description,
             'descriptionType' => $course->description_type,
             'coverImage' => $course->getCoverImageUrl(),
-            'trailer' => $course->trailer?->getUrl(),
+            'trailer' => VideoSource::for($course->trailer),
             'category' => $course->category?->id,
             'categories' => Category::query()
                 ->get()
@@ -84,8 +84,6 @@ class CourseController
             'description_type' => ['required', 'string', Rule::enum(TextContentType::class)],
             'cover_image' => TemporaryUploadRule::scope('CourseCoverImage'),
             'remove_cover_image' => 'boolean',
-            'trailer' => TemporaryUploadRule::scope('CourseTrailerVideo'),
-            'remove_trailer' => 'boolean',
             'category' => ['required', 'numeric', Rule::exists(Category::class, 'id')],
         ]);
 
@@ -125,35 +123,12 @@ class CourseController
                 $coverImageUploadToRemove = $coverImageUpload;
             }
 
-            $trailerVideoToRemove = null;
-            $trailerVideoUploadToRemove = null;
-            $removeTrailer = $request->boolean('remove_trailer');
-            $trailerVideo = $request->input('trailer');
-
-            if ($removeTrailer && ($course->trailer)) {
-                $trailerVideoToRemove = $course->trailer;
-                $course->trailer()->disassociate();
-            } elseif ($trailerVideo) {
-                if ($course->trailer) {
-                    $trailerVideoToRemove = $course->trailer;
-                }
-
-                $trailerVideoUpload = TemporaryUpload::findOrFailByUuid($trailerVideo);
-                $trailer = Video::create([
-                    'file_path' => $trailerVideoUpload->copyToContentDisk('course-videos'),
-                ]);
-                $course->trailer()->associate($trailer);
-                $trailerVideoUploadToRemove = $trailerVideoUpload;
-            }
-
             $course->save();
 
             if ($coverImageToRemove) {
                 Storage::disk(App::contentDisk())->delete($coverImageToRemove);
             }
             $coverImageUploadToRemove?->delete();
-            $trailerVideoToRemove?->delete();
-            $trailerVideoUploadToRemove?->delete();
         });
 
         return back();

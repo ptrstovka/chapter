@@ -20,6 +20,10 @@ enum Preference: string
 
     case EnableExplorePage = 'Explore.Show';
 
+    case EnableVideoHls = 'Video.Hls';
+    case KeepOriginalVideos = 'Video.KeepOriginals';
+    case VideoQualities = 'Video.Qualities';
+
     /**
      * Get the default value of the preference.
      *
@@ -39,6 +43,9 @@ enum Preference: string
             Preference::EnableSingleSignOn => false,
             Preference::EnablePasswordLogin => true,
             Preference::EnableStudioUserDirectory => false,
+            Preference::EnableVideoHls => false,
+            Preference::KeepOriginalVideos => true,
+            Preference::VideoQualities => [1080],
 
             default => null,
         };

@@ -10,6 +10,7 @@
           <Player
             v-if="trailer"
             :src="trailer.url"
+            :type="trailer.type"
             :poster="trailer.posterImageUrl"
           />
 

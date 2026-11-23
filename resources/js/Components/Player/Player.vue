@@ -1,11 +1,17 @@
 <template>
+  <div v-if="!src" :class="cn('flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-xl bg-secondary text-muted-foreground', $attrs.class || '')" role="status">
+    <Spinner class="size-6" />
+    <span class="text-sm">{{ $t('Video is being prepared') }}</span>
+  </div>
   <media-player
+      v-else
       :class="cn('group/media relative w-full aspect-video bg-secondary overflow-hidden rounded-xl ring-ring data-[focus]:ring-1', $attrs.class || '')"
-      :src="src"
+      :src="source"
       crossOrigin
       playsInline
       @ended="onPlaybackEnded"
       @rate-change="onPlaybackRateChanged"
+      @provider-change="onProviderChange"
       :autoplay="autoplay"
       :playback-rate="playbackRate"
       ref="$player"
@@ -40,6 +46,7 @@
           <template #content>
             <PlayerCaptionSubmenu v-if="captions" />
             <PlayerSpeedSubmenu v-if="speed" />
+            <PlayerQualitySubmenu v-if="isHls" />
             <slot name="settings" />
           </template>
           <template #tooltip-content>
@@ -76,11 +83,15 @@ import PlayerChapterTitle from './PlayerChapterTitle.vue'
 import PlayerCaptionSubmenu from './PlayerCaptionSubmenu.vue'
 import PlayerMenu from './PlayerMenu.vue'
 import PlayerSpeedSubmenu from './PlayerSpeedSubmenu.vue'
+import PlayerQualitySubmenu from './PlayerQualitySubmenu.vue'
+import { Spinner } from '@/Components/Spinner'
+import { isHLSProvider, type MediaProviderChangeEvent } from 'vidstack'
 
 const emit = defineEmits(['ended'])
 
 const props = withDefaults(defineProps<{
-  src: string
+  src: string | null
+  type?: string
   poster?: string | null
   autoplay?: boolean
   captions?: boolean
@@ -92,6 +103,13 @@ const props = withDefaults(defineProps<{
 })
 
 const $player = ref<MediaPlayerElement>()
+const source = computed(() => props.type ? { src: props.src || '', type: props.type } : props.src)
+const isHls = computed(() => props.type?.includes('mpegurl') || props.src?.includes('.m3u8'))
+const onProviderChange = (event: MediaProviderChangeEvent) => {
+  if (isHLSProvider(event.detail)) {
+    event.detail.library = () => import('hls.js')
+  }
+}
 
 const onPlaybackEnded = () => {
   emit('ended')
@@ -106,7 +124,7 @@ const onPlaybackRateChanged = () => {
 }
 
 const slots = useSlots()
-const showSettings = computed(() => props.captions === true || props.speed === true || !!slots.settings)
+const showSettings = computed(() => props.captions === true || props.speed === true || isHls.value || !!slots.settings)
 </script>
 
 <style scoped>

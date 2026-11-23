@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\File;
@@ -23,7 +24,7 @@ use Illuminate\Validation\Rules\Dimensions;
  * @property string $mime_type
  * @property string $client_file_name
  * @property int $size
- * @property \App\Models\User|null $user
+ * @property User|null $user
  */
 class TemporaryUpload extends Model
 {
@@ -50,7 +51,13 @@ class TemporaryUpload extends Model
      */
     public function prunable(): Builder
     {
-        return static::query()->where('created_at', '<=', now()->subHours(24));
+        return static::query()->where('created_at', '<=', now()->subHours(24))
+            ->whereDoesntHave('videoUploads', fn (Builder $query) => $query->pending());
+    }
+
+    public function videoUploads(): HasMany
+    {
+        return $this->hasMany(VideoUpload::class);
     }
 
     /**

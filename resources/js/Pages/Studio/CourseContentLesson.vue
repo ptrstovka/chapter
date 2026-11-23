@@ -31,20 +31,8 @@
           <Input v-model="form.title" :placeholder="lesson.fallbackTitle" :disabled="disabled" />
         </FormControl>
 
-        <FormControl :label="$t('Video')" :error="form.errors.video" class="max-w-lg">
-          <TemporaryFileInput
-            class="aspect-video"
-            scope="CourseVideo"
-            :source="lesson.video"
-            v-model:remove="form.remove_video"
-            v-model:file="form.video"
-            drag-label="Drag & drop a video"
-            pick-label="select a video"
-            v-slot="{ preview }"
-            :disabled="disabled"
-          >
-            <Player :src="preview" class="w-full h-full rounded-none" />
-          </TemporaryFileInput>
+        <FormControl :label="$t('Video')" class="max-w-lg">
+          <VideoInput :course-id="id" :lesson-id="lesson.id" :source="lesson.video" :label="lesson.title || lesson.fallbackTitle" :disabled="disabled" />
         </FormControl>
 
         <FormControl :label="$t('Description')" :error="form.errors.description || form.errors.description_type">
@@ -97,11 +85,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuIte
 import { FileListInput, type FileListItem } from "@/Components/FileListInput";
 import { FormControl } from "@/Components/Form";
 import { Input } from "@/Components/Input";
-import { Player } from "@/Components/Player";
-import { TemporaryFileInput } from "@/Components/TemporaryFileInput";
+import VideoInput from "@/Components/VideoUpload/VideoInput.vue";
 import { TextEditor } from "@/Components/TextEditor";
 import { useSaveShortcut } from "@/Composables/useKeyboard.ts";
-import type { TextContentType } from "@/Types";
+import type { TextContentType, VideoSource } from "@/Types";
 import { useForm } from "@inertiajs/vue3";
 import { asyncRouter } from "@stacktrace/ui";
 import { trans } from "laravel-vue-i18n";
@@ -122,7 +109,7 @@ const props = defineProps<{
     fallbackTitle: string
     description: string | null
     descriptionType: TextContentType
-    video: string | null
+    video: VideoSource | null
     resources: Array<FileListItem>
     isEditable: boolean
   }
@@ -134,8 +121,6 @@ const form = useForm(() => ({
   title: props.lesson.title || '',
   description: props.lesson.description || '',
   description_type: props.lesson.descriptionType,
-  video: null,
-  remove_video: false,
   resources: props.lesson.resources.map(it => ({...it})),
 }))
 

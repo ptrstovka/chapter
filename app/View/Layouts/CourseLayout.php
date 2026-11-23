@@ -31,7 +31,7 @@ class CourseLayout extends StudioLayout
             'isEditable' => Gate::allows('update', $this->course) && $this->course->canBeUpdated(),
             'canDelete' => Gate::allows('delete', $this->course),
             'canBeDeleted' => $this->course->canBeDeleted(),
-            'isPublishing' => in_array($this->course->status, [CourseStatus::Publishing, CourseStatus::PublishFailure]),
+            'isPublishing' => $this->course->status === CourseStatus::Publishing,
             'canPublish' => Gate::allows('publish', $this->course),
             'canBePublished' => $this->course->canBePublished(),
             'canUnpublish' => Gate::allows('unpublish', $this->course),

@@ -51,6 +51,35 @@
 
         <Panel>
           <PanelHeader>
+            <PanelTitle>{{ $t('Videos') }}</PanelTitle>
+          </PanelHeader>
+          <PanelContent>
+            <PanelItem :label="$t('Generate HLS streams')" :description="$t('Automatically adapt video quality to the viewer’s connection speed.')" :wrap="false">
+              <AutoSaveFormSwitchField name="enable_video_hls" />
+            </PanelItem>
+            <template v-if="form.value.enable_video_hls">
+              <PanelItem :label="$t('Keep original videos')" :description="$t('Keep the original uploaded videos too. Turn this off to save storage space if you no longer need them.')" :wrap="false">
+                <AutoSaveFormSwitchField name="keep_original_videos" />
+              </PanelItem>
+              <PanelItem :label="$t('Video qualities')" :description="$t('Choose which video qualities will be available for playback.')">
+                <AutoSaveFormField name="video_qualities" v-slot="{ field, error }">
+                  <div class="space-y-2">
+                    <div class="flex flex-wrap gap-x-4 gap-y-3">
+                      <label v-for="quality in qualities" :key="quality.value" class="inline-flex items-center gap-2 text-sm">
+                        <Checkbox :model-value="field.value.includes(quality.value)" :disabled="field.value.length === 1 && field.value.includes(quality.value)" @update:model-value="checked => field.updateAndSave(checked ? [...field.value, quality.value].sort((a, b) => b - a) : field.value.filter((value: number) => value !== quality.value))" />
+                        {{ quality.label }}
+                      </label>
+                    </div>
+                    <p v-if="error" role="alert" class="text-sm text-destructive">{{ error }}</p>
+                  </div>
+                </AutoSaveFormField>
+              </PanelItem>
+            </template>
+          </PanelContent>
+        </Panel>
+
+        <Panel>
+          <PanelHeader>
             <PanelTitle>{{ $t('Features') }}</PanelTitle>
           </PanelHeader>
           <PanelItem :label="$t('Explore Page')" :description="$t('Enable course recommendations through Explore page.')" :wrap="false">
@@ -93,10 +122,17 @@
 import {
   useAutoSaveForm, AutoSaveFormProvider, AutoSaveFormInputField, AutoSaveFormSelectField,
   AutoSaveFormSwitchField, AutoSaveFormImageField,
+  AutoSaveFormField,
 } from "@/Components/AutoSaveForm";
 import { AdminLayout } from "@/Layouts";
 import { Panel, PanelHeader, PanelTitle, PanelContent, PanelItem } from '@/Components/Panel'
 import type { SelectOption } from "@stacktrace/ui";
+import { Checkbox } from '@/Components/Checkbox'
+
+const qualities = [
+  { value: 2160, label: '4K' }, { value: 1440, label: '2K' }, { value: 1080, label: '1080p' },
+  { value: 720, label: '720p' }, { value: 480, label: '480p' }, { value: 360, label: '360p' },
+]
 
 const props = defineProps<{
   platformName: string | null
@@ -108,6 +144,9 @@ const props = defineProps<{
   enablePasswordLogin: boolean
   enableStudioUserDirectory: boolean
   enableExplorePage: boolean
+  enableVideoHls: boolean
+  keepOriginalVideos: boolean
+  videoQualities: number[]
   primaryColorForeground: string | null
   primaryColorBackground: string | null
   primaryColorDarkForeground: string | null
@@ -128,6 +167,9 @@ const form = useAutoSaveForm(() => ({
   enable_password_login: props.enablePasswordLogin,
   enable_studio_user_directory: props.enableStudioUserDirectory,
   enable_explore_page: props.enableExplorePage,
+  enable_video_hls: props.enableVideoHls,
+  keep_original_videos: props.keepOriginalVideos,
+  video_qualities: props.videoQualities,
   logo: props.logo,
 }), {
   method: 'patch',

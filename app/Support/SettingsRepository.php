@@ -24,6 +24,12 @@ class SettingsRepository
      */
     protected static array $missing = [];
 
+    public function clearMemory(): void
+    {
+        static::$memory = [];
+        static::$missing = [];
+    }
+
     public function __construct(
         protected ?Model $configurable = null
     ) {}

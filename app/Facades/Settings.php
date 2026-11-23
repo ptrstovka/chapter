@@ -1,13 +1,12 @@
 <?php
 
-
 namespace App\Facades;
-
 
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static mixed get(string|\App\Enums\Preference $key, mixed $default = null)
+ * @method static void clearMemory()
  * @method static boolean boolean(string|\App\Enums\Preference $key, boolean $default = false)
  * @method static string|null string(string|\App\Enums\Preference $key, ?string $default = null)
  * @method static array|null array(string|\App\Enums\Preference $key, ?array $default = null)

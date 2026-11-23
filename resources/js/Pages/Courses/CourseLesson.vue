@@ -2,6 +2,7 @@
   <div v-if="video" class="mb-6 relative">
     <Player
       :src="video.url"
+      :type="video.type"
       :poster="video.posterImageUrl"
       @ended="onPlaybackEnded"
       :autoplay="shouldAutoPlay === 'on'"

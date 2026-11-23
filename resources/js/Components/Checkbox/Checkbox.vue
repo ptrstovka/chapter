@@ -4,7 +4,7 @@
     type="checkbox"
     v-model="checked"
     :value="value"
-    :class="cn('w-4 h-4 text-primary bg-background indeterminate:bg-primary dark:indeterminate:bg-background checked:bg-primary dark:checked:bg-background border rounded border-muted-foreground/40 appearance-none p-0 inline-flex align-middle flex-shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1 disabled:bg-muted disabled:opacity-50 disabled:cursor-auto')"
+    :class="cn('w-4 h-4 text-primary bg-background indeterminate:bg-primary dark:indeterminate:bg-background checked:bg-primary dark:checked:bg-background border rounded border-muted-foreground/40 appearance-none p-0 inline-flex align-middle flex-shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1 disabled:not-checked:not-indeterminate:bg-muted disabled:opacity-50 disabled:cursor-auto')"
   >
 </template>
 

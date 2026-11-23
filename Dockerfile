@@ -33,6 +33,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --chmod=755 docker/s6-overlay/s6-rc.d/queue /etc/s6-overlay/s6-rc.d/queue
 RUN touch /etc/s6-overlay/user-bundles.d/user/contents.d/queue
+COPY --chmod=755 docker/s6-overlay/s6-rc.d/video-queue /etc/s6-overlay/s6-rc.d/video-queue
+RUN touch /etc/s6-overlay/user-bundles.d/user/contents.d/video-queue
 
 USER www-data
 

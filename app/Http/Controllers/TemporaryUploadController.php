@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\TemporaryUpload;
+use App\Models\VideoUpload;
+use App\Support\VideoUploads;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -10,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 
 class TemporaryUploadController
 {
-    public function store(Request $request)
+    public function store(Request $request, VideoUploads $videoUploads)
     {
         $scopes = TemporaryUpload::scopes();
 
@@ -28,6 +30,15 @@ class TemporaryUploadController
         }
 
         $request->validate(['file' => $fileRules]);
+
+        if (in_array($scope, ['CourseVideo', 'CourseTrailerVideo'], true)) {
+            $request->validate(['video_upload_id' => ['required', 'uuid']]);
+            $upload = VideoUpload::findOrFailByUuid($request->input('video_upload_id'));
+            $videoUploads->authorize($upload, $request->user());
+            abort_unless($upload->uploadScope() === $scope, 422);
+
+            return response()->json($videoUploads->receive($upload, $request->file('file'))->toUpload());
+        }
 
         $file = $request->file('file');
         $disk = TemporaryUpload::disk($scope);

@@ -49,8 +49,11 @@ export interface Paginator<T> {
 }
 
 export interface VideoSource {
-  url: string
+  id: number
+  url: string | null
   posterImageUrl: string | null
+  type: string
+  status: 'queued' | 'processing' | 'ready' | 'failed'
 }
 
 export type TextContentType = 'html' | 'markdown'

@@ -34,6 +34,9 @@ class SettingsController
             'enablePasswordLogin' => Settings::boolean(Preference::EnablePasswordLogin),
             'enableStudioUserDirectory' => Settings::boolean(Preference::EnableStudioUserDirectory),
             'enableExplorePage' => Settings::boolean(Preference::EnableExplorePage),
+            'enableVideoHls' => Settings::boolean(Preference::EnableVideoHls),
+            'keepOriginalVideos' => Settings::boolean(Preference::KeepOriginalVideos),
+            'videoQualities' => Settings::get(Preference::VideoQualities),
             'primaryColorForeground' => Settings::string(Preference::PrimaryColorForeground),
             'primaryColorBackground' => Settings::string(Preference::PrimaryColorBackground),
             'primaryColorDarkForeground' => Settings::string(Preference::PrimaryColorDarkForeground),
@@ -59,6 +62,10 @@ class SettingsController
             'enable_password_login' => ['sometimes', 'boolean'],
             'enable_studio_user_directory' => ['sometimes', 'boolean'],
             'enable_explore_page' => ['sometimes', 'boolean'],
+            'enable_video_hls' => ['sometimes', 'boolean'],
+            'keep_original_videos' => ['sometimes', 'boolean'],
+            'video_qualities' => ['sometimes', 'required', 'array', 'min:1', 'max:6'],
+            'video_qualities.*' => ['required', 'integer', 'distinct', Rule::in(array_keys(config('video.bitrates')))],
             'logo' => ['sometimes', 'nullable', 'string'],
         ]);
 
@@ -78,6 +85,9 @@ class SettingsController
         $patch->present('enable_studio_user_directory', fn (bool $value) => Settings::setOrForget(Preference::EnableStudioUserDirectory, $value));
 
         $patch->present('enable_explore_page', fn (bool $value) => Settings::setOrForget(Preference::EnableExplorePage, $value));
+        $patch->present('enable_video_hls', fn (bool $value) => Settings::set(Preference::EnableVideoHls, $value));
+        $patch->present('keep_original_videos', fn (bool $value) => Settings::set(Preference::KeepOriginalVideos, $value));
+        $patch->present('video_qualities', fn (array $value) => Settings::set(Preference::VideoQualities, array_map('intval', $value)));
 
         $patch->present('logo', function (?string $logo) {
             $removeCurrentLogo = function () {

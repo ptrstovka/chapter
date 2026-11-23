@@ -30,6 +30,24 @@ return [
 
     'connections' => [
 
+        'database-video' => [
+            'driver' => 'database',
+            'connection' => env('DB_QUEUE_CONNECTION'),
+            'table' => env('DB_QUEUE_TABLE', 'jobs'),
+            'queue' => 'videos',
+            'retry_after' => (int) env('VIDEO_JOB_TIMEOUT', 21900) + 120,
+            'after_commit' => true,
+        ],
+
+        'redis-video' => [
+            'driver' => 'redis',
+            'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
+            'queue' => 'videos',
+            'retry_after' => (int) env('VIDEO_JOB_TIMEOUT', 21900) + 120,
+            'block_for' => null,
+            'after_commit' => true,
+        ],
+
         'sync' => [
             'driver' => 'sync',
         ],

@@ -94,6 +94,23 @@ class Course extends Model
         return $this->hasMany(Lesson::class);
     }
 
+    public function videoUploads(): HasMany
+    {
+        return $this->hasMany(VideoUpload::class);
+    }
+
+    public function hasReadyVideos(): bool
+    {
+        if ($this->videoUploads()->pending()->exists()) {
+            return false;
+        }
+
+        $videos = $this->lessons()->with('video')->get()->pluck('video');
+        $videos->push($this->trailer()->first());
+
+        return $videos->filter()->every(fn (Video $video) => $video->isReady());
+    }
+
     public function resources(): HasMany
     {
         return $this->hasMany(Resource::class);
@@ -208,39 +225,29 @@ class Course extends Model
             throw new LogicException('The course is already being published.');
         }
 
-        $jobs = $this->lessons()
-            ->with(['video'])
-            ->get()
-            ->map(fn (Lesson $lesson) => $lesson->video)
-            ->push($this->trailer)
-            ->filter()
-            ->values()
-            ->map(fn (Video $video) => $video->getProcessingJobs())
-            ->flatten(1);
+        DB::transaction(function () {
+            $course = static::query()->lockForUpdate()->findOrFail($this->id);
+            if (! $course->canBePublished()) {
+                throw new LogicException('The course or its videos are not ready to publish.');
+            }
+            $course->update(['status' => CourseStatus::Publishing, 'failure_reason' => null]);
+            $this->setRawAttributes($course->getAttributes(), true);
 
-        $chain = [];
-
-        if ($jobs->isNotEmpty()) {
-            $chain[] = Bus::batch($jobs);
-        }
-
-        $chain[] = new SortLessonsWithinCourse($this->withoutRelations());
-        $chain[] = new CalculateCourseDuration($this->withoutRelations());
-        $chain[] = new PublishCourse($this->withoutRelations());
-
-        $course = $this->withoutRelations();
-
-        $this->update([
-            'status' => CourseStatus::Publishing,
-            'failure_reason' => null,
-        ]);
-
-        Bus::chain($chain)->catch(function (Throwable $exception) use ($course) {
-            $course->update([
-                'status' => CourseStatus::PublishFailure,
-                'failure_reason' => $exception->getMessage(),
-            ]);
-        })->dispatch();
+            DB::afterCommit(function () use ($course) {
+                try {
+                    Bus::chain([
+                        new SortLessonsWithinCourse($course->withoutRelations()),
+                        new CalculateCourseDuration($course->withoutRelations()),
+                        new PublishCourse($course->withoutRelations()),
+                    ])->catch(function (Throwable $exception) use ($course) {
+                        $course->update(['status' => CourseStatus::PublishFailure, 'failure_reason' => $exception->getMessage()]);
+                    })->dispatch();
+                } catch (Throwable $exception) {
+                    $course->update(['status' => CourseStatus::PublishFailure, 'failure_reason' => $exception->getMessage()]);
+                    throw $exception;
+                }
+            });
+        });
     }
 
     /**
@@ -280,7 +287,7 @@ class Course extends Model
      */
     public function canBePublished(): bool
     {
-        if ($this->status === CourseStatus::Draft || $this->status === CourseStatus::Unpublished) {
+        if (in_array($this->status, [CourseStatus::Draft, CourseStatus::Unpublished, CourseStatus::PublishFailure], true)) {
             if (! $this->title) {
                 return false;
             }
@@ -305,7 +312,7 @@ class Course extends Model
                 }
             }
 
-            return true;
+            return $this->hasReadyVideos();
         }
 
         return false;

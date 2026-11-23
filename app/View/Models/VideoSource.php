@@ -8,15 +8,21 @@ use StackTrace\Ui\ViewModel;
 class VideoSource extends ViewModel
 {
     public function __construct(
-        protected string $url,
+        protected int $id,
+        protected ?string $url,
         protected ?string $posterImageUrl,
+        protected string $type,
+        protected string $status,
     ) {}
 
     public function toView(): array
     {
         return [
+            'id' => $this->id,
             'url' => $this->url,
             'posterImageUrl' => $this->posterImageUrl,
+            'type' => $this->type,
+            'status' => $this->status,
         ];
     }
 
@@ -25,10 +31,13 @@ class VideoSource extends ViewModel
      */
     public static function for(?Video $video): ?static
     {
-        if ($url = $video?->getUrl()) {
+        if ($video) {
             return new static(
-                url: $url,
+                id: $video->id,
+                url: $video->getUrl(),
                 posterImageUrl: $video->getPosterImageUrl(),
+                type: $video->getMimeType(),
+                status: $video->processing_status->value,
             );
         }
 

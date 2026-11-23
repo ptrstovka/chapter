@@ -29,7 +29,7 @@
 
           <Button
             v-else
-            :disabled="!course.canBePublished || !course.canPublish"
+            :disabled="!readyToPublish || uploads.hasPending(course.id) || !course.canPublish"
             :icon="CheckIcon"
             :label="$t('Publish')"
             @click="publish"
@@ -50,15 +50,17 @@ import { Spinner } from "@/Components/Spinner";
 import { TabsNavigation } from "@/Components/Tabs";
 import { StudioLayout } from "@/Layouts"
 import type { AppPageProps } from "@/Types";
-import { usePage } from "@inertiajs/vue3";
+import { router, usePage } from "@inertiajs/vue3";
 import { asyncRouter, useNavigation } from "@stacktrace/ui";
 import { trans } from "laravel-vue-i18n";
-import { computed } from "vue";
+import { computed, ref, watch, onMounted, onBeforeUnmount } from "vue";
+import axios from 'axios'
+import { useVideoUploads } from '@/Components/VideoUpload/manager'
 import { CheckIcon, ChevronDownIcon } from 'lucide-vue-next'
 
 const page = usePage<AppPageProps & {
   id: string
-  status: 'draft' | 'publishing' | 'published' | 'unpublished'
+  status: 'draft' | 'publishing' | 'published' | 'unpublished' | 'publish-failure'
   title: string | null
   isPublishing: boolean
   canBePublished: boolean
@@ -71,6 +73,30 @@ const page = usePage<AppPageProps & {
 }>()
 
 const course = computed(() => page.props)
+const uploads = useVideoUploads()
+const readyToPublish = ref(page.props.canBePublished)
+watch(() => [page.props.id, page.props.canBePublished], () => { readyToPublish.value = page.props.canBePublished })
+let mediaPoll: ReturnType<typeof setInterval> | undefined
+let refreshingMedia = false
+async function refreshReadiness() {
+  if (refreshingMedia || !['draft', 'unpublished', 'publishing', 'publish-failure'].includes(course.value.status)) return
+  refreshingMedia = true
+  const id = course.value.id
+  try {
+    const { data } = await axios.get<{ canBePublished: boolean; courseStatus: string }>(route('studio.videos', id))
+    if (course.value.id === id) {
+      readyToPublish.value = data.canBePublished
+      if (course.value.status === 'publishing' && data.courseStatus !== 'publishing') router.reload()
+    }
+  } finally {
+    refreshingMedia = false
+  }
+}
+const unsubscribeUploads = uploads.subscribe(id => {
+  if (id === course.value.id) void refreshReadiness().catch(() => undefined)
+})
+onMounted(() => { mediaPoll = setInterval(() => { void refreshReadiness().catch(() => undefined) }, 5000) })
+onBeforeUnmount(() => { clearInterval(mediaPoll); unsubscribeUploads() })
 
 const menu = useNavigation(computed(() => [
   {

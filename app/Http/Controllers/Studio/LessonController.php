@@ -6,11 +6,9 @@ use App\Enums\TextContentType;
 use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\Lesson;
-use App\Models\TemporaryUpload;
-use App\Models\Video;
 use App\Rules\FileListRule;
-use App\Rules\TemporaryUploadRule;
 use App\View\Layouts\CourseContentLayout;
+use App\View\Models\VideoSource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -51,7 +49,7 @@ class LessonController
                 'fallbackTitle' => $lesson->getFallbackTitle(),
                 'description' => $lesson->description,
                 'descriptionType' => $lesson->description_type,
-                'video' => $lesson->video?->getUrl(),
+                'video' => VideoSource::for($lesson->video),
                 'resources' => $lesson->resourceFiles()->all(),
                 'isEditable' => $course->canBeUpdated(),
             ],
@@ -66,8 +64,6 @@ class LessonController
             'title' => ['nullable', 'string', 'max:191'],
             'description' => ['nullable', 'string', 'max:5000'],
             'description_type' => ['required', 'string', Rule::enum(TextContentType::class)],
-            'video' => TemporaryUploadRule::scope('CourseVideo'),
-            'remove_video' => 'boolean',
             'resources' => FileListRule::make('CourseResource', $resourceFiles->getAdapter()),
         ]);
 
@@ -83,31 +79,7 @@ class LessonController
                 $lesson->slug = null;
             }
 
-            $videoToRemove = null;
-            $videoUploadToRemove = null;
-            $removeVideo = $request->boolean('remove_video');
-            $video = $request->input('video');
-
-            if ($removeVideo && ($lesson->video)) {
-                $videoToRemove = $lesson->video;
-                $lesson->video()->disassociate();
-            } elseif ($video) {
-                if ($lesson->video) {
-                    $videoToRemove = $lesson->video;
-                }
-
-                $videoUpload = TemporaryUpload::findOrFailByUuid($video);
-                $lessonVideo = Video::create([
-                    'file_path' => $videoUpload->copyToContentDisk('course-videos'),
-                ]);
-                $lesson->video()->associate($lessonVideo);
-                $videoUploadToRemove = $videoUpload;
-            }
-
             $lesson->save();
-
-            $videoToRemove?->delete();
-            $videoUploadToRemove?->delete();
 
             $resourceFiles->syncFromRequest('resources');
         });

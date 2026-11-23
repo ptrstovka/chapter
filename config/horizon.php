@@ -209,6 +209,18 @@ return [
     */
 
     'defaults' => [
+        'video-supervisor' => [
+            'connection' => 'redis-video',
+            'queue' => ['videos'],
+            'balance' => false,
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 256,
+            'tries' => 2,
+            'timeout' => (int) env('VIDEO_JOB_TIMEOUT', 21900) + 60,
+            'nice' => 5,
+        ],
         'supervisor-1' => [
             'connection' => 'redis',
             'queue' => [env('REDIS_QUEUE', 'default')],
@@ -226,6 +238,7 @@ return [
 
     'environments' => [
         'production' => [
+            'video-supervisor' => [],
             'supervisor-1' => [
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
@@ -234,12 +247,14 @@ return [
         ],
 
         'local' => [
+            'video-supervisor' => [],
             'supervisor-1' => [
                 'maxProcesses' => 3,
             ],
         ],
 
         '*' => [
+            'video-supervisor' => [],
             'supervisor-1' => [],
         ],
     ],

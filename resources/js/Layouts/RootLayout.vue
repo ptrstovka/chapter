@@ -4,6 +4,7 @@
 
     <Toaster />
     <ConfirmationDialog />
+    <VideoUploadPanel />
   </ConfigProvider>
 </template>
 
@@ -15,6 +16,7 @@ import { computed, watch } from "vue";
 import { loadLanguageAsync } from 'laravel-vue-i18n'
 import { Toaster } from '@/Components/Sonner'
 import { ConfigProvider } from 'reka-ui'
+import VideoUploadPanel from '@/Components/VideoUpload/VideoUploadPanel.vue'
 import 'vue-sonner/style.css'
 
 const page = usePage()

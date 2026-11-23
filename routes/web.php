@@ -22,6 +22,7 @@ use App\Http\Controllers\Studio;
 use App\Http\Controllers\TemporaryUploadController;
 use App\Http\Controllers\TiptapImageController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\EnsureStudioCourseAccess;
 use App\Http\Middleware\StudioMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -111,10 +112,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/studio/users/lookup', Studio\UserLookupController::class)->name('studio.users.lookup');
     Route::get('/studio/users/search', Studio\UserLookupController::class)->name('studio.users.search');
 
-    Route::prefix('studio')->middleware(StudioMiddleware::class)->group(function () {
+    Route::prefix('studio')->middleware([StudioMiddleware::class, EnsureStudioCourseAccess::class])->group(function () {
         Route::get('/', Studio\StudioController::class)->name('studio');
 
         Route::name('studio.')->group(function () {
+            Route::get('/video-uploads', [Studio\VideoUploadController::class, 'index'])->name('video-uploads');
+            Route::get('/video-uploads/{videoUpload:uuid}', [Studio\VideoUploadController::class, 'show'])->name('video-uploads.show');
+            Route::delete('/courses/{course:uuid}/video-uploads/{uploadId}', [Studio\VideoUploadController::class, 'destroy'])->name('video-uploads.destroy');
+            Route::post('/video-uploads/{videoUpload:uuid}/complete', Studio\VideoUploadCompletionController::class)->name('video-uploads.complete');
+            Route::post('/courses/{course:uuid}/video-uploads', [Studio\VideoUploadController::class, 'store'])->name('video-uploads.store');
+            Route::get('/courses/{course:uuid}/videos', [Studio\VideoController::class, 'index'])->name('videos');
+            Route::delete('/courses/{course:uuid}/videos/{video}', [Studio\VideoController::class, 'destroy'])->name('videos.destroy');
+            Route::post('/courses/{course:uuid}/videos/{video}/retry', Studio\VideoRetryController::class)->name('videos.retry');
             Route::get('/overview', Studio\OverviewController::class)->name('overview');
 
             Route::get('/courses', [Studio\CourseController::class, 'index'])->name('courses');
