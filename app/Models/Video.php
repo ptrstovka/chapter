@@ -4,10 +4,14 @@ namespace App\Models;
 
 use App\Enums\VideoFormat;
 use App\Enums\VideoProcessingStatus;
+use App\Enums\VideoUploadStatus;
 use App\Jobs\DeleteVideoFiles;
 use App\Support\Duration;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +21,7 @@ use Throwable;
 /**
  * @property string|null $file_path
  * @property string|null $hls_playlist_path
+ * @property int|null $hls_size_bytes
  * @property string|null $poster_image_file_path
  * @property int|null $duration_seconds
  * @property VideoFormat $format
@@ -39,6 +44,7 @@ class Video extends Model
             'processing_status' => VideoProcessingStatus::class,
             'processing_options' => 'array',
             'duration_seconds' => 'integer',
+            'hls_size_bytes' => 'integer',
         ];
     }
 
@@ -66,6 +72,24 @@ class Video extends Model
         return $this->processing_status === VideoProcessingStatus::Ready
             && $this->poster_image_file_path && $this->duration_seconds !== null
             && ($this->format === VideoFormat::Hls ? (bool) $this->hls_playlist_path : (bool) $this->file_path);
+    }
+
+    public function lessons(): HasMany
+    {
+        return $this->hasMany(Lesson::class);
+    }
+
+    public function trailerCourses(): HasMany
+    {
+        return $this->hasMany(Course::class, 'trailer_id')->withTrashed();
+    }
+
+    public function latestCompletedUpload(): HasOne
+    {
+        return $this->hasOne(VideoUpload::class)->ofMany(
+            ['id' => 'max'],
+            fn (Builder $query) => $query->where('status', VideoUploadStatus::Completed),
+        );
     }
 
     public function getUrl(): ?string

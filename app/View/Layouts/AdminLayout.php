@@ -74,6 +74,15 @@ class AdminLayout extends Layout
                     )
                     ->addChild(
                         MenuItem::make(
+                            title: __('Videos'),
+                            action: Link::to(route('admin.videos')),
+                            icon: new Icon('video'),
+                        )->active(routes: [
+                            'admin.videos',
+                        ])
+                    )
+                    ->addChild(
+                        MenuItem::make(
                             title: __('Instructors'),
                             action: Link::to(route('admin.instructors')),
                             icon: new Icon('contact'),

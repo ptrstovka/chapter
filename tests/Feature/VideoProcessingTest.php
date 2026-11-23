@@ -57,7 +57,8 @@ it('prepares HLS and deletes the original only after activating the complete out
     expect($video->isReady())->toBeTrue()
         ->and($video->format)->toBe(VideoFormat::Hls)
         ->and($video->file_path)->toBeNull()
-        ->and($video->duration_seconds)->toBe(42);
+        ->and($video->duration_seconds)->toBe(42)
+        ->and($video->hls_size_bytes)->toBe(strlen("#EXTM3U\nvariant.m3u8") + strlen("#EXTM3U\nsegment.ts") + strlen('encoded segment'));
     Storage::disk('public')->assertMissing($original);
     Storage::disk('public')->assertExists([$video->hls_playlist_path, dirname($video->hls_playlist_path).'/segment.ts']);
     expect(File::directories(config('video.work_directory')))->toBe([]);
@@ -69,12 +70,18 @@ it('always keeps the original when HLS is disabled', function () {
     Storage::disk('public')->put($video->file_path, 'source video');
     $processing = app(VideoProcessing::class);
     $processing->process($video->id, $processing->prepare($video, ['hls' => false, 'keep_original' => false, 'qualities' => [1080]]));
-    expect($video->fresh()->isReady())->toBeTrue()->and($video->fresh()->hls_playlist_path)->toBeNull();
+    expect($video->fresh()->isReady())->toBeTrue()
+        ->and($video->fresh()->hls_playlist_path)->toBeNull()
+        ->and($video->fresh()->hls_size_bytes)->toBeNull();
     Storage::disk('public')->assertExists($video->file_path);
 });
 
 it('keeps the source and previous HLS when encoding fails', function () {
-    $video = Video::factory()->ready()->create(['hls_playlist_path' => 'video-streams/old/master.m3u8', 'format' => VideoFormat::Hls]);
+    $video = Video::factory()->ready()->create([
+        'hls_playlist_path' => 'video-streams/old/master.m3u8',
+        'hls_size_bytes' => 123456,
+        'format' => VideoFormat::Hls,
+    ]);
     Storage::disk('public')->put($video->file_path, 'source video');
     Storage::disk('public')->put($video->hls_playlist_path, '#EXTM3U');
     $this->mock(VideoEncoder::class)->shouldReceive('encode')->once()->andThrow(new RuntimeException('Encoding failed'));
@@ -82,6 +89,7 @@ it('keeps the source and previous HLS when encoding fails', function () {
     $attempt = $processing->prepare($video, ['hls' => true, 'keep_original' => false, 'qualities' => [720]]);
     expect(fn () => $processing->process($video->id, $attempt))->toThrow(RuntimeException::class, 'Encoding failed');
     expect($video->fresh()->processing_status)->toBe(VideoProcessingStatus::Failed)
+        ->and($video->fresh()->hls_size_bytes)->toBe(123456)
         ->and($video->fresh()->getUrl())->toContain('video-streams/old/master.m3u8');
     Storage::disk('public')->assertExists([$video->file_path, $video->hls_playlist_path]);
 });
@@ -94,7 +102,7 @@ it('rejects an unsuccessful destination write before marking the video ready', f
     {
         public function copy(FilesystemAdapter $from, string $source, FilesystemAdapter $to, string $destination, array $options = []): void
         {
-            if ($to === Storage::disk('public')) {
+            if ($to === Storage::disk('public') && str_ends_with($destination, '.ts')) {
                 throw new RuntimeException('Unable to write');
             }
             parent::copy($from, $source, $to, $destination, $options);
@@ -102,19 +110,48 @@ it('rejects an unsuccessful destination write before marking the video ready', f
     };
     $attempt = $processing->prepare($video, ['hls' => true, 'keep_original' => false, 'qualities' => [1080]]);
     expect(fn () => $processing->process($video->id, $attempt))->toThrow(RuntimeException::class);
-    expect($video->fresh()->processing_status)->toBe(VideoProcessingStatus::Failed);
+    expect($video->fresh()->processing_status)->toBe(VideoProcessingStatus::Failed)
+        ->and($video->fresh()->hls_size_bytes)->toBeNull();
     Storage::disk('public')->assertExists($video->file_path);
 });
 
 it('ignores stale attempts without modifying a newer generation', function () {
-    $video = Video::factory()->create();
+    $video = Video::factory()->create([
+        'hls_playlist_path' => 'video-streams/old/master.m3u8',
+        'hls_size_bytes' => 123456,
+    ]);
     $processing = app(VideoProcessing::class);
     $old = $processing->prepare($video, ['hls' => true, 'keep_original' => true, 'qualities' => [1080]]);
     $current = $processing->prepare($video, ['hls' => true, 'keep_original' => true, 'qualities' => [720]]);
     $processing->process($video->id, $old);
     expect($video->fresh()->processing_attempt)->toBe($current)
+        ->and($video->fresh()->hls_size_bytes)->toBe(123456)
         ->and($video->fresh()->processing_status)->toBe(VideoProcessingStatus::Queued);
 });
+
+it('updates the recorded HLS size only when activating a new stream', function (bool $hls) {
+    fakeVideoEncoder();
+    $video = Video::factory()->ready()->create([
+        'format' => VideoFormat::Hls,
+        'hls_playlist_path' => 'video-streams/old/master.m3u8',
+        'hls_size_bytes' => 123456,
+    ]);
+    Storage::disk('public')->put($video->file_path, 'source video');
+    Storage::disk('public')->put($video->hls_playlist_path, '#EXTM3U');
+    $processing = app(VideoProcessing::class);
+    $attempt = $processing->prepare($video, ['hls' => $hls, 'keep_original' => true, 'qualities' => [720]]);
+
+    expect($video->fresh()->hls_size_bytes)->toBe(123456);
+
+    $processing->process($video->id, $attempt);
+
+    expect($video->fresh()->hls_size_bytes)->toBe($hls
+        ? strlen("#EXTM3U\nvariant.m3u8") + strlen("#EXTM3U\nsegment.ts") + strlen('encoded segment')
+        : 123456)
+        ->and($video->fresh()->hls_playlist_path)->toBe($hls
+            ? 'video-streams/'.$video->id.'/'.$attempt.'/master.m3u8'
+            : 'video-streams/old/master.m3u8');
+})->with([true, false]);
 
 it('does not resurrect a video deleted while encoding', function () {
     $video = Video::factory()->create();

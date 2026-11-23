@@ -99,22 +99,25 @@ class VideoProcessing
             $result = $this->encoder->encode($work, $source, $video->processing_options);
             $this->copy($work, $result['poster'], $disk, $posterPath, ['ContentType' => 'image/jpeg']);
             $playlist = null;
+            $hlsSizeBytes = null;
             if ($result['playlist']) {
                 $files = $work->allFiles('output');
                 if (! in_array($result['playlist'], $files, true)) {
                     throw new RuntimeException('The HLS master playlist is missing.');
                 }
+                $hlsSizeBytes = 0;
                 foreach ($files as $path) {
                     $this->copy($work, $path, $disk, $prefix.'/'.substr($path, strlen('output/')), [
                         'ContentType' => str_ends_with($path, '.m3u8') ? 'application/vnd.apple.mpegurl' : 'video/mp2t',
                     ]);
+                    $hlsSizeBytes += $work->size($path);
                 }
                 $playlist = $prefix.'/master.m3u8';
             }
 
             $previousPoster = $video->poster_image_file_path;
             $previousPlaylist = $video->hls_playlist_path;
-            $activated = DB::transaction(function () use ($id, $attempt, $posterPath, $playlist, $result) {
+            $activated = DB::transaction(function () use ($id, $attempt, $posterPath, $playlist, $hlsSizeBytes, $result) {
                 $current = Video::query()->lockForUpdate()->find($id);
                 if (! $current || $current->processing_attempt !== $attempt) {
                     return false;
@@ -122,6 +125,7 @@ class VideoProcessing
                 $current->update([
                     'poster_image_file_path' => $posterPath,
                     'hls_playlist_path' => $playlist ?: $current->hls_playlist_path,
+                    'hls_size_bytes' => $playlist ? $hlsSizeBytes : $current->hls_size_bytes,
                     'duration_seconds' => $result['duration'],
                     'processing_status' => VideoProcessingStatus::Ready,
                     'processing_error' => null,

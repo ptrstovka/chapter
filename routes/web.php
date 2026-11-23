@@ -106,6 +106,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/instructors/{instructor}', [Admin\InstructorController::class, 'destroy'])->name('instructors.destroy');
 
             Route::get('/courses', [Admin\CourseController::class, 'index'])->name('courses');
+            Route::get('/videos', [Admin\VideoController::class, 'index'])->name('videos');
         });
     });
 

@@ -670,5 +670,19 @@
     "Auto": "Automaticky",
     "This course cannot be edited.": "Tento kurz teraz nemožno upravovať.",
     "The uploaded file size does not match.": "Veľkosť nahraného súboru nezodpovedá očakávanej veľkosti.",
-    "This upload is no longer active.": "Toto nahrávanie už nie je aktívne."
+    "This upload is no longer active.": "Toto nahrávanie už nie je aktívne.",
+    "Video type": "Typ videa",
+    "Course": "Kurz",
+    "Lesson": "Lekcia",
+    "Chapter / lesson": "Kapitola / lekcia",
+    "Unassigned": "Nepriradené",
+    "HLS stream": "HLS stream",
+    "Original": "Originál",
+    "Original size": "Veľkosť originálu",
+    "HLS size": "Veľkosť HLS",
+    "Unknown": "Neznáme",
+    "Duration": "Dĺžka",
+    "Queued": "Čaká na spracovanie",
+    "Ready": "Pripravené",
+    "Failed": "Zlyhalo"
 }
