@@ -50,11 +50,15 @@ it('uploads and attaches a video immediately and completes idempotently', functi
     $this->getJson(route('studio.video-uploads.show', $upload['id']))->assertJsonPath('received', true);
     $this->postJson(route('studio.video-uploads.complete', $upload['id']))->assertSuccessful()->assertJsonPath('status', 'completed');
     $video = $this->lesson->fresh()->video;
-    expect($video)->not->toBeNull()->and($video->processing_options['hls'])->toBeFalse();
+    expect($video)->not->toBeNull()->and($video->processing_options['hls'])->toBeFalse()
+        ->and($video->original_size_bytes)->toBe(12);
     Storage::disk('public')->assertExists($video->file_path);
     $this->postJson(route('studio.video-uploads.complete', $upload['id']))->assertSuccessful()->assertJsonPath('videoId', $video->id);
     expect(Video::count())->toBe(1);
     Queue::assertPushed(ProcessVideo::class, 1);
+
+    VideoUpload::query()->delete();
+    expect($video->fresh()->original_size_bytes)->toBe(12);
 });
 
 it('keeps the current video until replacement completion and rejects a cancelled receipt', function () {

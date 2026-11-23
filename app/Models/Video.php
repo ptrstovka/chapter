@@ -20,6 +20,7 @@ use Throwable;
 
 /**
  * @property string|null $file_path
+ * @property int|null $original_size_bytes
  * @property string|null $hls_playlist_path
  * @property int|null $hls_size_bytes
  * @property string|null $poster_image_file_path
@@ -44,6 +45,7 @@ class Video extends Model
             'processing_status' => VideoProcessingStatus::class,
             'processing_options' => 'array',
             'duration_seconds' => 'integer',
+            'original_size_bytes' => 'integer',
             'hls_size_bytes' => 'integer',
         ];
     }

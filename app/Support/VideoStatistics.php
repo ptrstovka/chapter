@@ -23,8 +23,8 @@ class VideoStatistics
     public function get(): array
     {
         $videos = Video::query()
-            ->select(['duration_seconds', 'file_path', 'hls_playlist_path', 'hls_size_bytes', 'processing_status'])
-            ->addSelect(['original_size_bytes' => VideoUpload::query()
+            ->select(['duration_seconds', 'file_path', 'original_size_bytes', 'hls_playlist_path', 'hls_size_bytes', 'processing_status'])
+            ->addSelect(['uploaded_size_bytes' => VideoUpload::query()
                 ->select('size')
                 ->whereColumn('video_id', (new Video)->qualifyColumn('id'))
                 ->where('status', VideoUploadStatus::Completed)
@@ -39,9 +39,9 @@ class VideoStatistics
             ->selectRaw('COUNT(CASE WHEN processing_status = ? THEN 1 END) as queued_count', [VideoProcessingStatus::Queued->value])
             ->selectRaw('COUNT(CASE WHEN processing_status = ? THEN 1 END) as processing_count', [VideoProcessingStatus::Processing->value])
             ->selectRaw('COUNT(CASE WHEN processing_status = ? THEN 1 END) as failed_count', [VideoProcessingStatus::Failed->value])
-            ->selectRaw("COALESCE(SUM(CASE WHEN NULLIF(file_path, '') IS NOT NULL THEN original_size_bytes END), 0) as original_bytes")
+            ->selectRaw("COALESCE(SUM(CASE WHEN NULLIF(file_path, '') IS NOT NULL THEN COALESCE(original_size_bytes, uploaded_size_bytes) END), 0) as original_bytes")
             ->selectRaw("COALESCE(SUM(CASE WHEN NULLIF(hls_playlist_path, '') IS NOT NULL THEN hls_size_bytes END), 0) as hls_bytes")
-            ->selectRaw("COUNT(CASE WHEN NULLIF(file_path, '') IS NOT NULL THEN original_size_bytes END) as known_original_sizes")
+            ->selectRaw("COUNT(CASE WHEN NULLIF(file_path, '') IS NOT NULL THEN COALESCE(original_size_bytes, uploaded_size_bytes) END) as known_original_sizes")
             ->selectRaw("COUNT(CASE WHEN NULLIF(hls_playlist_path, '') IS NOT NULL THEN hls_size_bytes END) as known_hls_sizes")
             ->first();
 

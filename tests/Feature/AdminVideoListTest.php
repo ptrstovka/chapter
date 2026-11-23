@@ -11,6 +11,7 @@ use App\Models\Lesson;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUpload;
+use App\Table\Actions\RefreshVideoMetadataAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
@@ -38,7 +39,7 @@ it('requires an authenticated administrator to view videos', function () {
     $this->actingAs(User::factory()->create())->get(route('admin.videos'))->assertForbidden();
 });
 
-it('lists all videos and their usages without reading storage or exposing actions and internal data', function () {
+it('lists all videos and their usages without reading storage or exposing internal data', function () {
     $admin = User::factory()->admin()->create();
     $course = Course::factory()->for(Author::factory())->for(Category::factory())->create(['title' => 'Video course']);
     $chapter = Chapter::factory()->for($course)->create(['title' => 'First chapter']);
@@ -78,7 +79,7 @@ it('lists all videos and their usages without reading storage or exposing action
         ->and(adminVideoCell($response, $lessonVideo, 'Status'))->toBe(__('Ready'));
 
     foreach ($response->inertiaProps('videos.rows') as $row) {
-        expect($row['actions'])->toBeEmpty()
+        expect(collect($row['actions'])->pluck('action')->all())->toBe([RefreshVideoMetadataAction::class])
             ->and($row['resource'])->toBeNull();
     }
 
@@ -109,6 +110,32 @@ it('shows only recorded original sizes and distinguishes missing files from unkn
         ->and(adminVideoCell($response, $hlsOnly, 'HLS size'))->toBe(__('Unknown'))
         ->and(adminVideoCell($response, $known, 'HLS size'))->toBe('—')
         ->and(adminVideoCell($response, $queued, 'HLS stream'))->toBe(__('No'));
+});
+
+it('uses durable original sizes in the table and totals even after upload records are pruned', function () {
+    $known = Video::factory()->ready()->create(['original_size_bytes' => 4294967296]);
+    $empty = Video::factory()->ready()->create(['original_size_bytes' => 0]);
+    $imported = Video::factory()->ready()->create(['original_size_bytes' => 4096]);
+    $removed = Video::factory()->ready()->create(['file_path' => null, 'original_size_bytes' => 999]);
+    VideoUpload::factory()->for($known)->create(['status' => VideoUploadStatus::Completed, 'size' => 1048576]);
+    VideoUpload::factory()->for($empty)->create(['status' => VideoUploadStatus::Completed, 'size' => 999]);
+    Storage::shouldReceive('disk')->never();
+
+    $response = $this->actingAs(User::factory()->admin()->create())->get(route('admin.videos'))->assertOk();
+
+    expect(adminVideoCell($response, $known, 'Original size'))->toBe(Number::fileSize(4294967296))
+        ->and(adminVideoCell($response, $empty, 'Original size'))->toBe(Number::fileSize(0))
+        ->and(adminVideoCell($response, $imported, 'Original size'))->toBe(Number::fileSize(4096))
+        ->and(adminVideoCell($response, $removed, 'Original size'))->toBe('—')
+        ->and($response->inertiaProps('statistics.originalBytes'))->toBe(4294971392)
+        ->and($response->inertiaProps('statistics.knownSizeBytes'))->toBe(4294971392)
+        ->and($response->inertiaProps('statistics.unknownOriginalSizeCount'))->toBe(0);
+
+    VideoUpload::query()->delete();
+
+    $this->get(route('admin.videos'))->assertOk()->assertInertia(fn (Assert $page) => $page
+        ->where('statistics', $response->inertiaProps('statistics'))
+    );
 });
 
 it('searches course chapter lesson titles and video IDs while preserving filters', function (string $search, array $filters, bool $matches) {

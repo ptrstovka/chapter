@@ -127,6 +127,7 @@ class VideoProcessing
             $work = Storage::build(['driver' => 'local', 'root' => $root, 'throw' => true]);
             $source = 'source.'.pathinfo($video->file_path, PATHINFO_EXTENSION);
             $this->copy($disk, $video->file_path, $work, $source);
+            $originalSizeBytes = $work->size($source);
             $result = $this->encoder->encode($work, $source, $video->processing_options);
             $this->copy($work, $result['poster'], $disk, $posterPath, ['ContentType' => 'image/jpeg']);
             $playlist = null;
@@ -148,12 +149,13 @@ class VideoProcessing
 
             $previousPoster = $video->poster_image_file_path;
             $previousPlaylist = $video->hls_playlist_path;
-            $activated = DB::transaction(function () use ($id, $attempt, $posterPath, $playlist, $hlsSizeBytes, $result) {
+            $activated = DB::transaction(function () use ($id, $attempt, $posterPath, $playlist, $hlsSizeBytes, $originalSizeBytes, $result) {
                 $current = Video::query()->lockForUpdate()->find($id);
                 if (! $current || $current->processing_attempt !== $attempt) {
                     return false;
                 }
                 $current->update([
+                    'original_size_bytes' => $originalSizeBytes,
                     'poster_image_file_path' => $posterPath,
                     'hls_playlist_path' => $playlist ?: $current->hls_playlist_path,
                     'hls_size_bytes' => $playlist ? $hlsSizeBytes : $current->hls_size_bytes,
@@ -172,7 +174,7 @@ class VideoProcessing
                     $this->cleanDirectory($disk, dirname($previousPlaylist));
                 }
                 if ($playlist && ! $video->processing_options['keep_original'] && $this->cleanFile($disk, $video->file_path)) {
-                    Video::query()->whereKey($id)->where('processing_attempt', $attempt)->update(['file_path' => null]);
+                    Video::query()->whereKey($id)->where('processing_attempt', $attempt)->update(['file_path' => null, 'original_size_bytes' => null]);
                 }
             }
         } catch (Throwable $exception) {

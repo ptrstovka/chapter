@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Video;
 use App\Table\Actions\ConvertVideoToHlsAction;
+use App\Table\Actions\RefreshVideoMetadataAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,6 +15,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Number;
 use StackTrace\Ui\SelectOption;
 use StackTrace\Ui\Table;
+use StackTrace\Ui\Table\Actions\Action;
 use StackTrace\Ui\Table\Columns;
 use StackTrace\Ui\Table\Filters;
 
@@ -87,8 +89,10 @@ class VideoTable extends Table
                     return '—';
                 }
 
-                return $video->latestCompletedUpload
-                    ? Number::fileSize($video->latestCompletedUpload->size)
+                $size = $video->original_size_bytes ?? $video->latestCompletedUpload?->size;
+
+                return $size !== null
+                    ? Number::fileSize($size)
                     : __('Unknown');
             })->alignRight()->numsTabular(),
 
@@ -163,11 +167,10 @@ class VideoTable extends Table
 
     public function actions(): array
     {
-        $action = ConvertVideoToHlsAction::make()
-            ->can(fn (Video $video) => $video->canConvertToHls())
-            ->bulk();
-
-        return $action->authorize() ? [$action] : [];
+        return array_values(array_filter([
+            ConvertVideoToHlsAction::make()->can(fn (Video $video) => $video->canConvertToHls())->bulk(),
+            RefreshVideoMetadataAction::make()->bulk(),
+        ], fn (Action $action) => $action->authorize()));
     }
 
     /** @return array<string, string> */

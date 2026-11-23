@@ -49,7 +49,7 @@ it('offers the HLS action for eligible rows and bulk selection only when enabled
     $rows = collect($response->inertiaProps('videos.rows'))->keyBy('key');
 
     foreach ([$ready, $failed] as $video) {
-        expect($rows[$video->id]['actions'])->toHaveCount(1)
+        expect($rows[$video->id]['actions'])->toHaveCount(2)
             ->and($rows[$video->id]['actions'][0])->toMatchArray([
                 'label' => __('Convert to HLS'),
                 'action' => ConvertVideoToHlsAction::class,
@@ -66,7 +66,7 @@ it('offers the HLS action for eligible rows and bulk selection only when enabled
     $response = $this->get(route('admin.videos'))->assertOk();
 
     foreach ($response->inertiaProps('videos.rows') as $row) {
-        expect($row['actions'])->toBeEmpty();
+        expect(collect($row['actions'])->pluck('action')->all())->not->toContain(ConvertVideoToHlsAction::class);
     }
 });
 

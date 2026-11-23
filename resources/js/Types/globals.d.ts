@@ -1,4 +1,5 @@
 import { AppPageProps } from '@/Types'
+import type { BackendToast } from '@/Components/Sonner/useBackendSonner'
 import { trans, transChoice } from 'laravel-vue-i18n'
 import AxiosClient from 'axios'
 
@@ -24,6 +25,10 @@ declare module 'vite/client' {
 
 declare module '@inertiajs/core' {
   interface PageProps extends InertiaPageProps, AppPageProps {
+  }
+
+  interface PageFlashData {
+    toast?: Omit<BackendToast, 'id'>
   }
 }
 

@@ -126,7 +126,7 @@ class VideoUploads
                     abort_unless($course->canBeUpdated(), 409);
                     $lesson = $upload->lesson_id ? $course->lessons()->findOrFail($upload->lesson_id) : null;
                     $previous = $lesson ? $lesson->video : $course->trailer;
-                    $video = Video::create(['file_path' => $destination]);
+                    $video = Video::create(['file_path' => $destination, 'original_size_bytes' => $temporary->size]);
                     $attempt = $this->processing->prepare($video, $this->settings->snapshot());
                     if ($lesson) {
                         $lesson->video()->associate($video);

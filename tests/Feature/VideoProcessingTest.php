@@ -57,6 +57,7 @@ it('prepares HLS and deletes the original only after activating the complete out
     expect($video->isReady())->toBeTrue()
         ->and($video->format)->toBe(VideoFormat::Hls)
         ->and($video->file_path)->toBeNull()
+        ->and($video->original_size_bytes)->toBeNull()
         ->and($video->duration_seconds)->toBe(42)
         ->and($video->hls_size_bytes)->toBe(strlen("#EXTM3U\nvariant.m3u8") + strlen("#EXTM3U\nsegment.ts") + strlen('encoded segment'));
     Storage::disk('public')->assertMissing($original);
@@ -71,6 +72,7 @@ it('always keeps the original when HLS is disabled', function () {
     $processing = app(VideoProcessing::class);
     $processing->process($video->id, $processing->prepare($video, ['hls' => false, 'keep_original' => false, 'qualities' => [1080]]));
     expect($video->fresh()->isReady())->toBeTrue()
+        ->and($video->fresh()->original_size_bytes)->toBe(strlen('source video'))
         ->and($video->fresh()->hls_playlist_path)->toBeNull()
         ->and($video->fresh()->hls_size_bytes)->toBeNull();
     Storage::disk('public')->assertExists($video->file_path);
@@ -148,6 +150,7 @@ it('updates the recorded HLS size only when activating a new stream', function (
     expect($video->fresh()->hls_size_bytes)->toBe($hls
         ? strlen("#EXTM3U\nvariant.m3u8") + strlen("#EXTM3U\nsegment.ts") + strlen('encoded segment')
         : 123456)
+        ->and($video->fresh()->original_size_bytes)->toBe(strlen('source video'))
         ->and($video->fresh()->hls_playlist_path)->toBe($hls
             ? 'video-streams/'.$video->id.'/'.$attempt.'/master.m3u8'
             : 'video-streams/old/master.m3u8');
