@@ -22,8 +22,6 @@ FROM serversideup/php:8.5-fpm-nginx
 
 USER root
 
-COPY docker/s6-overlay/s6-rc.d/queue /etc/s6-overlay/s6-rc.d/queue
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     && apt-get clean \
@@ -31,8 +29,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && mkdir -p /data/public \
     && mkdir -p /data/private \
     && chown -R www-data /data \
-    && install-php-extensions bcmath intl \
-    && touch /etc/s6-overlay/s6-rc.d/user/contents.d/queue
+    && install-php-extensions bcmath intl
+
+COPY --chmod=755 docker/s6-overlay/s6-rc.d/queue /etc/s6-overlay/s6-rc.d/queue
+RUN touch /etc/s6-overlay/user-bundles.d/user/contents.d/queue
 
 USER www-data
 

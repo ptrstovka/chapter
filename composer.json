@@ -9,6 +9,7 @@
         "inertiajs/inertia-laravel": "^3.1",
         "laravel-lang/common": "^6.7",
         "laravel/framework": "^13.0",
+        "laravel/horizon": "^5.52",
         "laravel/socialite": "^5.23",
         "laravel/tinker": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.29",
@@ -67,7 +68,9 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+                "laravel/horizon"
+            ]
         }
     },
     "config": {

@@ -8,11 +8,17 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Horizon\Horizon;
+use Laravel\Horizon\HorizonServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        if (config('horizon.enabled')) {
+            $this->app->register(HorizonServiceProvider::class);
+        }
+
         App::macro('contentDisk', function (): string {
             return config('filesystems.content_disk');
         });
@@ -63,5 +69,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('viewAdmin', function (User $user) {
             return $user->is_admin;
         });
+
+        if (config('horizon.enabled')) {
+            Horizon::auth(fn (): bool => Gate::allows('viewAdmin'));
+        }
     }
 }
