@@ -6,6 +6,7 @@ use App\Enums\VideoProcessingStatus;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Video;
+use App\Table\Actions\ConvertVideoToHlsAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -158,6 +159,15 @@ class VideoTable extends Table
                 }
             }
         });
+    }
+
+    public function actions(): array
+    {
+        $action = ConvertVideoToHlsAction::make()
+            ->can(fn (Video $video) => $video->canConvertToHls())
+            ->bulk();
+
+        return $action->authorize() ? [$action] : [];
     }
 
     /** @return array<string, string> */

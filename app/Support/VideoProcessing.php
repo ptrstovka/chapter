@@ -38,22 +38,53 @@ class VideoProcessing
             if ($retry && $video->processing_status !== VideoProcessingStatus::Failed) {
                 throw new RuntimeException('Only failed videos can be retried.');
             }
-            $previousAttempt = $video->processing_attempt;
-            $attempt = (string) Str::uuid();
-            $options = $retry ? ($video->processing_options ?? $options) : $options;
-            $video->update([
-                'format' => $options['hls'] || $video->hls_playlist_path ? VideoFormat::Hls : VideoFormat::Original,
-                'processing_status' => VideoProcessingStatus::Queued,
-                'processing_attempt' => $attempt,
-                'processing_options' => $options,
-                'processing_error' => null,
-            ]);
-            if ($previousAttempt && ! str_contains($video->hls_playlist_path ?? '', '/'.$previousAttempt.'/')) {
-                $this->cleanDirectory(Storage::disk(App::contentDisk()), 'video-streams/'.$video->id.'/'.$previousAttempt);
+
+            return $this->createAttempt($video, $retry ? ($video->processing_options ?? $options) : $options);
+        });
+    }
+
+    /** @param array{hls: bool, keep_original: bool, qualities: array<int, int>} $options */
+    public function queueHlsConversion(Video $video, array $options): bool
+    {
+        if (! $options['hls']) {
+            return false;
+        }
+
+        $attempt = Cache::lock(static::lockKey($video->id), 30)->get(function () use ($video, $options) {
+            $current = $video->fresh();
+            if (! $current?->canConvertToHls()) {
+                return null;
             }
 
-            return $attempt;
+            return $this->createAttempt($current, $options);
         });
+
+        if (! is_string($attempt)) {
+            return false;
+        }
+
+        $this->dispatch($video, $attempt);
+
+        return true;
+    }
+
+    /** @param array{hls: bool, keep_original: bool, qualities: array<int, int>} $options */
+    protected function createAttempt(Video $video, array $options): string
+    {
+        $previousAttempt = $video->processing_attempt;
+        $attempt = (string) Str::uuid();
+        $video->update([
+            'format' => $options['hls'] || $video->hls_playlist_path ? VideoFormat::Hls : VideoFormat::Original,
+            'processing_status' => VideoProcessingStatus::Queued,
+            'processing_attempt' => $attempt,
+            'processing_options' => $options,
+            'processing_error' => null,
+        ]);
+        if ($previousAttempt && ! str_contains($video->hls_playlist_path ?? '', '/'.$previousAttempt.'/')) {
+            $this->cleanDirectory(Storage::disk(App::contentDisk()), 'video-streams/'.$video->id.'/'.$previousAttempt);
+        }
+
+        return $attempt;
     }
 
     public function dispatch(Video $video, string $attempt): void

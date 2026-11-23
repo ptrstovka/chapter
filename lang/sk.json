@@ -684,5 +684,21 @@
     "Duration": "Dĺžka",
     "Queued": "Čaká na spracovanie",
     "Ready": "Pripravené",
-    "Failed": "Zlyhalo"
+    "Failed": "Zlyhalo",
+    "Convert to HLS": "Konvertovať na HLS",
+    "Convert": "Konvertovať",
+    "Convert the selected videos to HLS using the current video settings? The videos will be unavailable until processing finishes.": "Konvertovať vybrané videá na HLS podľa aktuálnych nastavení videí? Počas spracovania nebudú videá dostupné na prehrávanie.",
+    "All platform videos": "Všetky videá na platforme",
+    "Total videos": "Celkom videí",
+    "Total duration": "Celková dĺžka",
+    "Size": "Veľkosť",
+    "HLS streams": "HLS streamy",
+    "Ready: :count": "Pripravené: :count",
+    "Queued: :queued · Processing: :processing": "Vo fronte: :queued · Spracúva sa: :processing",
+    "Failed: :count": "Zlyhalo: :count",
+    "Unknown duration: :count videos": "Neznáma dĺžka: :count videí",
+    "Originals: :size": "Originály: :size",
+    "HLS: :size": "HLS: :size",
+    "Unknown size: :originals originals, :hls HLS streams": "Neznáma veľkosť: originály :originals, HLS :hls",
+    ":percentage of all videos": ":percentage zo všetkých videí"
 }

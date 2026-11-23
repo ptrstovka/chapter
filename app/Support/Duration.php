@@ -31,6 +31,19 @@ class Duration
         return "{$this->formatNumber($minutes)} min";
     }
 
+    public function formatWithSeconds(): string
+    {
+        $hours = intdiv($this->seconds, 3600);
+        $minutes = intdiv($this->seconds % 3600, 60);
+        $seconds = $this->seconds % 60;
+
+        return implode(' ', array_filter([
+            $hours > 0 ? "{$hours}h" : null,
+            $hours > 0 || $minutes > 0 ? "{$minutes}m" : null,
+            "{$seconds}s",
+        ]));
+    }
+
     /**
      * Create new duration instance for given amount of seconds.
      */

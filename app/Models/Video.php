@@ -74,6 +74,12 @@ class Video extends Model
             && ($this->format === VideoFormat::Hls ? (bool) $this->hls_playlist_path : (bool) $this->file_path);
     }
 
+    public function canConvertToHls(): bool
+    {
+        return $this->file_path && ! $this->hls_playlist_path
+            && in_array($this->processing_status, [VideoProcessingStatus::Ready, VideoProcessingStatus::Failed], true);
+    }
+
     public function lessons(): HasMany
     {
         return $this->hasMany(Lesson::class);
