@@ -1,4 +1,5 @@
 {
+    "maintenance_page_message": "Service Unavailable",
     "(and :count more error)": "(and :count more error)",
     "(and :count more errors)": "(and :count more error)|(and :count more errors)|(and :count more errors)",
     ":value results": ":value results",

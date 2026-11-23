@@ -13,8 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->encryptCookies(except: ['appearance']);
 
+        $middleware->prepend(\App\Http\Middleware\SetLocaleMiddleware::class);
+
         $middleware->web(append: [
-            \App\Http\Middleware\SetLocaleMiddleware::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ], remove: [

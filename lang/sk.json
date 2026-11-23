@@ -1,4 +1,5 @@
 {
+    "maintenance_page_message": "Prebieha údržba. O chvíľku sme späť.",
     "(and :count more error)": "(a :count ďalších chýb)",
     "(and :count more errors)": "(a :count ďalších chýb)|(a :count ďalších chýb)|(a :count ďalších chýb)",
     ":value results": ":value výsledkov",
