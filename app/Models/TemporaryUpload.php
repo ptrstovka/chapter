@@ -130,13 +130,13 @@ class TemporaryUpload extends Model
             'CourseTrailerVideo' => [
                 // TODO: FFProbe?
                 Rule::file()
-                    ->max(256 * 1024) // 256 MB
+                    ->max(config('video.max_upload_size_mb') * 1024)
                     ->extensions(['mp4', 'mov']),
             ],
             'CourseVideo' => [
                 // TODO: FFProbe?
                 Rule::file()
-                    ->max(2 * 1024 * 1024) // 2 GB
+                    ->max(config('video.max_upload_size_mb') * 1024)
                     ->extensions(['mp4', 'mov']),
             ],
             'CourseResource' => [

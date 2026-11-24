@@ -61,6 +61,75 @@ it('uploads and attaches a video immediately and completes idempotently', functi
     expect($video->fresh()->original_size_bytes)->toBe(12);
 });
 
+it('accepts the maximum video size for registration and upload', function (bool $lesson, ?int $limitMb) {
+    if ($limitMb !== null) {
+        config(['video.max_upload_size_mb' => $limitMb]);
+    }
+    $size = ($limitMb ?? 5120) * 1024 ** 2;
+    $upload = $this->postJson(route('studio.video-uploads.store', $this->course), [
+        'uuid' => (string) Str::uuid(),
+        'lesson_id' => $lesson ? $this->lesson->uuid : null,
+        'filename' => 'clip.mp4',
+        'size' => $size,
+    ])->assertCreated()->assertJsonPath('size', $size)->json();
+    $file = UploadedFile::fake()->createWithContent('clip.mp4', 'source video');
+    $file->sizeToReport = $size;
+
+    $this->postJson(route('files.store'), [
+        'scope' => $lesson ? 'CourseVideo' : 'CourseTrailerVideo',
+        'video_upload_id' => $upload['id'],
+        'file' => $file,
+    ])->assertSuccessful()->assertJsonPath('received', true);
+
+    expect(VideoUpload::findByUuid($upload['id'])->temporaryUpload->size)->toBe($size);
+})->with(['lesson' => true, 'trailer' => false])->with(['default 5 GB' => null, 'custom 64 MB' => 64]);
+
+it('rejects videos one byte above the configured limit at registration and upload', function (bool $lesson, int $limitMb) {
+    config(['video.max_upload_size_mb' => $limitMb]);
+    $size = $limitMb * 1024 ** 2;
+    $payload = [
+        'uuid' => (string) Str::uuid(),
+        'lesson_id' => $lesson ? $this->lesson->uuid : null,
+        'filename' => 'clip.mp4',
+        'size' => $size + 1,
+    ];
+    $this->postJson(route('studio.video-uploads.store', $this->course), $payload)
+        ->assertUnprocessable()->assertJsonValidationErrors('size');
+    expect(VideoUpload::count())->toBe(0);
+
+    $upload = $this->postJson(route('studio.video-uploads.store', $this->course), [...$payload, 'size' => $size])
+        ->assertCreated()->json();
+    $file = UploadedFile::fake()->createWithContent('clip.mp4', 'source video');
+    $file->sizeToReport = $size + 1;
+
+    $this->postJson(route('files.store'), [
+        'scope' => $lesson ? 'CourseVideo' : 'CourseTrailerVideo',
+        'video_upload_id' => $upload['id'],
+        'file' => $file,
+    ])->assertUnprocessable()->assertJsonValidationErrors('file');
+
+    expect(VideoUpload::findByUuid($upload['id'])->temporary_upload_id)->toBeNull();
+    Storage::disk('public')->assertDirectoryEmpty('/');
+})->with(['lesson' => true, 'trailer' => false])->with(['5 GB' => 5120, 'custom 64 MB' => 64]);
+
+it('shares the configured video limit with the browser', function () {
+    config(['video.max_upload_size_mb' => 3072]);
+
+    $response = $this->get(route('studio.courses.show', $this->course))->assertSuccessful();
+
+    expect($response->inertiaProps('app.videoUploadMaxSize'))->toBe(3 * 1024 ** 3)
+        ->and($response->inertiaProps('app.videoUploadMaxSizeLabel'))->toBe('3 GB');
+});
+
+it('keeps the attachment limit at two gigabytes', function () {
+    $file = UploadedFile::fake()->createWithContent('resource.pdf', 'resource');
+    $file->sizeToReport = 2 * 1024 ** 3 + 1;
+
+    $this->postJson(route('files.store'), ['scope' => 'CourseResource', 'file' => $file])
+        ->assertUnprocessable()->assertJsonValidationErrors('file');
+    Storage::disk('public')->assertDirectoryEmpty('/');
+});
+
 it('keeps the current video until replacement completion and rejects a cancelled receipt', function () {
     $original = Video::factory()->ready()->create();
     $this->lesson->video()->associate($original)->save();

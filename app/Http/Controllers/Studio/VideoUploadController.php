@@ -30,7 +30,7 @@ class VideoUploadController
             'uuid' => ['required', 'uuid'],
             'lesson_id' => ['nullable', 'uuid'],
             'filename' => ['required', 'string', 'max:255', 'regex:/\.(mp4|mov)$/i'],
-            'size' => ['required', 'integer', 'min:1', 'max:'.($request->filled('lesson_id') ? 2 * 1024 ** 3 : 256 * 1024 ** 2)],
+            'size' => ['required', 'integer', 'min:1', 'max:'.(config('video.max_upload_size_mb') * 1024 ** 2)],
         ]);
         $lesson = ! empty($validated['lesson_id']) ? $course->lessons()->where('uuid', $validated['lesson_id'])->firstOrFail() : null;
         $upload = $uploads->register($course, $lesson, $request->user(), $validated['uuid'], $validated['filename'], $validated['size']);

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'max_upload_size_mb' => (int) env('VIDEO_MAX_UPLOAD_SIZE_MB', 5120),
     'queue_connection' => env('VIDEO_QUEUE_CONNECTION', match (env('QUEUE_CONNECTION', 'database')) {
         'redis' => 'redis-video',
         default => 'database-video',

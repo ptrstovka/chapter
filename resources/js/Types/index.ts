@@ -17,6 +17,8 @@ export interface Application {
   locale: string
   enableExplorePage: boolean
   logo: string | null
+  videoUploadMaxSize: number
+  videoUploadMaxSizeLabel: string
 }
 
 export type AppPageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {

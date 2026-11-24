@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios'
+import { usePage } from '@inertiajs/vue3'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { trans } from 'laravel-vue-i18n'
 import { PencilIcon, Trash2Icon, UploadIcon } from 'lucide-vue-next'
@@ -8,7 +9,7 @@ import { Player } from '@/Components/Player'
 import { Progress } from '@/Components/Progress'
 import { Spinner } from '@/Components/Spinner'
 import { useConfirmable } from '@/Components/ConfirmationDialog'
-import type { VideoSource } from '@/Types'
+import type { AppPageProps, VideoSource } from '@/Types'
 import { useVideoUploads, videoUploadError } from './manager'
 
 const props = defineProps<{
@@ -19,6 +20,7 @@ const props = defineProps<{
   disabled?: boolean
 }>()
 const uploads = useVideoUploads()
+const page = usePage<AppPageProps>()
 const input = ref<HTMLInputElement>()
 const video = ref(props.source)
 const error = ref('')
@@ -59,13 +61,13 @@ async function select(files: File[]) {
   if (props.disabled || selecting.value || !files.length) return
   error.value = ''
   const file = files[0]!
-  const max = props.lessonId ? 2 * 1024 ** 3 : 256 * 1024 ** 2
+  const max = page.props.app.videoUploadMaxSize
   if (files.length !== 1 || !/\.(mp4|mov)$/i.test(file.name)) {
     error.value = trans('Select one MP4 or MOV video.')
     return
   }
   if (!file.size || file.size > max) {
-    error.value = trans(props.lessonId ? 'The video must be between 1 byte and 2 GB.' : 'The trailer must be between 1 byte and 256 MB.')
+    error.value = trans('The video must be between 1 byte and :max.', { max: page.props.app.videoUploadMaxSizeLabel })
     return
   }
   selecting.value = true

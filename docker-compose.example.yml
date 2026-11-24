@@ -5,6 +5,12 @@ services:
             APP_URL: http://localhost:8080
             APP_KEY: ""
             QUEUE_WORKER_ENABLED: "true"
+            VIDEO_MAX_UPLOAD_SIZE_MB: ${VIDEO_MAX_UPLOAD_SIZE_MB:-5120}
+            PHP_UPLOAD_MAX_FILE_SIZE: ${PHP_UPLOAD_MAX_FILE_SIZE:-5G}
+            PHP_POST_MAX_SIZE: ${PHP_POST_MAX_SIZE:-6G}
+            PHP_MAX_EXECUTION_TIME: ${PHP_MAX_EXECUTION_TIME:-7200}
+            PHP_MAX_INPUT_TIME: ${PHP_MAX_INPUT_TIME:-7200}
+            NGINX_CLIENT_MAX_BODY_SIZE: ${NGINX_CLIENT_MAX_BODY_SIZE:-6G}
         ports:
             - "8080:8080"
         volumes:
