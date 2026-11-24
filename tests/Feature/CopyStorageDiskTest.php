@@ -1,10 +1,15 @@
 <?php
 
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\DirectoryListing;
+use League\Flysystem\FileAttributes;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemAdapter as FlysystemAdapter;
 use League\Flysystem\UnableToListContents;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
 beforeEach(function () {
     config([
@@ -14,6 +19,84 @@ beforeEach(function () {
 
     $this->sourceDisk = Storage::fake('copy-source', ['driver' => 'local']);
     $this->destinationDisk = Storage::fake('copy-destination', ['driver' => 'local']);
+});
+
+it('advances progress through copied skipped and failed files without per file logs', function (bool $decorated) {
+    $files = [
+        'course-videos/first.mp4' => 'first',
+        'course-videos/skipped.mp4' => 'skipped',
+        'course-videos/failed.mp4' => 'failed',
+        'video-streams/master.m3u8' => 'playlist',
+    ];
+    foreach ($files as $path => $contents) {
+        $this->sourceDisk->put($path, $contents);
+    }
+    $this->destinationDisk->put('course-videos/skipped.mp4', 'skipped');
+    $destination = Mockery::mock(FilesystemAdapter::class, [
+        $this->destinationDisk->getDriver(),
+        $this->destinationDisk->getAdapter(),
+        $this->destinationDisk->getConfig(),
+    ])->makePartial();
+    $destination->shouldReceive('writeStream')->times(3)->andReturnUsing(function ($path, $stream, $options) {
+        if ($path === 'course-videos/failed.mp4') {
+            throw new RuntimeException('Write failed.');
+        }
+
+        return $this->destinationDisk->writeStream($path, $stream, $options);
+    });
+    Storage::set('copy-destination', $destination);
+    $output = new BufferedOutput(OutputInterface::VERBOSITY_NORMAL, $decorated);
+
+    $exitCode = Artisan::call('storage:copy', ['source' => 'copy-source', 'destination' => 'copy-destination'], $output);
+    $rendered = $output->fetch();
+
+    expect($exitCode)->toBe(1)
+        ->and($rendered)->toContain('Copied: 2; skipped: 1; failed: 1.', 'Write failed.')
+        ->not->toContain('Checking ', 'Skipped file with matching size:', 'Copying:', 'Copied: course-videos/');
+    expect($this->destinationDisk->get('course-videos/first.mp4'))->toBe('first')
+        ->and($this->destinationDisk->get('course-videos/skipped.mp4'))->toBe('skipped')
+        ->and($this->destinationDisk->get('video-streams/master.m3u8'))->toBe('playlist');
+    $this->destinationDisk->assertMissing('course-videos/failed.mp4');
+
+    if ($decorated) {
+        expect($rendered)->toContain('0/4', '1/4', '2/4', '3/4', '4/4', '25%', '50%', '75%', '100%', 'File: video-streams/master.m3u8', 'Finished with errors.');
+    } else {
+        expect($rendered)->not->toContain('File:', "\e[", '100%');
+    }
+})->with([true, false]);
+
+it('finishes an empty source without an indeterminate progress bar', function () {
+    $this->sourceDisk->makeDirectory('empty-directory');
+    $output = new BufferedOutput(OutputInterface::VERBOSITY_NORMAL, true);
+
+    expect(Artisan::call('storage:copy', ['source' => 'copy-source', 'destination' => 'copy-destination'], $output))->toBe(0)
+        ->and($output->fetch())->toContain('No files to copy.')->not->toContain('0/0', '100%');
+    $this->destinationDisk->assertDirectoryEmpty('/');
+});
+
+it('keeps partial progress when listing fails after copying has started', function () {
+    $this->sourceDisk->put('first.mp4', 'first');
+    $this->sourceDisk->put('second.mp4', 'second');
+    $filesystem = Mockery::mock(Filesystem::class, [$this->sourceDisk->getAdapter()])->makePartial();
+    $filesystem->shouldReceive('listContents')->with('', true)->once()->andReturn(new DirectoryListing([
+        new FileAttributes('first.mp4'),
+        new FileAttributes('second.mp4'),
+    ]));
+    $filesystem->shouldReceive('listContents')->with('', true)->once()->andReturnUsing(function () {
+        return new DirectoryListing((function () {
+            yield new FileAttributes('first.mp4');
+
+            throw UnableToListContents::atLocation('', true, new RuntimeException('Listing failed'));
+        })());
+    });
+    Storage::set('copy-source', new FilesystemAdapter($filesystem, $this->sourceDisk->getAdapter(), $this->sourceDisk->getConfig()));
+    $output = new BufferedOutput(OutputInterface::VERBOSITY_NORMAL, true);
+
+    expect(Artisan::call('storage:copy', ['source' => 'copy-source', 'destination' => 'copy-destination'], $output))->toBe(1)
+        ->and($output->fetch())->toContain('1/2', '50%', 'Interrupted while listing files.', 'Unable to finish listing [copy-source]', 'Copied: 1; skipped: 0; failed: 1.')
+        ->not->toContain('100%', 'Finished.');
+    expect($this->destinationDisk->get('first.mp4'))->toBe('first');
+    $this->destinationDisk->assertMissing('second.mp4');
 });
 
 it('copies all files with their original paths and bytes while retaining source and unrelated destination files', function () {

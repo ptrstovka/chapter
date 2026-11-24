@@ -5,10 +5,10 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Number;
 use InvalidArgumentException;
 use League\Flysystem\UnableToRetrieveMetadata;
 use RuntimeException;
+use Symfony\Component\Console\Formatter\OutputFormatter;
 use Throwable;
 
 class CopyStorageDisk extends Command
@@ -51,9 +51,41 @@ class CopyStorageDisk extends Command
         $this->line('Destination files with matching sizes are skipped; different sizes are overwritten. No files are deleted.');
         $this->line('Keep uploads, queue jobs and scheduled file changes stopped until the disk switch is complete.');
 
+        $this->line('Counting source files…');
+        $total = 0;
+        try {
+            foreach ($source->getDriver()->listContents('', true) as $file) {
+                if ($file->isFile()) {
+                    $total++;
+                }
+            }
+        } catch (Throwable $exception) {
+            $this->error(OutputFormatter::escape("Unable to finish listing [{$sourceName}]: {$exception->getMessage()}"));
+
+            return self::FAILURE;
+        }
+
+        if ($total === 0) {
+            $this->info('No files to copy.');
+
+            return self::SUCCESS;
+        }
+
+        $progress = $this->output->isDecorated() ? $this->output->createProgressBar($total) : null;
+        if ($progress) {
+            $this->newLine();
+            $progress->setFormat(" %current%/%max% [<fg=green>%bar%</>] %percent:3s%%\n %message%");
+            $progress->setBarCharacter('━');
+            $progress->setEmptyBarCharacter('─');
+            $progress->setProgressCharacter('╸');
+            $progress->setMessage('Starting…');
+            $progress->start();
+        }
+
         $copied = 0;
         $skipped = 0;
         $failed = 0;
+        $listingFailed = false;
 
         try {
             foreach ($source->getDriver()->listContents('', true) as $file) {
@@ -62,6 +94,8 @@ class CopyStorageDisk extends Command
                 }
 
                 $path = $file->path();
+                $progress?->setMessage('File: '.OutputFormatter::escape($path));
+                $progress?->display();
 
                 try {
                     if ($this->copyFile($source, $destination, $path)) {
@@ -71,12 +105,29 @@ class CopyStorageDisk extends Command
                     }
                 } catch (Throwable $exception) {
                     $failed++;
-                    $this->error("Failed [{$sourceName}:{$path}] -> [{$destinationName}:{$path}]: {$exception->getMessage()}");
+                    $progress?->clear();
+                    $this->error(OutputFormatter::escape("Failed [{$sourceName}:{$path}] -> [{$destinationName}:{$path}]: {$exception->getMessage()}"));
+                    $progress?->display();
                 }
+
+                $progress?->advance();
             }
         } catch (Throwable $exception) {
             $failed++;
-            $this->error("Unable to finish listing [{$sourceName}]: {$exception->getMessage()}");
+            $listingFailed = true;
+            $progress?->clear();
+            $this->error(OutputFormatter::escape("Unable to finish listing [{$sourceName}]: {$exception->getMessage()}"));
+        }
+
+        if ($progress) {
+            if ($listingFailed) {
+                $progress->setMessage('Interrupted while listing files.');
+                $progress->display();
+            } else {
+                $progress->setMessage($failed ? 'Finished with errors.' : 'Finished.');
+                $progress->finish();
+            }
+            $this->newLine(2);
         }
 
         $this->info("Copied: {$copied}; skipped: {$skipped}; failed: {$failed}.");
@@ -93,11 +144,8 @@ class CopyStorageDisk extends Command
     private function copyFile(FilesystemAdapter $source, FilesystemAdapter $destination, string $path): bool
     {
         $size = $source->size($path);
-        $this->line("Checking {$path} (".Number::fileSize($size).')');
         if ($destination->exists($path)
             && $destination->size($path) === $size) {
-            $this->line("Skipped file with matching size: {$path}");
-
             return false;
         }
 
@@ -113,8 +161,6 @@ class CopyStorageDisk extends Command
             throw new RuntimeException('Unable to open the source file stream.');
         }
 
-        $this->line("Copying: {$path}");
-
         try {
             if (! $destination->writeStream($path, $stream, ['mimetype' => $mimeType])) {
                 throw new RuntimeException('Unable to write the destination file.');
@@ -128,8 +174,6 @@ class CopyStorageDisk extends Command
         if ($destination->size($path) !== $size) {
             throw new RuntimeException('Destination size does not match the source.');
         }
-
-        $this->line("Copied: {$path}");
 
         return true;
     }
