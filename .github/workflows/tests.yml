@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.4]
+        php: ['8.5']
 
     name: PHP ${{ matrix.php }}
 
@@ -33,6 +33,13 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, posix, pdo, sqlite, pdo_sqlite
           coverage: none
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ffmpeg
+          ffmpeg -version
+          ffprobe -version
 
       - name: Setup Node
         uses: actions/setup-node@v4
