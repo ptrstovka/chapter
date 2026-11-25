@@ -17,7 +17,7 @@ class CourseContentLayout extends CourseLayout
     {
         return [
             ...parent::toLayout(),
-            'chapters' => $this->course->chapters
+            'chapters' => $this->course->editorContent()->loadMissing('chapters.lessons')->chapters
                 ->sortBy('position')
                 ->values()
                 ->map(fn (Chapter $chapter) => [

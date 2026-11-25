@@ -1,5 +1,5 @@
 <template>
-  <CourseLayout :title="$t('Content')">
+  <CourseLayout :title="$t('Content')" :editor="editor">
     <div class="relative h-[calc(100vh_-_8.5rem)] overflow-hidden flex flex-row">
       <div v-if="chapters.length > 0" class="w-80 shrink-0 overflow-y-auto [scrollbar-width:thin] border-r" scroll-region="">
         <div :class="cn('flex flex-col', { 'divide-y border-b border-dashed': page.props.isEditable })">
@@ -10,7 +10,7 @@
             :course-id="page.props.id"
             :active="route().current('studio.course.chapters.show', [page.props.id, chapter.id])"
             :first="idx === 0"
-            :disabled="!page.props.isEditable"
+            :disabled="!canEditOutline"
           >
             <div v-if="chapter.lessons.length > 0" class="divide-y border-b">
               <CourseLesson
@@ -20,13 +20,13 @@
                 :lesson-id="lesson.id"
                 :title="lesson.title || lesson.fallbackTitle"
                 :active="route().current('studio.course.lessons.show', [page.props.id, lesson.id])"
-                :disabled="!page.props.isEditable"
+                :disabled="!canEditOutline"
               />
             </div>
           </CourseChapter>
         </div>
 
-        <div class="p-3" v-if="page.props.isEditable">
+        <div class="p-3" v-if="canEditOutline">
           <Button
             class="w-full"
             @click="createChapter"
@@ -63,11 +63,14 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/types";
 import { router, useForm, usePage } from "@inertiajs/vue3";
 import { trans } from "laravel-vue-i18n";
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import CourseLayout from "./CourseLayout.vue";
 import { PlusIcon } from 'lucide-vue-next'
 import CourseChapter from '../Components/CourseChapter.vue'
 import CourseLesson from '../Components/CourseLesson.vue'
+import type { CourseEditorForm } from '../useCourseEditorForm'
+
+const props = defineProps<{ editor?: CourseEditorForm }>()
 
 interface Lesson {
   id: string
@@ -87,13 +90,16 @@ const page = usePage<AppPageProps & {
   id: string
   chapters: Array<Chapter>
   isEditable: boolean
+  revision: number
 }>()
 
-const chapters = ref(page.props.chapters)
+const copyOutline = () => page.props.chapters.map(chapter => ({ ...chapter, lessons: chapter.lessons.map(lesson => ({ ...lesson })) }))
+const chapters = ref(copyOutline())
+const canEditOutline = computed(() => page.props.isEditable && !page.props.errors.revision && !props.editor?.processing)
 
 const createChapterForm = useForm({})
 const createChapter = () => {
-  createChapterForm.post(route('studio.course.chapters.store', page.props.id), {
+  createChapterForm.transform(() => ({ revision: page.props.revision })).post(route('studio.course.chapters.store', page.props.id), {
     preserveScroll: true,
   })
 }
@@ -104,7 +110,7 @@ onMounted(() => {
   cleanup = combine(
     monitorForElements({
       canMonitor: ({ source }) => {
-        return source.data.type === 'lesson' || source.data.type === 'chapter'
+        return canEditOutline.value && (source.data.type === 'lesson' || source.data.type === 'chapter')
       },
       onDrop: ({ location, source }) => {
         if (!location.current.dropTargets.length) {
@@ -171,6 +177,7 @@ const moveChapter = (startIndex: number, finishIndex: number) => {
 
   router.post(route('studio.course.chapters.sort', page.props.id), {
     chapters: chapters.value.map(it => it.id),
+    revision: page.props.revision,
   }, {
     preserveScroll: true,
   })
@@ -199,6 +206,7 @@ const moveLessonWithinChapter = (chapterId: string, startIndex: number, finishIn
     destination_chapter: chapter.id,
     lesson: lesson.id,
     destination_index: finishIndex,
+    revision: page.props.revision,
   }, {
     preserveScroll: true,
   })
@@ -226,6 +234,7 @@ const moveLessonToChapter = (sourceChapterId: string, destinationChapterId: stri
     destination_chapter: destinationChapterId,
     lesson: lesson.id,
     destination_index: finishIndex,
+    revision: page.props.revision,
   }, {
     preserveScroll: true,
   })
@@ -245,7 +254,7 @@ const updateFallbackTitles = () => {
   })
 }
 
-watch(() => page.props.chapters, updatedChapters => {
-  chapters.value = updatedChapters
+watch(() => page.props.chapters, () => {
+  chapters.value = copyOutline()
 })
 </script>

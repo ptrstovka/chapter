@@ -7,6 +7,7 @@
         :message="$t('Get started by adding first lesson.')"
       >
         <Button
+          v-if="isEditable && !page.props.errors.revision"
           class="mt-4"
           :icon="PlusIcon"
           :label="$t('Create Lesson')"
@@ -23,20 +24,23 @@
 </template>
 
 <script setup lang="ts">
+import type { AppPageProps } from "@/Types"
 import { Button } from "@/Components/Button";
 import { EmptyState } from "@/Components/EmptyState";
-import { useForm } from "@inertiajs/vue3";
+import { useForm, usePage } from "@inertiajs/vue3";
 import CourseContentLayout from "./Layouts/CourseContentLayout.vue";
 import { PlusIcon } from "lucide-vue-next";
 
 const props = defineProps<{
   id: string
   chapters: Array<any>
+  isEditable: boolean
 }>()
 
+const page = usePage<AppPageProps & { revision: number }>()
 const createChapterForm = useForm({})
 const createChapter = () => {
-  createChapterForm.post(route('studio.course.chapters.store', { course: props.id, _query: { lesson: 1 } }), {
+  createChapterForm.transform(() => ({ revision: page.props.revision })).post(route('studio.course.chapters.store', { course: props.id, _query: { lesson: 1 } }), {
     preserveScroll: true,
   })
 }

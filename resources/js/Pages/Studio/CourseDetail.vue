@@ -1,5 +1,5 @@
 <template>
-  <CourseLayout :title="$t('General')">
+  <CourseLayout :title="$t('General')" :editor="editor">
     <div class="relative h-[calc(100vh_-_8.5rem)] overflow-hidden flex flex-row">
       <div class="flex-1 flex flex-col">
         <div class="flex-1 overflow-y-auto [scrollbar-width:thin]">
@@ -10,7 +10,7 @@
               </FormControl>
 
               <FormControl :label="$t('URL Slug')" :error="form.errors.slug" v-if="title || slug">
-                <Input v-model="form.slug" :disabled="disabled" />
+                <Input v-model="form.slug" :disabled="disabled || slugLocked" />
               </FormControl>
             </div>
 
@@ -65,9 +65,9 @@
             :icon="SaveIcon"
             :processing="form.processing"
             :recently-successful="form.recentlySuccessful"
-            :label="$t('Save')"
+            :label="$t('Save changes')"
             @click="save"
-            :disabled="disabled"
+            :disabled="disabled || !form.isDirty || form.processing"
           />
         </div>
       </div>
@@ -89,11 +89,13 @@ import { TemporaryFileInput } from '@/Components/TemporaryFileInput'
 import VideoInput from '@/Components/VideoUpload/VideoInput.vue'
 import { computed } from "vue";
 import CourseLayout from "./Layouts/CourseLayout.vue"
+import { useCourseEditorForm } from './useCourseEditorForm'
 
 const props = defineProps<{
   id: string
   title: string | null
   slug: string | null
+  slugLocked: boolean
   description: string | null
   descriptionType: TextContentType
   coverImage: string | null
@@ -115,18 +117,7 @@ const form = useForm(() => ({
   category: props.category,
 }))
 
-const save = () => {
-  if (disabled.value) {
-    return
-  }
-
-  form.patch(route('studio.courses.update', props.id), {
-    preserveScroll: true,
-    onSuccess: () => {
-      form.reset()
-    }
-  })
-}
+const { editor, save } = useCourseEditorForm(form, () => route('studio.courses.update', props.id), () => !disabled.value)
 
 useSaveShortcut(() => save())
 </script>

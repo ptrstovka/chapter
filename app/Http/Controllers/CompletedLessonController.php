@@ -2,34 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use App\Models\Lesson;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class CompletedLessonController
 {
-    public function store(Lesson $lesson)
+    public function store(Lesson $lesson): RedirectResponse
     {
-        Gate::authorize('study', $lesson->course);
-
-        $user = Auth::user();
-
-        $completion = $user->findLessonCompletionFor($lesson);
-
-        if ($completion) {
-            return back();
-        }
-
-        $lesson->markCompletedFor($user);
-
-        return back();
+        return $this->change($lesson, true);
     }
 
-    public function destroy(Lesson $lesson)
+    public function destroy(Lesson $lesson): RedirectResponse
     {
-        Gate::authorize('study', $lesson->course);
+        return $this->change($lesson, false);
+    }
 
-        Auth::user()->findLessonCompletionFor($lesson)?->delete();
+    private function change(Lesson $lesson, bool $completed): RedirectResponse
+    {
+        DB::transaction(function () use ($lesson, $completed) {
+            $course = Course::query()->lockForUpdate()->findOrFail($lesson->course_id);
+            Gate::authorize('study', $course);
+
+            $current = $course->lessons()->findOrFail($lesson->id);
+            $user = Auth::user();
+            $completion = $user->findLessonCompletionFor($current);
+            if ($completed && ! $completion) {
+                $current->markCompletedFor($user);
+            } elseif (! $completed) {
+                $completion?->delete();
+            }
+        });
 
         return back();
     }

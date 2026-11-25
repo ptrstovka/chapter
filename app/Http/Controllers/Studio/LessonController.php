@@ -3,38 +3,35 @@
 namespace App\Http\Controllers\Studio;
 
 use App\Enums\TextContentType;
-use App\Models\Chapter;
 use App\Models\Course;
-use App\Models\Lesson;
 use App\Rules\FileListRule;
 use App\View\Layouts\CourseContentLayout;
 use App\View\Models\VideoSource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class LessonController
 {
-    public function store(Course $course, Chapter $chapter)
+    public function store(Request $request, Course $course)
     {
+        $chapter = $request->route('chapter');
         $position = ($chapter->lessons()->max('position') ?: 0) + 1;
 
-        $lesson = new Lesson([
+        $course->editorContent()->lessons()->create([
+            'chapter_id' => $chapter->id,
             'position' => $position,
             'position_within_course' => 0,
             'description_type' => $course->author->getDefaultTextContentType(),
         ]);
-        $lesson->chapter()->associate($chapter);
-        $lesson->course()->associate($course);
-        $lesson->save();
 
         return back();
     }
 
-    public function show(Course $course, Lesson $lesson)
+    public function show(Request $request, Course $course)
     {
+        $lesson = $request->route('lesson');
         $chapter = $lesson->chapter;
 
         return Inertia::render('Studio/CourseContentLesson', CourseContentLayout::make($course, [
@@ -56,8 +53,9 @@ class LessonController
         ]));
     }
 
-    public function update(Request $request, Course $course, Chapter $chapter, Lesson $lesson)
+    public function update(Request $request, Course $course)
     {
+        $lesson = $request->route('lesson');
         $resourceFiles = $lesson->resourceFiles();
 
         $request->validate([
@@ -67,30 +65,28 @@ class LessonController
             'resources' => FileListRule::make('CourseResource', $resourceFiles->getAdapter()),
         ]);
 
-        DB::transaction(function () use ($request, $lesson, $resourceFiles) {
-            $lesson->description = $request->input('description');
-            $lesson->description_type = $request->enum('description_type', TextContentType::class);
+        $lesson->description = $request->input('description');
+        $lesson->description_type = $request->enum('description_type', TextContentType::class);
 
-            if ($title = $request->input('title')) {
-                $lesson->title = $title;
-                $lesson->slug = Str::slug($title);
-            } else {
-                $lesson->title = null;
-                $lesson->slug = null;
-            }
+        if ($title = $request->input('title')) {
+            $lesson->title = $title;
+            $lesson->slug = Str::slug($title);
+        } else {
+            $lesson->title = null;
+            $lesson->slug = null;
+        }
 
-            $lesson->save();
+        $lesson->save();
 
-            $resourceFiles->syncFromRequest('resources');
-        });
+        $resourceFiles->syncFromRequest('resources');
 
         return back();
     }
 
-    public function destroy(Course $course, Chapter $chapter, Lesson $lesson)
+    public function destroy(Request $request, Course $course)
     {
-        DB::transaction(fn () => $lesson->delete());
+        $request->route('lesson')->delete();
 
-        return to_route('studio.course.chapters.show', [$course, $chapter]);
+        return to_route('studio.course.chapters.show', [$course, $request->route('chapter')->uuid]);
     }
 }

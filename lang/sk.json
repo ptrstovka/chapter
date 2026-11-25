@@ -704,5 +704,21 @@
     "Originals: :size": "Originály: :size",
     "HLS: :size": "HLS: :size",
     "Unknown size: :originals originals, :hls HLS streams": "Neznáma veľkosť: originály :originals, HLS :hls",
-    ":percentage of all videos": ":percentage zo všetkých videí"
+    ":percentage of all videos": ":percentage zo všetkých videí",
+    "Save changes": "Uložiť zmeny",
+    "Publish changes": "Publikovať zmeny",
+    "Unpublished changes": "Nepublikované zmeny",
+    "Published · Unpublished changes": "Publikovaný · Nepublikované zmeny",
+    "Discard changes": "Zahodiť zmeny",
+    "Discard all changes and restore the last published version?": "Zahodiť všetky zmeny a obnoviť poslednú publikovanú verziu?",
+    "Course actions": "Akcie kurzu",
+    "Publishing failed": "Publikovanie zlyhalo",
+    "Reload course": "Načítať kurz znova",
+    "This course was changed in another editor. Reload the course to continue.": "Kurz bol upravený v inom editore. Pred pokračovaním ho načítajte znova.",
+    "Enter a title, select a category, and add at least one lesson before publishing.": "Pred publikovaním vyplňte názov, vyberte kategóriu a pridajte aspoň jednu lekciu.",
+    "Wait for the video uploads to finish before publishing.": "Pred publikovaním počkajte na dokončenie nahrávania videí.",
+    "Retry or remove the failed videos before publishing.": "Pred publikovaním zopakujte spracovanie videí s chybou alebo ich odstráňte.",
+    "Wait for the videos to finish processing before publishing.": "Pred publikovaním počkajte na dokončenie spracovania videí.",
+    "Remove this lesson from the course editor?": "Odstrániť túto lekciu z editora kurzu?",
+    "Remove this chapter and its lessons from the course editor?": "Odstrániť túto kapitolu aj jej lekcie z editora kurzu?"
 }

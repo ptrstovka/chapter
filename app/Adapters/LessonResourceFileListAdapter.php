@@ -5,6 +5,7 @@ namespace App\Adapters;
 use App\Models\Lesson;
 use App\Models\Resource;
 use App\Models\TemporaryUpload;
+use App\Support\CourseDrafts;
 use App\Support\FileListAdapter;
 use App\Support\FileListItem;
 use Illuminate\Support\Collection;
@@ -18,7 +19,7 @@ class LessonResourceFileListAdapter implements FileListAdapter
     public function list(): Collection
     {
         return $this->lesson->resources->map(fn (Resource $resource) => new FileListItem(
-            id: $resource->id,
+            id: $resource->uuid,
             url: $resource->getDirectUrl(),
             name: $resource->client_file_name,
             size: $resource->size,
@@ -29,9 +30,8 @@ class LessonResourceFileListAdapter implements FileListAdapter
 
     public function create(TemporaryUpload $upload): void
     {
-        $filePath = $upload->copyToContentDisk(Resource::dir());
-
-        $resource = new Resource([
+        $filePath = app(CourseDrafts::class)->copyUpload($upload, Resource::dir());
+        $resource = $this->lesson->resources()->getRelated()->newInstance([
             'file_path' => $filePath,
             'client_file_name' => $upload->client_file_name,
             'size' => $upload->size,
@@ -57,7 +57,9 @@ class LessonResourceFileListAdapter implements FileListAdapter
         if ($file->source instanceof Resource) {
             $this->lesson->resources()->detach($file->source);
 
-            $file->source->delete();
+            if ($file->source->lessons()->doesntExist()) {
+                $file->source->delete();
+            }
         }
     }
 }

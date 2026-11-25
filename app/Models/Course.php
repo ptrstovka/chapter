@@ -9,6 +9,7 @@ use App\Jobs\CalculateCourseDuration;
 use App\Jobs\PublishCourse;
 use App\Jobs\SortLessonsWithinCourse;
 use App\Models\Concerns\HasUuid;
+use App\Support\CoursePublication;
 use App\Support\Duration;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Bus;
@@ -58,6 +60,8 @@ class Course extends Model
 
     protected $attributes = [
         'access_mode' => 'public',
+        'studio_revision' => 0,
+        'has_been_published' => false,
     ];
 
     protected function casts(): array
@@ -66,6 +70,8 @@ class Course extends Model
             'status' => CourseStatus::class,
             'access_mode' => CourseAccessMode::class,
             'description_type' => TextContentType::class,
+            'studio_revision' => 'integer',
+            'has_been_published' => 'boolean',
         ];
     }
 
@@ -87,6 +93,21 @@ class Course extends Model
     public function chapters(): HasMany
     {
         return $this->hasMany(Chapter::class);
+    }
+
+    public function draft(): HasOne
+    {
+        return $this->hasOne(CourseDraft::class);
+    }
+
+    public function editorContent(): self|CourseDraft
+    {
+        return $this->draft ?? $this;
+    }
+
+    public function hasPublication(): bool
+    {
+        return $this->has_been_published || in_array($this->status, [CourseStatus::Published, CourseStatus::Unpublished], true);
     }
 
     public function lessons(): HasMany
@@ -215,18 +236,25 @@ class Course extends Model
     /**
      * Publish the course.
      */
-    public function publish(): void
+    public function publish(bool $allowChanges = false): void
     {
-        if ($this->status === CourseStatus::Published) {
-            return;
-        }
-
-        if ($this->status === CourseStatus::Publishing) {
-            throw new LogicException('The course is already being published.');
-        }
-
-        DB::transaction(function () {
+        DB::transaction(function () use ($allowChanges) {
             $course = static::query()->lockForUpdate()->findOrFail($this->id);
+            if ($course->status === CourseStatus::Published && (! $allowChanges || ! $course->draft?->has_changes)) {
+                return;
+            }
+
+            if ($course->status === CourseStatus::Publishing) {
+                throw new LogicException('The course is already being published.');
+            }
+
+            if ($course->hasPublication()) {
+                app(CoursePublication::class)->publish($course);
+                $this->setRawAttributes($course->getAttributes(), true)->unsetRelation('draft');
+
+                return;
+            }
+
             if (! $course->canBePublished()) {
                 throw new LogicException('The course or its videos are not ready to publish.');
             }
@@ -255,9 +283,17 @@ class Course extends Model
      */
     public function unpublish(): void
     {
-        $this->update([
-            'status' => CourseStatus::Unpublished,
-        ]);
+        DB::transaction(function () {
+            $course = static::query()->lockForUpdate()->findOrFail($this->id);
+            if ($course->canBeUnpublished()) {
+                $course->update([
+                    'status' => CourseStatus::Unpublished,
+                    'has_been_published' => true,
+                    'studio_revision' => $course->studio_revision + 1,
+                ]);
+                $this->setRawAttributes($course->getAttributes(), true);
+            }
+        });
     }
 
     /**
@@ -288,6 +324,10 @@ class Course extends Model
     public function canBePublished(): bool
     {
         if (in_array($this->status, [CourseStatus::Draft, CourseStatus::Unpublished, CourseStatus::PublishFailure], true)) {
+            if ($this->hasPublication()) {
+                return app(CoursePublication::class)->problem($this) === null;
+            }
+
             if (! $this->title) {
                 return false;
             }
@@ -331,7 +371,7 @@ class Course extends Model
      */
     public function canBeUpdated(): bool
     {
-        return $this->status === CourseStatus::Draft || $this->status === CourseStatus::Unpublished;
+        return in_array($this->status, [CourseStatus::Draft, CourseStatus::Published, CourseStatus::Unpublished], true);
     }
 
     /**

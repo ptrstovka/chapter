@@ -47,6 +47,7 @@
 </template>
 
 <script setup lang="ts">
+import type { AppPageProps } from "@/Types"
 import { Button } from "@/Components/Button";
 import { PlaceholderPattern } from "@/Components/Skeleton";
 import { cn } from "@/Utils";
@@ -59,7 +60,7 @@ import {
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/types";
-import { Link, useForm } from "@inertiajs/vue3";
+import { Link, useForm, usePage } from "@inertiajs/vue3";
 import { GripVerticalIcon, PlusIcon } from "lucide-vue-next";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 
@@ -73,8 +74,9 @@ const props = defineProps<{
 }>()
 
 const createLessonForm = useForm({})
+const page = usePage<AppPageProps & { revision: number }>()
 const createLesson = () => {
-  createLessonForm.post(route('studio.course.lessons.store', [props.courseId, props.chapterId]), {
+  createLessonForm.transform(() => ({ revision: page.props.revision })).post(route('studio.course.lessons.store', [props.courseId, props.chapterId]), {
     preserveScroll: true,
   })
 }

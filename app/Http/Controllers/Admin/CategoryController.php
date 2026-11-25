@@ -13,8 +13,8 @@ use Inertia\Inertia;
 use StackTrace\Ui\Breadcrumbs\BreadcrumbItem;
 use StackTrace\Ui\Link;
 use StackTrace\Ui\Table;
-use StackTrace\Ui\Table\Columns;
 use StackTrace\Ui\Table\Actions;
+use StackTrace\Ui\Table\Columns;
 
 class CategoryController
 {
@@ -76,7 +76,7 @@ class CategoryController
                 'id' => $category->id,
                 'title' => $category->title,
                 'slug' => $category->slug,
-                'canDelete' => $category->courses()->doesntExist(),
+                'canDelete' => $category->courses()->doesntExist() && $category->courseDrafts()->doesntExist(),
             ],
         ])->breadcrumb([
             BreadcrumbItem::make(__('Categories'), Link::to(route('admin.categories'))),
@@ -104,7 +104,7 @@ class CategoryController
 
     public function destroy(Category $category)
     {
-        abort_if($category->courses()->exists(), 400);
+        abort_if($category->courses()->exists() || $category->courseDrafts()->exists(), 400);
 
         $category->delete();
 

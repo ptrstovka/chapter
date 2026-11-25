@@ -20,7 +20,7 @@ class VideoUploadController
         return response()->json([
             'uploads' => VideoUpload::query()->where('user_id', $request->user()->id)
                 ->where('expires_at', '>', now())->whereHas('course')
-                ->with(['course', 'lesson'])->latest()->limit(100)->get()->map->toUpload(),
+                ->with(['course', 'lesson', 'draftLesson'])->latest()->limit(100)->get()->map->toUpload(),
         ]);
     }
 
@@ -31,9 +31,13 @@ class VideoUploadController
             'lesson_id' => ['nullable', 'uuid'],
             'filename' => ['required', 'string', 'max:255', 'regex:/\.(mp4|mov)$/i'],
             'size' => ['required', 'integer', 'min:1', 'max:'.(config('video.max_upload_size_mb') * 1024 ** 2)],
+            'revision' => ['nullable', 'integer', 'min:0'],
         ]);
-        $lesson = ! empty($validated['lesson_id']) ? $course->lessons()->where('uuid', $validated['lesson_id'])->firstOrFail() : null;
-        $upload = $uploads->register($course, $lesson, $request->user(), $validated['uuid'], $validated['filename'], $validated['size']);
+        $upload = $uploads->register(
+            $course, $validated['lesson_id'] ?? null, $request->user(),
+            $validated['uuid'], $validated['filename'], $validated['size'],
+            $request->has('revision') ? $request->integer('revision') : null,
+        );
 
         return response()->json($upload->toUpload(), 201);
     }
@@ -53,8 +57,7 @@ class VideoUploadController
             'filename' => ['required', 'string', 'max:255'],
             'size' => ['required', 'integer', 'min:1'],
         ]);
-        $lesson = ! empty($validated['lesson_id']) ? $course->lessons()->where('uuid', $validated['lesson_id'])->firstOrFail() : null;
-        $upload = $uploads->cancel($course, $lesson, $request->user(), $uploadId, $validated['filename'], $validated['size']);
+        $upload = $uploads->cancel($course, $validated['lesson_id'] ?? null, $request->user(), $uploadId, $validated['filename'], $validated['size']);
 
         return response()->json($upload->toUpload());
     }

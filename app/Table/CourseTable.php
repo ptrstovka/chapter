@@ -37,6 +37,7 @@ class CourseTable extends Table
         return Course::query()
             ->when($this->author, fn (Builder $builder, Author $author) => $builder->whereBelongsTo($author))
             ->with(['author'])
+            ->withExists(['draft as has_unpublished_changes' => fn (Builder $query) => $query->where('has_changes', true)])
             ->withCount(['chapters', 'lessons', 'enrollments']);
     }
 
@@ -57,13 +58,16 @@ class CourseTable extends Table
                 ? null
                 : Columns\Text::make(__('Author'), fn (Course $course) => $course->author->name)->width(56),
 
-            Columns\Badge::make(__('Status'), fn (Course $course) => $course->status->value)
+            Columns\Badge::make(__('Status'), fn (Course $course) => $course->status === CourseStatus::Published && $course->has_unpublished_changes
+                ? 'published-with-changes'
+                : $course->status->value)
                 ->variant([
                     CourseStatus::Draft->value => 'default',
                     CourseStatus::Publishing->value => 'default',
                     CourseStatus::PublishFailure->value => 'default',
                     CourseStatus::Unpublished->value => 'warning',
                     CourseStatus::Published->value => 'positive',
+                    'published-with-changes' => 'warning',
                 ])
                 ->label([
                     CourseStatus::Draft->value => __('Draft'),
@@ -71,6 +75,7 @@ class CourseTable extends Table
                     CourseStatus::PublishFailure->value => __('Publishing'),
                     CourseStatus::Unpublished->value => __('Unpublished'),
                     CourseStatus::Published->value => __('Published'),
+                    'published-with-changes' => __('Published · Unpublished changes'),
                 ])
                 ->width(28),
 

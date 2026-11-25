@@ -143,6 +143,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/courses/{course:uuid}/access/requests/{courseAccessRequest}/deny', [Studio\CourseAccessRequestController::class, 'deny'])->name('courses.access.requests.deny');
             Route::post('/courses/{course:uuid}/unpublish', Studio\UnpublishCourseController::class)->name('courses.unpublish');
             Route::post('/courses/{course:uuid}/publish', Studio\PublishCourseController::class)->name('courses.publish');
+            Route::delete('/courses/{course:uuid}/draft', Studio\DiscardCourseDraftController::class)->name('courses.draft.destroy');
             Route::post('/courses/{course:uuid}/chapters', [Studio\ChapterController::class, 'store'])->name('course.chapters.store');
             Route::post('/courses/{course:uuid}/sort-chapters', Studio\SortChaptersController::class)->name('course.chapters.sort');
             Route::post('/courses/{course:uuid}/move-lesson', Studio\MoveLessonController::class)->name('course.lessons.move');

@@ -20,7 +20,7 @@ class VideoUpload extends Model
 
     protected function casts(): array
     {
-        return ['status' => VideoUploadStatus::class, 'expires_at' => 'datetime', 'size' => 'integer'];
+        return ['status' => VideoUploadStatus::class, 'expires_at' => 'datetime', 'size' => 'integer', 'editor_revision' => 'integer'];
     }
 
     public function course(): BelongsTo
@@ -31,6 +31,11 @@ class VideoUpload extends Model
     public function lesson(): BelongsTo
     {
         return $this->belongsTo(Lesson::class);
+    }
+
+    public function draftLesson(): BelongsTo
+    {
+        return $this->belongsTo(CourseDraftLesson::class, 'draft_lesson_id');
     }
 
     public function temporaryUpload(): BelongsTo
@@ -50,7 +55,12 @@ class VideoUpload extends Model
 
     public function uploadScope(): string
     {
-        return $this->lesson_id ? 'CourseVideo' : 'CourseTrailerVideo';
+        return $this->lesson_uuid || $this->lesson_id || $this->draft_lesson_id ? 'CourseVideo' : 'CourseTrailerVideo';
+    }
+
+    public function lessonUuid(): ?string
+    {
+        return $this->lesson_uuid ?? $this->draftLesson?->uuid ?? $this->lesson?->uuid;
     }
 
     public function prunable(): Builder
@@ -69,12 +79,15 @@ class VideoUpload extends Model
         return [
             'id' => $this->uuid,
             'courseId' => $this->course?->uuid,
-            'lessonId' => $this->lesson?->uuid,
+            'lessonId' => $this->lessonUuid(),
             'name' => $this->filename,
             'size' => $this->size,
             'status' => $this->status,
             'received' => $this->temporary_upload_id !== null,
             'videoId' => $this->video_id,
+            'editorRevision' => $this->editor_revision === null
+                ? null
+                : ['before' => $this->editor_revision - 1, 'after' => $this->editor_revision],
         ];
     }
 }

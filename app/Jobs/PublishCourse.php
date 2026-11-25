@@ -22,7 +22,7 @@ class PublishCourse implements ShouldQueue
             if ($course->status !== CourseStatus::Publishing || ! $course->hasReadyVideos()) {
                 throw new LogicException('The course videos are not ready to publish.');
             }
-            $course->update(['status' => CourseStatus::Published]);
+            $course->update(['status' => CourseStatus::Published, 'has_been_published' => true]);
         });
     }
 }

@@ -13,15 +13,16 @@ class MoveLessonController
 {
     public function __invoke(Request $request, Course $course)
     {
-        $chapters = $course->chapters->pluck('uuid');
+        $content = $course->editorContent();
+        $chapters = $content->chapters->pluck('uuid');
 
         $request->validate([
             'source_chapter' => ['required', 'string', Rule::in($chapters)],
             'destination_chapter' => ['required', 'string', Rule::in($chapters)],
         ]);
 
-        $sourceChapter = $course->chapters->firstOrFail('uuid', '=', $request->input('source_chapter'));
-        $destinationChapter = $course->chapters->firstOrFail('uuid', '=', $request->input('destination_chapter'));
+        $sourceChapter = $content->chapters->firstOrFail('uuid', '=', $request->input('source_chapter'));
+        $destinationChapter = $content->chapters->firstOrFail('uuid', '=', $request->input('destination_chapter'));
 
         $request->validate([
             'lesson' => ['required', 'string', Rule::in($sourceChapter->lessons->pluck('uuid'))],

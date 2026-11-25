@@ -1,5 +1,5 @@
 <template>
-  <CourseContentLayout>
+  <CourseContentLayout :editor="editor">
     <div>
       <div class="flex flex-row justify-between items-center border-b px-3 h-10">
         <Breadcrumb>
@@ -33,11 +33,11 @@
       <div class="flex-1 flex flex-row justify-end items-center">
         <Button
           :icon="SaveIcon"
-          :label="$t('Save')"
+          :label="$t('Save changes')"
           @click="save"
           :processing="form.processing"
           :recently-successful="form.recentlySuccessful"
-          :disabled="!chapter.isEditable"
+          :disabled="!chapter.isEditable || !form.isDirty || form.processing"
         />
       </div>
     </template>
@@ -45,6 +45,7 @@
 </template>
 
 <script setup lang="ts">
+import type { AppPageProps } from "@/Types"
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -61,11 +62,11 @@ import {
 import { FormControl } from "@/Components/Form";
 import { Input } from "@/Components/Input";
 import { useSaveShortcut } from "@/Composables/useKeyboard.ts";
-import { useForm } from "@inertiajs/vue3";
-import { asyncRouter } from "@stacktrace/ui";
+import { useForm, router, usePage } from "@inertiajs/vue3";
 import { trans } from "laravel-vue-i18n";
 import { EllipsisIcon, SaveIcon, Trash2Icon } from "lucide-vue-next";
 import CourseContentLayout from "./Layouts/CourseContentLayout.vue";
+import { useCourseEditorForm } from './useCourseEditorForm'
 
 const props = defineProps<{
   id: string
@@ -80,20 +81,19 @@ const props = defineProps<{
 const form = useForm(() => ({
   title: props.chapter.title || '',
 }))
-const save = () => {
-  if (!props.chapter.isEditable) {
-    return
-  }
-
-  form.patch(route('studio.course.chapters.update', [props.id, props.chapter.id]), {
-    preserveScroll: true,
-  })
-}
+const page = usePage<AppPageProps & { revision: number }>()
+const { editor, save } = useCourseEditorForm(
+  form,
+  () => route('studio.course.chapters.update', [props.id, props.chapter.id]),
+  () => props.chapter.isEditable,
+)
 
 useSaveShortcut(() => save())
 
 const { confirm } = useConfirmable()
-const destroy = () => confirm(trans('Are you sure you want to delete this chapter? All lessons within the chapter including their resources and videos will be permanently deleted.'), async () => {
-  await asyncRouter.delete(route('studio.course.chapters.destroy', [props.id, props.chapter.id]))
+const destroy = () => confirm(trans('Remove this chapter and its lessons from the course editor?'), () => {
+  if (!page.props.errors.revision) {
+    router.delete(route('studio.course.chapters.destroy', [props.id, props.chapter.id]), { data: { revision: page.props.revision } })
+  }
 }, { title: trans('Delete Chapter'), confirmLabel: trans('Delete'), cancelLabel: trans('Keep'), destructive: true })
 </script>

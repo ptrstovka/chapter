@@ -10,7 +10,7 @@ import { Progress } from '@/Components/Progress'
 import { Spinner } from '@/Components/Spinner'
 import { useConfirmable } from '@/Components/ConfirmationDialog'
 import type { AppPageProps, VideoSource } from '@/Types'
-import { useVideoUploads, videoUploadError } from './manager'
+import { advanceCourseRevision, type EditorRevision, useVideoUploads, videoUploadError } from './manager'
 
 const props = defineProps<{
   courseId: string
@@ -20,7 +20,7 @@ const props = defineProps<{
   disabled?: boolean
 }>()
 const uploads = useVideoUploads()
-const page = usePage<AppPageProps>()
+const page = usePage<AppPageProps & { revision: number }>()
 const input = ref<HTMLInputElement>()
 const video = ref(props.source)
 const error = ref('')
@@ -72,7 +72,7 @@ async function select(files: File[]) {
   }
   selecting.value = true
   try {
-    await uploads.enqueue(file, props.courseId, props.lessonId ?? null, props.label ?? '')
+    await uploads.enqueue(file, props.courseId, props.lessonId ?? null, props.label ?? '', page.props.revision)
   } catch (cause) {
     error.value = videoUploadError(cause)
   } finally {
@@ -95,7 +95,11 @@ function remove() {
   confirm(trans('Are you sure you want to delete this video?'), async () => {
     busy.value = true
     try {
-      await axios.delete(route('studio.videos.destroy', [props.courseId, target.id]))
+      const courseId = props.courseId
+      const { data } = await axios.delete<{ editorRevision?: EditorRevision }>(route('studio.videos.destroy', [courseId, target.id]), {
+        data: { revision: page.props.revision, lesson_id: props.lessonId ?? null },
+      })
+      advanceCourseRevision(courseId, data?.editorRevision)
       await refresh()
     } catch (cause) {
       error.value = videoUploadError(cause)

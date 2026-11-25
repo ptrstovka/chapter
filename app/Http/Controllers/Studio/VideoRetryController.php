@@ -19,7 +19,10 @@ class VideoRetryController
         DB::transaction(function () use ($course, $video, $processing, $settings) {
             $course = Course::query()->lockForUpdate()->findOrFail($course->id);
             abort_unless($course->canBeUpdated(), 409);
-            abort_unless($course->trailer_id === $video->id || $course->lessons()->where('video_id', $video->id)->exists(), 404);
+            $content = $course->editorContent();
+            abort_unless($content->trailer_id === $video->id || $content->lessons()->where('video_id', $video->id)->exists(), 404);
+            abort_if($course->hasPublication() && ($course->trailer_id === $video->id
+                || $course->lessons()->where('video_id', $video->id)->exists()), 409);
             abort_unless($video->processing_status === VideoProcessingStatus::Failed && $video->file_path, 409);
             $processing->dispatch($video, $processing->prepare($video, $settings->snapshot(), retry: true));
         });

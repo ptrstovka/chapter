@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasUuid;
+use App\Support\CourseDrafts;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,8 +17,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  * @property string $client_file_name
  * @property int $size
  * @property string $mime_type
- * @property \App\Models\Course $course
- * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Lesson> $lessons
+ * @property Course $course
+ * @property Collection<int, Lesson> $lessons
  */
 class Resource extends Model
 {
@@ -26,13 +28,7 @@ class Resource extends Model
 
     protected static function booted(): void
     {
-        static::deleted(function (Resource $resource) {
-            $disk = App::contentDisk();
-
-            if (Storage::disk($disk)->exists($resource->file_path)) {
-                Storage::disk($disk)->delete($resource->file_path);
-            }
-        });
+        static::deleted(fn (Resource $resource) => app(CourseDrafts::class)->deleteUnusedFile($resource->file_path));
     }
 
     public function course(): BelongsTo

@@ -23,4 +23,9 @@ class Category extends Model
     {
         return $this->hasMany(Course::class);
     }
+
+    public function courseDrafts(): HasMany
+    {
+        return $this->hasMany(CourseDraft::class);
+    }
 }

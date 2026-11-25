@@ -1,4 +1,6 @@
 import axios from 'axios'
+import type { AppPageProps } from '@/Types'
+import { router, usePage } from '@inertiajs/vue3'
 import { computed, markRaw, reactive, ref } from 'vue'
 import { trans } from 'laravel-vue-i18n'
 
@@ -11,6 +13,19 @@ interface UploadReceipt {
   status: 'pending' | 'completed' | 'cancelled'
   received: boolean
   videoId: number | null
+  editorRevision: EditorRevision | null
+}
+
+export interface EditorRevision {
+  before: number
+  after: number
+}
+
+export function advanceCourseRevision(courseId: string, revision: EditorRevision | null | undefined) {
+  const page = usePage<AppPageProps & { id?: string; revision?: number }>()
+  if (revision && page.props.id === courseId && page.props.revision === revision.before && !page.props.errors.revision) {
+    router.replaceProp('revision', revision.after)
+  }
 }
 
 export interface VideoUploadTask {
@@ -21,6 +36,7 @@ export interface VideoUploadTask {
   label: string
   name: string
   size: number
+  revision: number | undefined
   file?: File
   registered: boolean
   received: boolean
@@ -57,7 +73,7 @@ export function videoUploadError(error: unknown): string {
 
 async function register(task: VideoUploadTask) {
   const { data } = await axios.post<UploadReceipt>(route('studio.video-uploads.store', task.courseId), {
-    uuid: task.id, lesson_id: task.lessonId, filename: task.name, size: task.size,
+    uuid: task.id, lesson_id: task.lessonId, filename: task.name, size: task.size, revision: task.revision,
   })
   task.registered = true
   task.received = data.received
@@ -66,6 +82,7 @@ async function register(task: VideoUploadTask) {
     return
   }
   task.status = data.status === 'completed' ? 'done' : data.status === 'cancelled' ? 'cancelled' : 'queued'
+  advanceCourseRevision(task.courseId, data.editorRevision)
   notify(task.courseId)
 }
 
@@ -111,7 +128,10 @@ async function processQueue() {
           signal.throwIfAborted()
           task.status = 'completing'
           task.progress = 100
-          await axios.post(route('studio.video-uploads.complete', task.id), {}, { signal })
+          const result = await axios.post<UploadReceipt>(route('studio.video-uploads.complete', task.id), {}, { signal })
+          advanceCourseRevision(task.courseId, result.data.editorRevision)
+        } else {
+          advanceCourseRevision(task.courseId, data.editorRevision)
         }
         task.status = 'done'
         task.progress = 100
@@ -193,6 +213,7 @@ async function refresh() {
         if (receipt.status !== 'pending') {
           task.controller?.abort()
           task.status = receipt.status === 'completed' ? 'done' : 'cancelled'
+          advanceCourseRevision(task.courseId, receipt.editorRevision)
           if (task.status === 'done') task.progress = 100
           task.file = undefined
           notify(task.courseId)
@@ -212,7 +233,7 @@ export function useVideoUploads() {
       if (open.value) hasOpened.value = true
     },
     hasPending: (courseId: string) => tasks.some(task => task.courseId === courseId && pending(task)),
-    async enqueue(file: File, courseId: string, lessonId: string | null, label: string) {
+    async enqueue(file: File, courseId: string, lessonId: string | null, label: string, revision?: number) {
       const previous = tasks.filter(task => task.courseId === courseId && task.lessonId === lessonId && pending(task))
       for (const task of previous) await cancel(task)
       if (!active.value) {
@@ -222,7 +243,7 @@ export function useVideoUploads() {
       }
       const task = reactive<VideoUploadTask>({
         id: crypto.randomUUID(), batchId: batchId.value, courseId, lessonId, label, name: file.name, size: file.size,
-        file: markRaw(file), registered: false, received: false, status: 'registering', progress: 0, error: '',
+        revision, file: markRaw(file), registered: false, received: false, status: 'registering', progress: 0, error: '',
       })
       tasks.push(task)
       notify(courseId)

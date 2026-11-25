@@ -11,11 +11,11 @@ class ResetProgressController
 {
     public function __invoke(Course $course)
     {
-        Gate::authorize('study', $course);
-
         $user = Auth::user();
 
         DB::transaction(function () use ($user, $course) {
+            $course = Course::query()->lockForUpdate()->findOrFail($course->id);
+            Gate::authorize('study', $course);
             $enrollment = $user->findEnrollmentFor($course);
 
             $user

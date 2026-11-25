@@ -14,6 +14,8 @@ class ResourceController
 
         Gate::authorize('study', $course);
 
+        abort_unless($resource->lessons()->where('lessons.course_id', $course->id)->exists(), 404);
+
         return $resource->download();
     }
 }

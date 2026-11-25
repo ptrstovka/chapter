@@ -1,5 +1,5 @@
 <template>
-  <CourseContentLayout>
+  <CourseContentLayout :editor="editor">
     <div>
       <div class="flex flex-row justify-between items-center border-b px-3 h-10">
         <Breadcrumb>
@@ -60,11 +60,11 @@
       <div class="flex-1 flex flex-row justify-end items-center">
         <Button
           :icon="SaveIcon"
-          :label="$t('Save')"
+          :label="$t('Save changes')"
           @click="save"
           :processing="form.processing"
           :recently-successful="form.recentlySuccessful"
-          :disabled="disabled"
+          :disabled="disabled || !form.isDirty || form.processing"
         />
       </div>
     </template>
@@ -72,6 +72,7 @@
 </template>
 
 <script setup lang="ts">
+import type { AppPageProps } from "@/Types"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -89,11 +90,11 @@ import VideoInput from "@/Components/VideoUpload/VideoInput.vue";
 import { TextEditor } from "@/Components/TextEditor";
 import { useSaveShortcut } from "@/Composables/useKeyboard.ts";
 import type { TextContentType, VideoSource } from "@/Types";
-import { useForm } from "@inertiajs/vue3";
-import { asyncRouter } from "@stacktrace/ui";
+import { useForm, router, usePage } from "@inertiajs/vue3";
 import { trans } from "laravel-vue-i18n";
 import { computed } from "vue";
 import CourseContentLayout from "./Layouts/CourseContentLayout.vue";
+import { useCourseEditorForm } from './useCourseEditorForm'
 import { Trash2Icon, EllipsisIcon, SaveIcon } from 'lucide-vue-next'
 
 const props = defineProps<{
@@ -124,23 +125,19 @@ const form = useForm(() => ({
   resources: props.lesson.resources.map(it => ({...it})),
 }))
 
-const save = () => {
-  if (disabled.value) {
-    return
-  }
-
-  form.patch(route('studio.course.lessons.update', [props.id, props.chapter.id, props.lesson.id]), {
-    preserveScroll: true,
-    onSuccess: () => {
-      form.reset()
-    }
-  })
-}
+const page = usePage<AppPageProps & { revision: number }>()
+const { editor, save } = useCourseEditorForm(
+  form,
+  () => route('studio.course.lessons.update', [props.id, props.chapter.id, props.lesson.id]),
+  () => !disabled.value,
+)
 
 useSaveShortcut(() => save())
 
 const { confirm } = useConfirmable()
-const destroy = () => confirm(trans('Are you sure you want to delete this lesson? All resources including video will be permanently deleted.'), async () => {
-  await asyncRouter.delete(route('studio.course.lessons.destroy', [props.id, props.chapter.id, props.lesson.id]))
+const destroy = () => confirm(trans('Remove this lesson from the course editor?'), () => {
+  if (!page.props.errors.revision) {
+    router.delete(route('studio.course.lessons.destroy', [props.id, props.chapter.id, props.lesson.id]), { data: { revision: page.props.revision } })
+  }
 }, { title: trans('Delete Lesson'), confirmLabel: trans('Delete'), cancelLabel: trans('Keep'), destructive: true })
 </script>

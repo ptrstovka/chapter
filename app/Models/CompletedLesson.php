@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property \App\Models\User $user
- * @property \App\Models\Lesson $lesson
+ * @property User $user
+ * @property Lesson $lesson
  */
 class CompletedLesson extends Model
 {
@@ -20,6 +20,10 @@ class CompletedLesson extends Model
             $course = $completion->lesson->course;
 
             if ($enrollment = $completion->user->findEnrollmentFor($course)) {
+                if ($completion->exists && $enrollment->isCompleted()) {
+                    return;
+                }
+
                 $completedLessons = $completion->user
                     ->completedLessons()
                     ->whereRelation('lesson.course', 'courses.id', $course->id)
