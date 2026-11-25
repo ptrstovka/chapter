@@ -107,6 +107,9 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/courses', [Admin\CourseController::class, 'index'])->name('courses');
             Route::get('/videos', [Admin\VideoController::class, 'index'])->name('videos');
+
+            Route::name('course-editor.')->middleware(EnsureStudioCourseAccess::class)
+                ->group(__DIR__.'/course-editor.php');
         });
     });
 
@@ -119,51 +122,12 @@ Route::middleware('auth')->group(function () {
         Route::name('studio.')->group(function () {
             Route::get('/video-uploads', [Studio\VideoUploadController::class, 'index'])->name('video-uploads');
             Route::get('/video-uploads/{videoUpload:uuid}', [Studio\VideoUploadController::class, 'show'])->name('video-uploads.show');
-            Route::delete('/courses/{course:uuid}/video-uploads/{uploadId}', [Studio\VideoUploadController::class, 'destroy'])->name('video-uploads.destroy');
             Route::post('/video-uploads/{videoUpload:uuid}/complete', Studio\VideoUploadCompletionController::class)->name('video-uploads.complete');
-            Route::post('/courses/{course:uuid}/video-uploads', [Studio\VideoUploadController::class, 'store'])->name('video-uploads.store');
-            Route::get('/courses/{course:uuid}/videos', [Studio\VideoController::class, 'index'])->name('videos');
-            Route::delete('/courses/{course:uuid}/videos/{video}', [Studio\VideoController::class, 'destroy'])->name('videos.destroy');
-            Route::post('/courses/{course:uuid}/videos/{video}/retry', Studio\VideoRetryController::class)->name('videos.retry');
             Route::get('/overview', Studio\OverviewController::class)->name('overview');
 
             Route::get('/courses', [Studio\CourseController::class, 'index'])->name('courses');
             Route::post('/courses', [Studio\CourseController::class, 'store'])->name('courses.store');
-            Route::get('/courses/{course:uuid}', [Studio\CourseController::class, 'show'])->name('courses.show');
-            Route::patch('/courses/{course:uuid}', [Studio\CourseController::class, 'update'])->name('courses.update');
-            Route::delete('/courses/{course:uuid}', [Studio\CourseController::class, 'destroy'])->name('courses.destroy');
-            Route::get('/courses/{course:uuid}/content', Studio\CourseContentController::class)->name('courses.content');
-            Route::prefix('/courses/{course:uuid}/preview/{version}')
-                ->name('courses.preview.')
-                ->middleware('cache.headers:private;no_store')
-                ->group(function () {
-                    Route::get('/', [Studio\CoursePreviewController::class, 'show'])->name('show');
-                    Route::get('/lessons/{lessonUuid}', [Studio\CoursePreviewController::class, 'lesson'])
-                        ->whereUuid('lessonUuid')->name('lesson');
-                    Route::get('/lessons/{lessonUuid}/resources/{resourceUuid}', [Studio\CoursePreviewController::class, 'resource'])
-                        ->whereUuid(['lessonUuid', 'resourceUuid'])->name('resource');
-                });
-            Route::get('/courses/{course:uuid}/access', [Studio\CourseAccessController::class, 'show'])->name('courses.access');
-            Route::patch('/courses/{course:uuid}/access', [Studio\CourseAccessController::class, 'update'])->name('courses.access.update');
-            Route::post('/courses/{course:uuid}/access/users', [Studio\CourseUserAccessController::class, 'store'])->name('courses.access.users.store');
-            Route::delete('/courses/{course:uuid}/access/users', [Studio\CourseUserAccessController::class, 'destroy'])->name('courses.access.users.destroy');
-            Route::post('/courses/{course:uuid}/access/groups', [Studio\CourseGroupAccessController::class, 'store'])->name('courses.access.groups.store');
-            Route::delete('/courses/{course:uuid}/access/groups', [Studio\CourseGroupAccessController::class, 'destroy'])->name('courses.access.groups.destroy');
-            Route::post('/courses/{course:uuid}/access/requests/{courseAccessRequest}/approve', [Studio\CourseAccessRequestController::class, 'approve'])->name('courses.access.requests.approve');
-            Route::post('/courses/{course:uuid}/access/requests/{courseAccessRequest}/deny', [Studio\CourseAccessRequestController::class, 'deny'])->name('courses.access.requests.deny');
-            Route::post('/courses/{course:uuid}/unpublish', Studio\UnpublishCourseController::class)->name('courses.unpublish');
-            Route::post('/courses/{course:uuid}/publish', Studio\PublishCourseController::class)->name('courses.publish');
-            Route::delete('/courses/{course:uuid}/draft', Studio\DiscardCourseDraftController::class)->name('courses.draft.destroy');
-            Route::post('/courses/{course:uuid}/chapters', [Studio\ChapterController::class, 'store'])->name('course.chapters.store');
-            Route::post('/courses/{course:uuid}/sort-chapters', Studio\SortChaptersController::class)->name('course.chapters.sort');
-            Route::post('/courses/{course:uuid}/move-lesson', Studio\MoveLessonController::class)->name('course.lessons.move');
-            Route::get('/courses/{course:uuid}/chapters/{chapter:uuid}', [Studio\ChapterController::class, 'show'])->name('course.chapters.show');
-            Route::patch('/courses/{course:uuid}/chapters/{chapter:uuid}', [Studio\ChapterController::class, 'update'])->name('course.chapters.update');
-            Route::post('/courses/{course:uuid}/chapters/{chapter:uuid}/lessons', [Studio\LessonController::class, 'store'])->name('course.lessons.store');
-            Route::delete('/courses/{course:uuid}/chapters/{chapter:uuid}', [Studio\ChapterController::class, 'destroy'])->name('course.chapters.destroy');
-            Route::get('/courses/{course:uuid}/lessons/{lesson:uuid}', [Studio\LessonController::class, 'show'])->name('course.lessons.show');
-            Route::patch('/courses/{course:uuid}/chapters/{chapter:uuid}/lessons/{lesson:uuid}', [Studio\LessonController::class, 'update'])->name('course.lessons.update');
-            Route::delete('/courses/{course:uuid}/chapters/{chapter:uuid}/lessons/{lesson:uuid}', [Studio\LessonController::class, 'destroy'])->name('course.lessons.destroy');
+            Route::group([], __DIR__.'/course-editor.php');
 
             Route::get('/profile', [Studio\ProfileController::class, 'show'])->name('profile');
         });

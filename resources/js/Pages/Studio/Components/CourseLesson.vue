@@ -19,7 +19,7 @@
     </div>
 
     <Link
-      :href="route('studio.course.lessons.show', [courseId, lessonId])"
+      :href="route(courseRouteName('course.lessons.show'), [courseId, lessonId])"
       preserve-scroll
       :class="cn('flex-1 flex px-1.5 py-3 cursor-pointer text-sm')"
     >
@@ -31,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+import { useCourseEditorRoutes } from '@/Composables/useCourseEditorRoutes'
 import { cn } from "@/Utils";
 import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/types";
 import { Link } from '@inertiajs/vue3'
@@ -40,6 +41,8 @@ import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine'
 import { attachClosestEdge, extractClosestEdge, type Edge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
 import { GripVerticalIcon } from 'lucide-vue-next'
 import DropIndicator from './DropIndicator.vue'
+
+const { courseRouteName } = useCourseEditorRoutes()
 
 const props = defineProps<{
   courseId: string

@@ -1,9 +1,8 @@
 <?php
 
-
 namespace App\Http\Controllers\Admin;
 
-
+use App\Enums\CourseEditorContext;
 use App\Table\CourseTable;
 use App\View\Layouts\AdminLayout;
 use Inertia\Inertia;
@@ -13,7 +12,7 @@ class CourseController
 {
     public function index()
     {
-        $courses = new CourseTable(author: null);
+        $courses = new CourseTable(author: null, context: CourseEditorContext::Admin);
 
         return Inertia::render('Admin/CourseListPage', AdminLayout::make([
             'courses' => $courses,

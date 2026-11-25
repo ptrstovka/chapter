@@ -9,6 +9,7 @@ import { Player } from '@/Components/Player'
 import { Progress } from '@/Components/Progress'
 import { Spinner } from '@/Components/Spinner'
 import { useConfirmable } from '@/Components/ConfirmationDialog'
+import { useCourseEditorRoutes } from '@/Composables/useCourseEditorRoutes'
 import type { AppPageProps, VideoSource } from '@/Types'
 import { advanceCourseRevision, type EditorRevision, useVideoUploads, videoUploadError } from './manager'
 
@@ -20,6 +21,7 @@ const props = defineProps<{
   disabled?: boolean
 }>()
 const uploads = useVideoUploads()
+const { courseEditorPrefix, courseRouteName } = useCourseEditorRoutes()
 const page = usePage<AppPageProps & { revision: number }>()
 const input = ref<HTMLInputElement>()
 const video = ref(props.source)
@@ -40,7 +42,7 @@ async function refresh() {
   const courseId = props.courseId
   const lessonId = props.lessonId ?? null
   try {
-    const { data } = await axios.get<{ video: VideoSource | null }>(route('studio.videos', courseId), { params: { lesson_id: lessonId } })
+    const { data } = await axios.get<{ video: VideoSource | null }>(route(courseRouteName('videos'), courseId), { params: { lesson_id: lessonId } })
     if (props.courseId === courseId && (props.lessonId ?? null) === lessonId) video.value = data.video
   } finally {
     refreshing = false
@@ -72,7 +74,7 @@ async function select(files: File[]) {
   }
   selecting.value = true
   try {
-    await uploads.enqueue(file, props.courseId, props.lessonId ?? null, props.label ?? '', page.props.revision)
+    await uploads.enqueue(file, props.courseId, props.lessonId ?? null, props.label ?? '', courseEditorPrefix.value, page.props.revision)
   } catch (cause) {
     error.value = videoUploadError(cause)
   } finally {
@@ -96,7 +98,7 @@ function remove() {
     busy.value = true
     try {
       const courseId = props.courseId
-      const { data } = await axios.delete<{ editorRevision?: EditorRevision }>(route('studio.videos.destroy', [courseId, target.id]), {
+      const { data } = await axios.delete<{ editorRevision?: EditorRevision }>(route(courseRouteName('videos.destroy'), [courseId, target.id]), {
         data: { revision: page.props.revision, lesson_id: props.lessonId ?? null },
       })
       advanceCourseRevision(courseId, data?.editorRevision)
@@ -112,7 +114,7 @@ async function retryProcessing() {
   if (!video.value) return
   busy.value = true
   try {
-    await axios.post(route('studio.videos.retry', [props.courseId, video.value.id]))
+    await axios.post(route(courseRouteName('videos.retry'), [props.courseId, video.value.id]))
     await refresh()
   } catch (cause) {
     error.value = videoUploadError(cause)

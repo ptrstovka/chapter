@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Studio;
 
+use App\Enums\CourseEditorContext;
 use App\Models\Course;
 use App\Support\CourseDrafts;
 use Illuminate\Http\RedirectResponse;
@@ -25,6 +26,6 @@ class DiscardCourseDraftController
             }
         });
 
-        return to_route('studio.courses.show', $course);
+        return to_route(CourseEditorContext::forRequest($request)->routeName('courses.show'), $course);
     }
 }

@@ -24,12 +24,15 @@
 </template>
 
 <script setup lang="ts">
+import { useCourseEditorRoutes } from '@/Composables/useCourseEditorRoutes'
 import type { AppPageProps } from "@/Types"
 import { Button } from "@/Components/Button";
 import { EmptyState } from "@/Components/EmptyState";
 import { useForm, usePage } from "@inertiajs/vue3";
 import CourseContentLayout from "./Layouts/CourseContentLayout.vue";
 import { PlusIcon } from "lucide-vue-next";
+
+const { courseRouteName } = useCourseEditorRoutes()
 
 const props = defineProps<{
   id: string
@@ -40,7 +43,7 @@ const props = defineProps<{
 const page = usePage<AppPageProps & { revision: number }>()
 const createChapterForm = useForm({})
 const createChapter = () => {
-  createChapterForm.transform(() => ({ revision: page.props.revision })).post(route('studio.course.chapters.store', { course: props.id, _query: { lesson: 1 } }), {
+  createChapterForm.transform(() => ({ revision: page.props.revision })).post(route(courseRouteName('course.chapters.store'), { course: props.id, _query: { lesson: 1 } }), {
     preserveScroll: true,
   })
 }

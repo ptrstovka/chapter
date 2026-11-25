@@ -1,4 +1,5 @@
 import axios from 'axios'
+import type { CourseEditorPrefix } from '@/Composables/useCourseEditorRoutes'
 import type { AppPageProps } from '@/Types'
 import { router, usePage } from '@inertiajs/vue3'
 import { computed, markRaw, reactive, ref } from 'vue'
@@ -32,6 +33,7 @@ export interface VideoUploadTask {
   id: string
   batchId: number
   courseId: string
+  courseEditorPrefix: CourseEditorPrefix
   lessonId: string | null
   label: string
   name: string
@@ -72,13 +74,13 @@ export function videoUploadError(error: unknown): string {
 }
 
 async function register(task: VideoUploadTask) {
-  const { data } = await axios.post<UploadReceipt>(route('studio.video-uploads.store', task.courseId), {
+  const { data } = await axios.post<UploadReceipt>(route(`${task.courseEditorPrefix}.video-uploads.store`, task.courseId), {
     uuid: task.id, lesson_id: task.lessonId, filename: task.name, size: task.size, revision: task.revision,
   })
   task.registered = true
   task.received = data.received
   if (task.status === 'cancelled') {
-    await axios.delete(route('studio.video-uploads.destroy', [task.courseId, task.id]), { data: { lesson_id: task.lessonId, filename: task.name, size: task.size } })
+    await axios.delete(route(`${task.courseEditorPrefix}.video-uploads.destroy`, [task.courseId, task.id]), { data: { lesson_id: task.lessonId, filename: task.name, size: task.size } })
     return
   }
   task.status = data.status === 'completed' ? 'done' : data.status === 'cancelled' ? 'cancelled' : 'queued'
@@ -160,7 +162,7 @@ async function cancel(task: VideoUploadTask) {
   notify(task.courseId)
   try {
     await registrations.get(task.id)?.catch(() => undefined)
-    const { data } = await axios.delete<UploadReceipt>(route('studio.video-uploads.destroy', [task.courseId, task.id]), { data: { lesson_id: task.lessonId, filename: task.name, size: task.size } })
+    const { data } = await axios.delete<UploadReceipt>(route(`${task.courseEditorPrefix}.video-uploads.destroy`, [task.courseId, task.id]), { data: { lesson_id: task.lessonId, filename: task.name, size: task.size } })
     if (data.status === 'completed') {
       task.status = 'done'
       task.progress = 100
@@ -233,7 +235,7 @@ export function useVideoUploads() {
       if (open.value) hasOpened.value = true
     },
     hasPending: (courseId: string) => tasks.some(task => task.courseId === courseId && pending(task)),
-    async enqueue(file: File, courseId: string, lessonId: string | null, label: string, revision?: number) {
+    async enqueue(file: File, courseId: string, lessonId: string | null, label: string, courseEditorPrefix: CourseEditorPrefix, revision?: number) {
       const previous = tasks.filter(task => task.courseId === courseId && task.lessonId === lessonId && pending(task))
       for (const task of previous) await cancel(task)
       if (!active.value) {
@@ -242,7 +244,7 @@ export function useVideoUploads() {
         hasOpened.value = false
       }
       const task = reactive<VideoUploadTask>({
-        id: crypto.randomUUID(), batchId: batchId.value, courseId, lessonId, label, name: file.name, size: file.size,
+        id: crypto.randomUUID(), batchId: batchId.value, courseId, courseEditorPrefix, lessonId, label, name: file.name, size: file.size,
         revision, file: markRaw(file), registered: false, received: false, status: 'registering', progress: 0, error: '',
       })
       tasks.push(task)

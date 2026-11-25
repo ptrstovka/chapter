@@ -2,6 +2,7 @@
 
 namespace App\View\Layouts;
 
+use App\Enums\CourseEditorContext;
 use App\Enums\Preference;
 use App\Facades\Settings;
 use App\View\Layout;
@@ -70,6 +71,7 @@ class AdminLayout extends Layout
                             icon: new Icon('graduation-cap'),
                         )->active(routes: [
                             'admin.courses',
+                            CourseEditorContext::Admin->routeName('*'),
                         ])
                     )
                     ->addChild(

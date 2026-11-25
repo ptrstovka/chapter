@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Studio;
 
+use App\Enums\CourseEditorContext;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\View\Layouts\CourseContentLayout;
@@ -31,10 +32,9 @@ class ChapterController
             return $chapter;
         });
 
-        return to_route(
-            $lessonOrChapter instanceof Lesson ? 'studio.course.lessons.show' : 'studio.course.chapters.show',
-            [$course, $lessonOrChapter->uuid],
-        );
+        $route = $lessonOrChapter instanceof Lesson ? 'course.lessons.show' : 'course.chapters.show';
+
+        return to_route(CourseEditorContext::forRequest($request)->routeName($route), [$course, $lessonOrChapter->uuid]);
     }
 
     public function show(Request $request, Course $course)
@@ -68,6 +68,6 @@ class ChapterController
     {
         $request->route('chapter')->delete();
 
-        return to_route('studio.courses.content', $course);
+        return to_route(CourseEditorContext::forRequest($request)->routeName('courses.content'), $course);
     }
 }

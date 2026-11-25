@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Studio;
 
+use App\Enums\CourseEditorContext;
 use App\Enums\CoursePreviewVersion;
 use App\Models\Course;
 use App\View\Models\CoursePresentation;
@@ -15,9 +16,11 @@ class CoursePreviewController
 {
     public function show(Course $course, CoursePreviewVersion $version, CoursePresentation $presentation): Response
     {
+        $context = CourseEditorContext::current();
+
         return Inertia::render('Courses/CourseDetail', [
-            ...$presentation->detail($course, $version->content($course), $version),
-            'preview' => $version->pageProps($course),
+            ...$presentation->detail($course, $version->content($course), $version, $context),
+            'preview' => $version->pageProps($course, $context),
             'access' => null,
             'enrollment' => null,
         ]);
@@ -25,12 +28,13 @@ class CoursePreviewController
 
     public function lesson(Course $course, CoursePreviewVersion $version, string $lessonUuid, CoursePresentation $presentation): Response
     {
+        $context = CourseEditorContext::current();
         $content = $version->content($course);
         $lesson = $content->lessons()->where('uuid', $lessonUuid)->firstOrFail();
 
         return Inertia::render('Courses/CourseLesson', [
-            ...$presentation->lesson($course, $content, $lesson, $version),
-            'preview' => $version->pageProps($course),
+            ...$presentation->lesson($course, $content, $lesson, $version, context: $context),
+            'preview' => $version->pageProps($course, $context),
         ]);
     }
 

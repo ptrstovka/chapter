@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Studio;
 
+use App\Enums\CourseEditorContext;
 use App\Enums\CourseStatus;
 use App\Enums\TextContentType;
 use App\Models\Category;
@@ -134,6 +135,6 @@ class CourseController
     {
         DB::transaction(fn () => $course->delete());
 
-        return to_route('studio.courses');
+        return to_route(CourseEditorContext::current()->indexRoute());
     }
 }

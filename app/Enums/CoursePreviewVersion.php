@@ -36,26 +36,27 @@ enum CoursePreviewVersion: string
     }
 
     /** @return list<array{label: string, url: string}> */
-    public static function optionsFor(Course $course): array
+    public static function optionsFor(Course $course, CourseEditorContext $context): array
     {
         return collect(self::cases())
             ->filter(fn (self $version) => $version->isAvailableFor($course))
             ->map(fn (self $version) => [
                 'label' => $version->label($course),
-                'url' => route('studio.courses.preview.show', [$course, $version]),
+                'url' => route($context->routeName('courses.preview.show'), [$course, $version]),
             ])
             ->values()
             ->all();
     }
 
-    /** @return array{version: string, versionLabel: string, courseUrl: string, studioUrl: string} */
-    public function pageProps(Course $course): array
+    /** @return array{version: string, versionLabel: string, courseUrl: string, studioUrl: string, returnLabel: string} */
+    public function pageProps(Course $course, CourseEditorContext $context): array
     {
         return [
             'version' => $this->value,
             'versionLabel' => $this->label($course),
-            'courseUrl' => route('studio.courses.preview.show', [$course, $this]),
-            'studioUrl' => route('studio.courses.show', $course),
+            'courseUrl' => route($context->routeName('courses.preview.show'), [$course, $this]),
+            'studioUrl' => route($context->routeName('courses.show'), $course),
+            'returnLabel' => $context === CourseEditorContext::Admin ? __('Back to editor') : __('Back to Studio'),
         ];
     }
 }

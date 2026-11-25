@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Studio;
 
+use App\Enums\CourseEditorContext;
 use App\Enums\TextContentType;
 use App\Models\Course;
 use App\Rules\FileListRule;
@@ -88,6 +89,6 @@ class LessonController
     {
         $request->route('lesson')->delete();
 
-        return to_route('studio.course.chapters.show', [$course, $request->route('chapter')->uuid]);
+        return to_route(CourseEditorContext::forRequest($request)->routeName('course.chapters.show'), [$course, $request->route('chapter')->uuid]);
     }
 }

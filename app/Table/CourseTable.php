@@ -2,6 +2,7 @@
 
 namespace App\Table;
 
+use App\Enums\CourseEditorContext;
 use App\Enums\CourseStatus;
 use App\Models\Author;
 use App\Models\Course;
@@ -21,7 +22,8 @@ use StackTrace\Ui\Table\Filters;
 class CourseTable extends Table
 {
     public function __construct(
-        protected ?Author $author
+        protected ?Author $author,
+        private CourseEditorContext $context = CourseEditorContext::Studio,
     ) {
         $this->searchable(fn (Builder $builder, string $term) => $builder->search($term));
 
@@ -32,12 +34,19 @@ class CourseTable extends Table
         });
     }
 
+    private function canManage(Course $course): bool
+    {
+        return ($this->context === CourseEditorContext::Admin || $this->author !== null)
+            && Gate::allows('view', $course);
+    }
+
     public function source(): Builder
     {
         return Course::query()
             ->when($this->author, fn (Builder $builder, Author $author) => $builder->whereBelongsTo($author))
             ->with(['author'])
-            ->withExists(['draft as has_unpublished_changes' => fn (Builder $query) => $query->where('has_changes', true)])
+            ->when($this->context === CourseEditorContext::Studio, fn (Builder $builder) => $builder
+                ->withExists(['draft as has_unpublished_changes' => fn (Builder $query) => $query->where('has_changes', true)]))
             ->withCount(['chapters', 'lessons', 'enrollments']);
     }
 
@@ -45,7 +54,9 @@ class CourseTable extends Table
     {
         return collect([
             Columns\Text::make(__('Title'), fn (Course $course) => $course->title ?: __('Draft'))
-                ->link(fn (Course $course) => $this->author ? Link::to(route('studio.courses.show', $course)) : null)
+                ->link(fn (Course $course) => $this->canManage($course)
+                    ? Link::to(route($this->context->routeName('courses.show'), $course))
+                    : null)
                 ->style(function (Table\Style $style, Course $course) {
                     if (! $course->title) {
                         $style->colorMuted();
@@ -58,7 +69,9 @@ class CourseTable extends Table
                 ? null
                 : Columns\Text::make(__('Author'), fn (Course $course) => $course->author->name)->width(56),
 
-            Columns\Badge::make(__('Status'), fn (Course $course) => $course->status === CourseStatus::Published && $course->has_unpublished_changes
+            Columns\Badge::make(__('Status'), fn (Course $course) => $this->context === CourseEditorContext::Studio
+                && $course->status === CourseStatus::Published
+                && $course->has_unpublished_changes
                 ? 'published-with-changes'
                 : $course->status->value)
                 ->variant([
@@ -150,9 +163,8 @@ class CourseTable extends Table
     public function actions(): array
     {
         return collect([
-            $this->author
-                ? Actions\Link::make(__('Manage'), fn (Course $course) => route('studio.courses.show', $course))
-                : null,
+            Actions\Link::make(__('Manage'), fn (Course $course) => route($this->context->routeName('courses.show'), $course))
+                ->can($this->canManage(...)),
 
             PublishCourseAction::make()
                 ->can(fn (Course $course) => Gate::allows('publish', $course) && $course->canBePublished())

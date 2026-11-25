@@ -7,7 +7,7 @@
     <div class="flex shrink-0 items-center gap-2">
       <slot />
       <LinkButton :href="preview.studioUrl" variant="outline">
-        {{ $t('Back to Studio') }}
+        {{ preview.returnLabel }}
       </LinkButton>
     </div>
   </div>

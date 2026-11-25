@@ -5,7 +5,7 @@
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink :href="route('studio.course.chapters.show', [id, chapter.id])">{{ chapter.title || chapter.fallbackTitle }}</BreadcrumbLink>
+              <BreadcrumbLink :href="route(courseRouteName('course.chapters.show'), [id, chapter.id])">{{ chapter.title || chapter.fallbackTitle }}</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbPage>
@@ -72,6 +72,7 @@
 </template>
 
 <script setup lang="ts">
+import { useCourseEditorRoutes } from '@/Composables/useCourseEditorRoutes'
 import type { AppPageProps } from "@/Types"
 import {
   Breadcrumb,
@@ -96,6 +97,8 @@ import { computed } from "vue";
 import CourseContentLayout from "./Layouts/CourseContentLayout.vue";
 import { useCourseEditorForm } from './useCourseEditorForm'
 import { Trash2Icon, EllipsisIcon, SaveIcon } from 'lucide-vue-next'
+
+const { courseRouteName } = useCourseEditorRoutes()
 
 const props = defineProps<{
   id: string
@@ -128,7 +131,7 @@ const form = useForm(() => ({
 const page = usePage<AppPageProps & { revision: number }>()
 const { editor, save } = useCourseEditorForm(
   form,
-  () => route('studio.course.lessons.update', [props.id, props.chapter.id, props.lesson.id]),
+  () => route(courseRouteName('course.lessons.update'), [props.id, props.chapter.id, props.lesson.id]),
   () => !disabled.value,
 )
 
@@ -137,7 +140,7 @@ useSaveShortcut(() => save())
 const { confirm } = useConfirmable()
 const destroy = () => confirm(trans('Remove this lesson from the course editor?'), () => {
   if (!page.props.errors.revision) {
-    router.delete(route('studio.course.lessons.destroy', [props.id, props.chapter.id, props.lesson.id]), { data: { revision: page.props.revision } })
+    router.delete(route(courseRouteName('course.lessons.destroy'), [props.id, props.chapter.id, props.lesson.id]), { data: { revision: page.props.revision } })
   }
 }, { title: trans('Delete Lesson'), confirmLabel: trans('Delete'), cancelLabel: trans('Keep'), destructive: true })
 </script>

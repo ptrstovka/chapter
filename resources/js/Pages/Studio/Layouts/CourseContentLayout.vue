@@ -8,7 +8,7 @@
             :title="chapter.title || chapter.fallbackTitle"
             :chapter-id="chapter.id"
             :course-id="page.props.id"
-            :active="route().current('studio.course.chapters.show', [page.props.id, chapter.id])"
+            :active="route().current(courseRouteName('course.chapters.show'), [page.props.id, chapter.id])"
             :first="idx === 0"
             :disabled="!canEditOutline"
           >
@@ -19,7 +19,7 @@
                 :chapter-id="chapter.id"
                 :lesson-id="lesson.id"
                 :title="lesson.title"
-                :active="route().current('studio.course.lessons.show', [page.props.id, lesson.id])"
+                :active="route().current(courseRouteName('course.lessons.show'), [page.props.id, lesson.id])"
                 :disabled="!canEditOutline"
               />
             </div>
@@ -52,6 +52,7 @@
 </template>
 
 <script setup lang="ts">
+import { useCourseEditorRoutes } from '@/Composables/useCourseEditorRoutes'
 import { Button } from "@/Components/Button";
 import type { AppPageProps } from "@/Types";
 import { cn } from "@/Utils";
@@ -69,6 +70,8 @@ import { PlusIcon } from 'lucide-vue-next'
 import CourseChapter from '../Components/CourseChapter.vue'
 import CourseLesson from '../Components/CourseLesson.vue'
 import type { CourseEditorForm } from '../useCourseEditorForm'
+
+const { courseRouteName } = useCourseEditorRoutes()
 
 const props = defineProps<{ editor?: CourseEditorForm }>()
 
@@ -98,7 +101,7 @@ const canEditOutline = computed(() => page.props.isEditable && !page.props.error
 
 const createChapterForm = useForm({})
 const createChapter = () => {
-  createChapterForm.transform(() => ({ revision: page.props.revision })).post(route('studio.course.chapters.store', page.props.id), {
+  createChapterForm.transform(() => ({ revision: page.props.revision })).post(route(courseRouteName('course.chapters.store'), page.props.id), {
     preserveScroll: true,
   })
 }
@@ -174,7 +177,7 @@ const moveChapter = (startIndex: number, finishIndex: number) => {
 
   updateFallbackTitles()
 
-  router.post(route('studio.course.chapters.sort', page.props.id), {
+  router.post(route(courseRouteName('course.chapters.sort'), page.props.id), {
     chapters: chapters.value.map(it => it.id),
     revision: page.props.revision,
   }, {
@@ -200,7 +203,7 @@ const moveLessonWithinChapter = (chapterId: string, startIndex: number, finishIn
 
   updateFallbackTitles()
 
-  router.post(route('studio.course.lessons.move', page.props.id), {
+  router.post(route(courseRouteName('course.lessons.move'), page.props.id), {
     source_chapter: chapter.id,
     destination_chapter: chapter.id,
     lesson: lesson.id,
@@ -228,7 +231,7 @@ const moveLessonToChapter = (sourceChapterId: string, destinationChapterId: stri
 
   updateFallbackTitles()
 
-  router.post(route('studio.course.lessons.move', page.props.id), {
+  router.post(route(courseRouteName('course.lessons.move'), page.props.id), {
     source_chapter: sourceChapterId,
     destination_chapter: destinationChapterId,
     lesson: lesson.id,

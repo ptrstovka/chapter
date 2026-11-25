@@ -1,5 +1,5 @@
 <template>
-  <StudioLayout>
+  <component :is="courseEditorPrefix === 'admin.course-editor' ? AdminLayout : StudioLayout">
     <div class="flex flex-1 flex-col">
       <div class="flex min-h-14 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b px-3 py-2">
         <TabsNavigation :menu="menu" />
@@ -116,16 +116,17 @@
         <slot />
       </div>
     </div>
-  </StudioLayout>
+  </component>
 </template>
 
 <script setup lang="ts">
+import { useCourseEditorRoutes } from '@/Composables/useCourseEditorRoutes'
 import { Button } from '@/Components/Button'
 import { useConfirmable } from '@/Components/ConfirmationDialog'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel } from '@/Components/DropdownMenu'
 import { Spinner } from '@/Components/Spinner'
 import { TabsNavigation } from '@/Components/Tabs'
-import { StudioLayout } from '@/Layouts'
+import { AdminLayout, StudioLayout } from '@/Layouts'
 import type { AppPageProps } from '@/Types'
 import { router, usePage } from '@inertiajs/vue3'
 import { useNavigation } from '@stacktrace/ui'
@@ -136,6 +137,8 @@ import { useVideoUploads } from '@/Components/VideoUpload/manager'
 import { CheckIcon, ChevronDownIcon, ExternalLinkIcon } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import type { CourseEditorForm } from '../useCourseEditorForm'
+
+const { courseEditorPrefix, courseRouteName } = useCourseEditorRoutes()
 
 const props = defineProps<{ editor?: CourseEditorForm }>()
 const page = usePage<AppPageProps & PublicationState & {
@@ -194,7 +197,7 @@ const publicationMessage = computed(() => {
   return media.value.publicationProblem ?? (course.value.status === 'publish-failure' ? trans('Publishing failed') : null)
 })
 
-watch(() => [page.props.id, page.props.revision, page.props.status, page.props.publicationProblem,
+watch(() => [courseEditorPrefix.value, page.props.id, page.props.revision, page.props.status, page.props.publicationProblem,
   page.props.hasUnpublishedChanges, page.props.hasCourseDraft], () => { media.value = page.props })
 
 let timer: ReturnType<typeof setInterval> | undefined
@@ -203,9 +206,10 @@ async function refreshReadiness() {
   if (refreshing || busy.value) return
   refreshing = true
   const id = course.value.id
+  const prefix = courseEditorPrefix.value
   try {
-    const { data } = await axios.get<PublicationState & { courseStatus: string; revision: number }>(route('studio.videos', id))
-    if (course.value.id === id && data.revision >= page.props.revision) {
+    const { data } = await axios.get<PublicationState & { courseStatus: string; revision: number }>(route(courseRouteName('videos'), id))
+    if (courseEditorPrefix.value === prefix && course.value.id === id && data.revision >= page.props.revision) {
       media.value = data
       if (course.value.isPublishing && data.courseStatus !== 'publishing') router.reload()
     }
@@ -223,31 +227,31 @@ onBeforeUnmount(() => { clearInterval(timer); unsubscribeUploads() })
 const menu = useNavigation(computed(() => [
   {
     title: trans('General'),
-    action: { route: 'studio.courses.show', params: [page.props.id] },
+    action: { route: courseRouteName('courses.show'), params: [page.props.id] },
   },
   {
     title: trans('Content'),
-    action: { route: 'studio.courses.content', params: [page.props.id] },
+    action: { route: courseRouteName('courses.content'), params: [page.props.id] },
     active: [
-      { route: 'studio.courses.content' },
-      { route: 'studio.course.lessons*' },
-      { route: 'studio.course.chapters*' },
+      { route: courseRouteName('courses.content') },
+      { route: courseRouteName('course.lessons*') },
+      { route: courseRouteName('course.chapters*') },
     ],
   },
   ...(page.props.canManageAccess ? [{
     title: trans('Access'),
-    action: { route: 'studio.courses.access', params: [page.props.id] },
-    active: [{ route: 'studio.courses.access*' }],
+    action: { route: courseRouteName('courses.access'), params: [page.props.id] },
+    active: [{ route: courseRouteName('courses.access*') }],
   }] : []),
 ]))
 
-const reload = () => router.get(route('studio.courses.show', course.value.id), {}, { replace: true })
+const reload = () => router.get(route(courseRouteName('courses.show'), course.value.id), {}, { replace: true })
 
 const destroy = () => confirm(
   trans(page.props.status === 'draft' ? 'Are you sure you want to delete this draft course?' : 'Are you sure you want to delete this course? All lessons and statistics will be permanently deleted.'),
   () => {
     acting.value = true
-    router.delete(route('studio.courses.destroy', page.props.id), {
+    router.delete(route(courseRouteName('courses.destroy'), page.props.id), {
       data: { revision: page.props.revision },
       onFinish: () => { acting.value = false },
     })
@@ -259,7 +263,7 @@ const discard = () => confirm(
   trans('Discard all changes and restore the last published version?'),
   () => {
     acting.value = true
-    router.delete(route('studio.courses.draft.destroy', course.value.id), {
+    router.delete(route(courseRouteName('courses.draft.destroy'), course.value.id), {
       data: { revision: page.props.revision },
       preserveState: false,
       onSuccess: () => { void uploads.refresh().catch(() => undefined) },
@@ -273,7 +277,7 @@ const unpublish = () => confirm(
   trans("Are you sure you want to unpublish this course? Your audience won't be able to access this course anymore."),
   () => {
     acting.value = true
-    router.post(route('studio.courses.unpublish', course.value.id), { revision: page.props.revision }, {
+    router.post(route(courseRouteName('courses.unpublish'), course.value.id), { revision: page.props.revision }, {
       preserveScroll: true,
       onFinish: () => { acting.value = false },
     })
@@ -302,7 +306,7 @@ async function submitPublication() {
       return
     }
 
-    router.post(route('studio.courses.publish', course.value.id), { revision: page.props.revision }, {
+    router.post(route(courseRouteName('courses.publish'), course.value.id), { revision: page.props.revision }, {
       preserveScroll: true,
       onFinish: () => { publishing.value = false },
     })

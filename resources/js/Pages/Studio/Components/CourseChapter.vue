@@ -20,7 +20,7 @@
         <PlaceholderPattern class="opacity-80 pointer-events-none" />
 
         <Link
-          :href="route('studio.course.chapters.show', [courseId, chapterId])"
+          :href="route(courseRouteName('course.chapters.show'), [courseId, chapterId])"
           :class="cn('flex-1 px-1.5 py-3 cursor-pointer text-sm font-medium')"
           preserve-scroll
         >
@@ -47,6 +47,7 @@
 </template>
 
 <script setup lang="ts">
+import { useCourseEditorRoutes } from '@/Composables/useCourseEditorRoutes'
 import type { AppPageProps } from "@/Types"
 import { Button } from "@/Components/Button";
 import { PlaceholderPattern } from "@/Components/Skeleton";
@@ -64,6 +65,8 @@ import { Link, useForm, usePage } from "@inertiajs/vue3";
 import { GripVerticalIcon, PlusIcon } from "lucide-vue-next";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 
+const { courseRouteName } = useCourseEditorRoutes()
+
 const props = defineProps<{
   courseId: string
   chapterId: string
@@ -76,7 +79,7 @@ const props = defineProps<{
 const createLessonForm = useForm({})
 const page = usePage<AppPageProps & { revision: number }>()
 const createLesson = () => {
-  createLessonForm.transform(() => ({ revision: page.props.revision })).post(route('studio.course.lessons.store', [props.courseId, props.chapterId]), {
+  createLessonForm.transform(() => ({ revision: page.props.revision })).post(route(courseRouteName('course.lessons.store'), [props.courseId, props.chapterId]), {
     preserveScroll: true,
   })
 }

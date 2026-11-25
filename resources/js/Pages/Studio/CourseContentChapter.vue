@@ -45,6 +45,7 @@
 </template>
 
 <script setup lang="ts">
+import { useCourseEditorRoutes } from '@/Composables/useCourseEditorRoutes'
 import type { AppPageProps } from "@/Types"
 import {
   Breadcrumb,
@@ -68,6 +69,8 @@ import { EllipsisIcon, SaveIcon, Trash2Icon } from "lucide-vue-next";
 import CourseContentLayout from "./Layouts/CourseContentLayout.vue";
 import { useCourseEditorForm } from './useCourseEditorForm'
 
+const { courseRouteName } = useCourseEditorRoutes()
+
 const props = defineProps<{
   id: string
   chapter: {
@@ -84,7 +87,7 @@ const form = useForm(() => ({
 const page = usePage<AppPageProps & { revision: number }>()
 const { editor, save } = useCourseEditorForm(
   form,
-  () => route('studio.course.chapters.update', [props.id, props.chapter.id]),
+  () => route(courseRouteName('course.chapters.update'), [props.id, props.chapter.id]),
   () => props.chapter.isEditable,
 )
 
@@ -93,7 +96,7 @@ useSaveShortcut(() => save())
 const { confirm } = useConfirmable()
 const destroy = () => confirm(trans('Remove this chapter and its lessons from the course editor?'), () => {
   if (!page.props.errors.revision) {
-    router.delete(route('studio.course.chapters.destroy', [props.id, props.chapter.id]), { data: { revision: page.props.revision } })
+    router.delete(route(courseRouteName('course.chapters.destroy'), [props.id, props.chapter.id]), { data: { revision: page.props.revision } })
   }
 }, { title: trans('Delete Chapter'), confirmLabel: trans('Delete'), cancelLabel: trans('Keep'), destructive: true })
 </script>

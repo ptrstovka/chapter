@@ -2,6 +2,7 @@
 
 namespace App\View\Models;
 
+use App\Enums\CourseEditorContext;
 use App\Enums\CoursePreviewVersion;
 use App\Enums\TextContentType;
 use App\Models\Chapter;
@@ -18,8 +19,12 @@ class CoursePresentation
     public function __construct(private TextRenderer $text) {}
 
     /** @return array<string, mixed> */
-    public function detail(Course $course, Course|CourseDraft $content, ?CoursePreviewVersion $preview = null): array
-    {
+    public function detail(
+        Course $course,
+        Course|CourseDraft $content,
+        ?CoursePreviewVersion $preview = null,
+        CourseEditorContext $context = CourseEditorContext::Studio,
+    ): array {
         $content->loadMissing(['trailer', 'chapters.lessons.video']);
 
         return [
@@ -40,7 +45,7 @@ class CoursePresentation
                     'id' => $lesson->uuid,
                     'title' => $lesson->getDisplayTitle(),
                     'duration' => $lesson->video?->getDurationLabel(),
-                    ...($preview ? ['url' => route('studio.courses.preview.lesson', [$course, $preview, $lesson->uuid])] : []),
+                    ...($preview ? ['url' => route($context->routeName('courses.preview.lesson'), [$course, $preview, $lesson->uuid])] : []),
                 ]),
             ]),
         ];
@@ -56,19 +61,21 @@ class CoursePresentation
         Lesson $currentLesson,
         ?CoursePreviewVersion $preview = null,
         array $completedLessonIds = [],
+        CourseEditorContext $context = CourseEditorContext::Studio,
     ): array {
         $content->loadMissing('chapters.lessons.video');
         $currentLesson->loadMissing(['video', 'resources']);
 
         $lessonNo = 0;
         $completed = array_fill_keys($completedLessonIds, true);
+        $previewLessonRoute = $context->routeName('courses.preview.lesson');
         $chapters = $content->chapters->sortBy('position')->values()
-            ->map(function (Chapter $chapter, int $idx) use (&$lessonNo, $currentLesson, $course, $completed, $preview) {
+            ->map(function (Chapter $chapter, int $idx) use (&$lessonNo, $currentLesson, $course, $completed, $preview, $previewLessonRoute) {
                 return [
                     'no' => $idx + 1,
                     'title' => filled($chapter->title) ? $chapter->title : $chapter->getFallbackTitle(),
                     'lessons' => $chapter->lessons->sortBy('position')->values()
-                        ->map(function (Lesson $lesson) use (&$lessonNo, $currentLesson, $course, $completed, $preview) {
+                        ->map(function (Lesson $lesson) use (&$lessonNo, $currentLesson, $course, $completed, $preview, $previewLessonRoute) {
                             return [
                                 'slugId' => $preview ? $lesson->uuid : $lesson->slug_id,
                                 'no' => ++$lessonNo,
@@ -76,7 +83,7 @@ class CoursePresentation
                                 'isCurrent' => $lesson->is($currentLesson),
                                 'duration' => $lesson->video?->getDurationLabel(),
                                 'url' => $preview
-                                    ? route('studio.courses.preview.lesson', [$course, $preview, $lesson->uuid])
+                                    ? route($previewLessonRoute, [$course, $preview, $lesson->uuid])
                                     : route('lessons.show', [$course->slug, $lesson->slug_id]),
                                 'isCompleted' => isset($completed[$lesson->id]),
                             ];
@@ -98,7 +105,7 @@ class CoursePresentation
             'resources' => $currentLesson->resources->map(fn (Resource $resource) => [
                 'name' => $resource->client_file_name,
                 'url' => $preview
-                    ? route('studio.courses.preview.resource', [$course, $preview, $currentLesson->uuid, $resource->uuid])
+                    ? route($context->routeName('courses.preview.resource'), [$course, $preview, $currentLesson->uuid, $resource->uuid])
                     : route('resources.show', [$course->slug, $resource->uuid]),
                 'size' => Number::fileSize($resource->size),
             ]),

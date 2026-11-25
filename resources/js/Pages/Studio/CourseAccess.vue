@@ -300,6 +300,7 @@
 </template>
 
 <script setup lang="ts">
+import { useCourseEditorRoutes } from '@/Composables/useCourseEditorRoutes'
 import { Badge } from "@/Components/Badge";
 import { Button } from "@/Components/Button";
 import { Checkbox } from "@/Components/Checkbox";
@@ -316,6 +317,8 @@ import { SearchIcon, UserPlusIcon, UsersIcon } from "lucide-vue-next";
 import { trans } from "laravel-vue-i18n";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import CourseLayout from "./Layouts/CourseLayout.vue";
+
+const { courseRouteName } = useCourseEditorRoutes()
 
 type CourseAccessMode = 'public' | 'request-only' | 'private'
 type AccessGroupVisibility = 'public' | 'private'
@@ -384,7 +387,7 @@ const saveAccessMode = () => {
     return
   }
 
-  modeForm.patch(route('studio.courses.access.update', props.id), {
+  modeForm.patch(route(courseRouteName('courses.access.update'), props.id), {
     preserveScroll: true,
   })
 }
@@ -556,7 +559,7 @@ const grantSelectedUsers = () => {
     return
   }
 
-  grantUsersForm.post(route('studio.courses.access.users.store', props.id), {
+  grantUsersForm.post(route(courseRouteName('courses.access.users.store'), props.id), {
     preserveScroll: true,
     only: ['directGrants'],
     onSuccess: () => {
@@ -571,7 +574,7 @@ const removeDirectGrant = (grant: DirectGrant) => {
   }
 
   revokeUsersForm.users = [grant.user.id]
-  revokeUsersForm.delete(route('studio.courses.access.users.destroy', props.id), {
+  revokeUsersForm.delete(route(courseRouteName('courses.access.users.destroy'), props.id), {
     preserveScroll: true,
   })
 }
@@ -629,7 +632,7 @@ const grantSelectedGroups = () => {
     return
   }
 
-  grantGroupsForm.post(route('studio.courses.access.groups.store', props.id), {
+  grantGroupsForm.post(route(courseRouteName('courses.access.groups.store'), props.id), {
     preserveScroll: true,
     only: ['groupGrants', 'availableGroups'],
     onSuccess: () => {
@@ -644,7 +647,7 @@ const removeGroupGrant = (grant: GroupGrant) => {
   }
 
   revokeGroupsForm.groups = [grant.group.id]
-  revokeGroupsForm.delete(route('studio.courses.access.groups.destroy', props.id), {
+  revokeGroupsForm.delete(route(courseRouteName('courses.access.groups.destroy'), props.id), {
     preserveScroll: true,
   })
 }
@@ -660,7 +663,7 @@ const approveRequest = (request: PendingRequest) => {
 
   resolvingRequestId.value = request.id
   resolvingRequestAction.value = 'approve'
-  resolveRequestForm.post(route('studio.courses.access.requests.approve', [props.id, request.id]), {
+  resolveRequestForm.post(route(courseRouteName('courses.access.requests.approve'), [props.id, request.id]), {
     preserveScroll: true,
     onFinish: () => {
       resolvingRequestId.value = null
@@ -676,7 +679,7 @@ const denyRequest = (request: PendingRequest) => {
 
   resolvingRequestId.value = request.id
   resolvingRequestAction.value = 'deny'
-  resolveRequestForm.post(route('studio.courses.access.requests.deny', [props.id, request.id]), {
+  resolveRequestForm.post(route(courseRouteName('courses.access.requests.deny'), [props.id, request.id]), {
     preserveScroll: true,
     onFinish: () => {
       resolvingRequestId.value = null

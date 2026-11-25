@@ -9,6 +9,7 @@ export interface CoursePreview {
   versionLabel: string
   courseUrl: string
   studioUrl: string
+  returnLabel: string
 }
 
 export interface Lesson {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\CourseEditorContext;
 use App\Models\Course;
 use App\Models\CourseDraft;
 use App\Support\CourseDrafts;
@@ -23,12 +24,13 @@ class EnsureStudioCourseAccess
         }
 
         Gate::authorize('view', $course);
-        $mutatesContent = $request->routeIs(
-            'studio.courses.update',
-            'studio.course.chapters.store', 'studio.course.chapters.update', 'studio.course.chapters.destroy', 'studio.course.chapters.sort',
-            'studio.course.lessons.store', 'studio.course.lessons.update', 'studio.course.lessons.destroy', 'studio.course.lessons.move',
-        );
-        $deletesCourse = $request->routeIs('studio.courses.destroy');
+        $context = CourseEditorContext::forRequest($request);
+        $mutatesContent = $request->routeIs(...array_map($context->routeName(...), [
+            'courses.update',
+            'course.chapters.store', 'course.chapters.update', 'course.chapters.destroy', 'course.chapters.sort',
+            'course.lessons.store', 'course.lessons.update', 'course.lessons.destroy', 'course.lessons.move',
+        ]));
+        $deletesCourse = $request->routeIs($context->routeName('courses.destroy'));
 
         if (! $mutatesContent && ! $deletesCourse) {
             $this->bindContent($request, $course->editorContent());

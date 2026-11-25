@@ -76,6 +76,7 @@
 </template>
 
 <script setup lang="ts">
+import { useCourseEditorRoutes } from '@/Composables/useCourseEditorRoutes'
 import { Button } from "@/Components/Button";
 import { FormCombobox, FormControl } from "@/Components/Form";
 import { Input } from "@/Components/Input";
@@ -90,6 +91,8 @@ import VideoInput from '@/Components/VideoUpload/VideoInput.vue'
 import { computed } from "vue";
 import CourseLayout from "./Layouts/CourseLayout.vue"
 import { useCourseEditorForm } from './useCourseEditorForm'
+
+const { courseRouteName } = useCourseEditorRoutes()
 
 const props = defineProps<{
   id: string
@@ -117,7 +120,7 @@ const form = useForm(() => ({
   category: props.category,
 }))
 
-const { editor, save } = useCourseEditorForm(form, () => route('studio.courses.update', props.id), () => !disabled.value)
+const { editor, save } = useCourseEditorForm(form, () => route(courseRouteName('courses.update'), props.id), () => !disabled.value)
 
 useSaveShortcut(() => save())
 </script>
