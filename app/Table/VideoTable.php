@@ -192,7 +192,7 @@ class VideoTable extends Table
             'type' => __('Lesson'),
             'lesson' => collect([
                 $lesson->chapter ? ($lesson->chapter->title ?: $lesson->chapter->getFallbackTitle()) : null,
-                $lesson->title ?: $lesson->getFallbackTitle(),
+                $lesson->getDisplayTitle(),
             ])->filter()->join(' / '),
         ])->concat($video->trailerCourses->map(fn (Course $course) => [
             'course' => $course->title ?: __('Draft'),

@@ -6,16 +6,37 @@
 
         <div class="ml-auto flex flex-wrap items-center justify-end gap-2">
           <Button
-            v-if="isPublished && course.slug"
+            v-if="singlePreview"
             as="a"
             variant="outline"
-            :href="route('courses.show', course.slug)"
+            :href="singlePreview.url"
+            :title="editor?.dirty ? $t(unsavedPreviewNotice) : undefined"
             target="_blank"
             rel="noopener"
+            @click="notifyUnsavedPreview"
           >
-            {{ $t('View on Platform') }}
             <ExternalLinkIcon class="size-3.5" aria-hidden="true" />
+            {{ $t('Preview') }}
           </Button>
+          <DropdownMenu v-else-if="media.previewOptions.length > 1">
+            <DropdownMenuTrigger as-child>
+              <Button variant="outline">
+                <ExternalLinkIcon class="size-3.5" aria-hidden="true" />
+                {{ $t('Preview') }}
+                <ChevronDownIcon class="size-3.5" aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel v-if="editor?.dirty" class="max-w-64 font-normal text-muted-foreground">
+                {{ $t(unsavedPreviewNotice) }}
+              </DropdownMenuLabel>
+              <DropdownMenuItem v-for="option in media.previewOptions" :key="option.url" as-child>
+                <a :href="option.url" target="_blank" rel="noopener">
+                  {{ option.label }}
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <div class="inline-flex items-center rounded-md shadow-xs" role="group" :aria-label="$t('Course actions')">
             <span class="sr-only" role="status">
@@ -101,7 +122,7 @@
 <script setup lang="ts">
 import { Button } from '@/Components/Button'
 import { useConfirmable } from '@/Components/ConfirmationDialog'
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/Components/DropdownMenu'
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel } from '@/Components/DropdownMenu'
 import { Spinner } from '@/Components/Spinner'
 import { TabsNavigation } from '@/Components/Tabs'
 import { StudioLayout } from '@/Layouts'
@@ -113,18 +134,14 @@ import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import axios from 'axios'
 import { useVideoUploads } from '@/Components/VideoUpload/manager'
 import { CheckIcon, ChevronDownIcon, ExternalLinkIcon } from 'lucide-vue-next'
+import { toast } from 'vue-sonner'
 import type { CourseEditorForm } from '../useCourseEditorForm'
 
 const props = defineProps<{ editor?: CourseEditorForm }>()
-const page = usePage<AppPageProps & {
+const page = usePage<AppPageProps & PublicationState & {
   id: string
-  slug: string | null
   status: 'draft' | 'publishing' | 'published' | 'unpublished' | 'publish-failure'
   isPublishing: boolean
-  canBePublished: boolean
-  publicationProblem: string | null
-  hasUnpublishedChanges: boolean
-  hasCourseDraft: boolean
   revision: number
   canPublish: boolean
   canBeUnpublished: boolean
@@ -139,6 +156,7 @@ interface PublicationState {
   publicationProblem: string | null
   hasUnpublishedChanges: boolean
   hasCourseDraft: boolean
+  previewOptions: Array<{ label: string; url: string }>
 }
 
 const course = computed(() => page.props)
@@ -149,6 +167,15 @@ const acting = ref(false)
 const busy = computed(() => publishing.value || acting.value || props.editor?.processing)
 const stale = computed(() => page.props.errors.revision)
 const media = ref<PublicationState>(page.props)
+const singlePreview = computed(() => media.value.previewOptions.length === 1 ? media.value.previewOptions[0] : undefined)
+const unsavedPreviewNotice = 'You have unsaved changes. The preview shows saved content.'
+
+function notifyUnsavedPreview() {
+  if (props.editor?.dirty) {
+    toast(trans(unsavedPreviewNotice))
+  }
+}
+
 const isPublished = computed(() => course.value.status === 'published')
 const publicationButtonVariant = computed(() => isPublished.value ? 'positive' : 'outline')
 const publishedWithChanges = computed(() => isPublished.value && (media.value.hasUnpublishedChanges || !!props.editor?.dirty))

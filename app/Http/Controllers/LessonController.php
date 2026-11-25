@@ -2,90 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Chapter;
-use App\Models\CompletedLesson;
 use App\Models\Course;
 use App\Models\Lesson;
-use App\Models\Resource;
-use App\Support\TextRenderer;
-use App\View\Models\VideoSource;
-use Illuminate\Database\Eloquent\Collection;
+use App\View\Models\CoursePresentation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Number;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class LessonController
 {
-    public function show(Course $course, Lesson $lesson)
+    public function show(Course $course, Lesson $lesson, CoursePresentation $presentation): Response
     {
         abort_unless($lesson->course_id === $course->id, 404);
 
         Gate::authorize('study', $course);
 
         $user = Auth::user();
-
-        $course->load(['chapters.lessons.video']);
-        $course->loadCount('lessons');
-
-        /** @var Collection<int, CompletedLesson> $completions */
-        $completions = $user->completedLessons()
+        $completedLessonIds = $user->completedLessons()
             ->whereRelation('lesson.course', 'courses.id', $course->id)
-            ->get()
-            ->keyBy(fn (CompletedLesson $completion) => $completion->lesson_id);
-
-        $enrollment = $user->findEnrollmentFor($course);
-
-        $lessonNo = 0;
-        $currentLesson = $lesson;
-        $chapters = $course
-            ->chapters
-            ->sortBy('position')
-            ->values()
-            ->map(function (Chapter $chapter, int $idx) use (&$lessonNo, $currentLesson, $course, $completions) {
-                return [
-                    'no' => $idx + 1,
-                    'title' => $chapter->title,
-                    'lessons' => $chapter
-                        ->lessons
-                        ->sortBy('position')
-                        ->values()
-                        ->map(function (Lesson $lesson) use (&$lessonNo, $currentLesson, $course, $completions) {
-                            $lessonNo++;
-
-                            return [
-                                'slugId' => $lesson->slug_id,
-                                'no' => $lessonNo,
-                                'title' => $lesson->title,
-                                'isCurrent' => $lesson->is($currentLesson),
-                                'duration' => $lesson->video?->getDurationLabel(),
-                                'url' => route('lessons.show', [$course->slug, $lesson->slug_id]),
-                                'isCompleted' => $completions->has($lesson->id),
-                            ];
-                        }),
-                ];
-            });
+            ->pluck('lesson_id')
+            ->all();
 
         return Inertia::render('Courses/CourseLesson', [
-            'id' => $lesson->uuid,
-            'isCompleted' => $completions->has($lesson->id),
-            'completedLessons' => $completions->count(),
-            'totalLessons' => $course->lessons_count,
-            'remainingLessons' => $course->lessons_count - $completions->count(),
-            'progress' => $enrollment->progress,
-            'courseSlug' => $course->slug,
-            'courseTitle' => $course->title,
-            'lessonTitle' => $lesson->title,
-            'video' => VideoSource::for($lesson->video),
-            'description' => $lesson->description
-                ? (new TextRenderer)->toHtml($lesson->description, $lesson->description_type)
-                : null,
-            'resources' => $lesson->resources->map(fn (Resource $resource) => [
-                'name' => $resource->client_file_name,
-                'url' => route('resources.show', [$course->slug, $resource->uuid]),
-                'size' => Number::fileSize($resource->size),
-            ]),
-            'chapters' => $chapters,
+            ...$presentation->lesson($course, $course, $lesson, completedLessonIds: $completedLessonIds),
+            'progress' => $user->findEnrollmentFor($course)->progress,
         ]);
     }
 }

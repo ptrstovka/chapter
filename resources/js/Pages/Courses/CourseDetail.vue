@@ -1,18 +1,22 @@
 <template>
-  <Head :title="title" />
-
   <AuthenticatedLayout>
+    <Head :title="title" />
+    <div v-if="preview" class="border-b bg-secondary/40">
+      <CoursePreviewBanner :preview="preview" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" />
+    </div>
+
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
       <h1 class="text-2xl font-semibold leading-tight">{{ title }}</h1>
 
       <div class="flex flex-col lg:flex-row lg:gap-8 mt-4 lg:mt-6">
         <div class="flex flex-col w-full gap-6">
           <Player
-            v-if="trailer"
+            v-if="trailer?.url"
             :src="trailer.url"
             :type="trailer.type"
             :poster="trailer.posterImageUrl"
           />
+          <CourseVideoStatus v-else-if="trailer" :status="trailer.status" />
 
           <Tabs :default-value="description ? 'description' : 'lessons'">
             <TabsList class="w-full sm:max-w-sm">
@@ -23,13 +27,16 @@
               <div class="prose dark:prose-invert max-w-full pt-2" v-html="description"></div>
             </TabsContent>
             <TabsContent value="lessons">
+              <p v-if="!hasLessons" class="py-4 text-sm text-muted-foreground">{{ $t('This course has no lessons yet.') }}</p>
               <Accordion type="multiple" collapsible>
-                <AccordionItem :value="chapter.id" v-for="chapter in chapters">
+                <AccordionItem v-for="chapter in chapters" :key="chapter.id" :value="chapter.id">
                   <AccordionTrigger>{{ chapter.title }}</AccordionTrigger>
                   <AccordionContent>
-                    <ul class="flex flex-col gap-2">
-                      <li v-for="lesson in chapter.lessons" class="flex flex-row justify-between p-4 text-sm border rounded-md bg-background">
-                        <p class="font-medium">{{ lesson.title }}</p>
+                    <p v-if="!chapter.lessons.length" class="text-sm text-muted-foreground">{{ $t('This chapter has no lessons yet.') }}</p>
+                    <ul v-else class="flex flex-col gap-2">
+                      <li v-for="lesson in chapter.lessons" :key="lesson.id" class="flex flex-row justify-between gap-2 rounded-md border bg-background p-4 text-sm">
+                        <Link v-if="lesson.url" :href="lesson.url" class="font-medium text-primary hover:underline">{{ lesson.title }}</Link>
+                        <p v-else class="font-medium">{{ lesson.title }}</p>
                         <p class="font-mono tabular-nums text-muted-foreground" v-if="lesson.duration">{{ lesson.duration }}</p>
                       </li>
                     </ul>
@@ -57,8 +64,11 @@
                 <p class="text-sm text-muted-foreground" v-else>{{ $t(':value% completed', { value: `${enrollment.progress}` }) }}</p>
               </div>
 
-              <div class="flex flex-col w-full gap-2 mt-4">
-                <LinkButton v-if="enrollment && access.canEnroll" :href="route('courses.begin', slug)">
+              <LinkButton v-if="preview && firstLessonUrl" :href="firstLessonUrl" class="mt-4 w-full">
+                {{ $t('Go to course') }}
+              </LinkButton>
+              <div v-else-if="access" class="flex flex-col w-full gap-2 mt-4">
+                <LinkButton v-if="enrollment && access.canEnroll && slug" :href="route('courses.begin', slug)">
                   {{ enrollment.isCompleted ? $t('Browse Lessons') : (enrollment.completedLessons === 0 ? $t('Start Learning') : $t('Continue Learning')) }}
                 </LinkButton>
                 <Button v-else-if="access.canEnroll" :processing="enrollForm.processing" @click="enroll">{{ $t('Enroll') }}</Button>
@@ -66,7 +76,7 @@
                 <p v-else-if="access.hasPendingRequest" role="status" class="py-2 text-center text-sm text-muted-foreground">{{ $t('Request Pending') }}</p>
               </div>
 
-              <Button @click="resetProgress" v-if="enrollment && access.canEnroll && enrollment.completedLessons > 0" class="w-full mt-3" variant="ghost">{{ $t('Start Over') }}</Button>
+              <Button @click="resetProgress" v-if="enrollment && access?.canEnroll && enrollment.completedLessons > 0" class="w-full mt-3" variant="ghost">{{ $t('Start Over') }}</Button>
             </CardContent>
           </Card>
         </div>
@@ -80,7 +90,7 @@ import { useConfirmable } from '@/Components/ConfirmationDialog'
 import { AuthenticatedLayout } from '@/Layouts'
 import type { VideoSource } from '@/Types'
 import { asyncRouter } from '@stacktrace/ui'
-import { Head, useForm } from '@inertiajs/vue3'
+import { Head, Link, useForm } from '@inertiajs/vue3'
 import { Card, CardContent } from '@/Components/Card'
 import { Player } from '@/Components/Player'
 import { trans } from 'laravel-vue-i18n'
@@ -90,17 +100,22 @@ import { Button, LinkButton } from '@/Components/Button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/Tabs'
 import { Accordion, AccordionTrigger, AccordionContent, AccordionItem } from '@/Components/Accordion'
 import { Badge } from '@/Components/Badge'
+import { computed } from 'vue'
+import type { CoursePreview } from '.'
+import CoursePreviewBanner from './Components/CoursePreviewBanner.vue'
+import CourseVideoStatus from './Components/CourseVideoStatus.vue'
 
 const props = defineProps<{
   id: string
-  slug: string
+  slug: string | null
   title: string
+  preview?: CoursePreview
   access: {
     mode: 'public' | 'request-only' | 'private'
     canEnroll: boolean
     canRequest: boolean
     hasPendingRequest: boolean
-  }
+  } | null
   trailer: VideoSource | null
   description: string | null
   author: {
@@ -120,9 +135,13 @@ const props = defineProps<{
       id: string
       title: string
       duration: string | null
+      url?: string
     }>
   }>
 }>()
+
+const hasLessons = computed(() => props.chapters.some(chapter => chapter.lessons.length))
+const firstLessonUrl = computed(() => props.chapters.find(chapter => chapter.lessons.length)?.lessons[0]?.url)
 
 const enrollForm = useForm({})
 const enroll = () => {
@@ -145,7 +164,9 @@ const requestAccess = () => {
 const { confirm } = useConfirmable()
 
 const resetProgress = () => confirm(trans('Are you sure you want to restart this course? Your current progress will be reset, and you’ll begin from the very first lesson. This action cannot be undone.'), async () => {
-  await asyncRouter.post(route('courses.reset-progress', props.slug))
+  if (props.slug) {
+    await asyncRouter.post(route('courses.reset-progress', props.slug))
+  }
 }, {
   title: trans('Start Over?'),
   destructive: true,

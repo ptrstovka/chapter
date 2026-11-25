@@ -4,6 +4,13 @@ export interface Resource {
   size: string
 }
 
+export interface CoursePreview {
+  version: 'draft' | 'published'
+  versionLabel: string
+  courseUrl: string
+  studioUrl: string
+}
+
 export interface Lesson {
   slugId: string
   title: string

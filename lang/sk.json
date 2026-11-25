@@ -722,5 +722,18 @@
     "Retry or remove the failed videos before publishing.": "Pred publikovaním zopakujte spracovanie videí s chybou alebo ich odstráňte.",
     "Wait for the videos to finish processing before publishing.": "Pred publikovaním počkajte na dokončenie spracovania videí.",
     "Remove this lesson from the course editor?": "Odstrániť túto lekciu z editora kurzu?",
-    "Remove this chapter and its lessons from the course editor?": "Odstrániť túto kapitolu aj jej lekcie z editora kurzu?"
+    "Remove this chapter and its lessons from the course editor?": "Odstrániť túto kapitolu aj jej lekcie z editora kurzu?",
+    "Published version": "Publikovaná verzia",
+    "Last published version": "Posledná publikovaná verzia",
+    "You have unsaved changes. The preview shows saved content.": "Máš neuložené zmeny. Náhľad zobrazí uložený obsah.",
+    "Back to Studio": "Späť do Štúdia",
+    "Back to course preview": "Späť na náhľad kurzu",
+    "Go to course": "Prejsť do kurzu",
+    "Untitled": "Bez názvu",
+    "Untitled course": "Kurz bez názvu",
+    "This course has no lessons yet.": "Kurz zatiaľ neobsahuje žiadne lekcie.",
+    "This chapter has no lessons yet.": "Kapitola zatiaľ neobsahuje žiadne lekcie.",
+    "This lesson has no content yet.": "Lekcia zatiaľ nemá žiadny obsah.",
+    "Video processing failed.": "Spracovanie videa zlyhalo.",
+    "Video is unavailable.": "Video nie je dostupné."
 }

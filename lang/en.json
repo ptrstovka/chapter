@@ -687,5 +687,18 @@
     "Retry or remove the failed videos before publishing.": "Retry or remove the failed videos before publishing.",
     "Wait for the videos to finish processing before publishing.": "Wait for the videos to finish processing before publishing.",
     "Remove this lesson from the course editor?": "Remove this lesson from the course editor?",
-    "Remove this chapter and its lessons from the course editor?": "Remove this chapter and its lessons from the course editor?"
+    "Remove this chapter and its lessons from the course editor?": "Remove this chapter and its lessons from the course editor?",
+    "Published version": "Published version",
+    "Last published version": "Last published version",
+    "You have unsaved changes. The preview shows saved content.": "You have unsaved changes. The preview shows saved content.",
+    "Back to Studio": "Back to Studio",
+    "Back to course preview": "Back to course preview",
+    "Go to course": "Go to course",
+    "Untitled": "Untitled",
+    "Untitled course": "Untitled course",
+    "This course has no lessons yet.": "This course has no lessons yet.",
+    "This chapter has no lessons yet.": "This chapter has no lessons yet.",
+    "This lesson has no content yet.": "This lesson has no content yet.",
+    "Video processing failed.": "Video processing failed.",
+    "Video is unavailable.": "Video is unavailable."
 }

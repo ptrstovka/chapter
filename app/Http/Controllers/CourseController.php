@@ -5,14 +5,11 @@ namespace App\Http\Controllers;
 use App\Enums\CourseAccessMode;
 use App\Enums\CourseStatus;
 use App\Models\Category;
-use App\Models\Chapter;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
-use App\Models\Lesson;
-use App\Support\TextRenderer;
 use App\View\Models\CourseCard;
+use App\View\Models\CoursePresentation;
 use App\View\Models\Paginator;
-use App\View\Models\VideoSource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
@@ -92,13 +89,11 @@ class CourseController
         ]);
     }
 
-    public function show(Course $course)
+    public function show(Course $course, CoursePresentation $presentation)
     {
         $user = Auth::user();
 
         abort_unless($course->status === CourseStatus::Published && $course->isVisibleToLearner($user), 404);
-
-        $course->load('chapters.lessons.video');
 
         $enrollment = $user->findEnrollmentFor($course);
         $canEnroll = Gate::allows('enroll', $course);
@@ -109,38 +104,18 @@ class CourseController
             ->exists();
 
         return Inertia::render('Courses/CourseDetail', [
-            'id' => $course->uuid,
-            'slug' => $course->slug,
-            'title' => $course->title,
+            ...$presentation->detail($course, $course),
             'access' => [
                 'mode' => $course->access_mode->value,
                 'canEnroll' => $canEnroll,
                 'canRequest' => $course->access_mode === CourseAccessMode::RequestOnly && ! $canEnroll && ! $hasPendingAccessRequest,
                 'hasPendingRequest' => $hasPendingAccessRequest,
             ],
-            'trailer' => VideoSource::for($course->trailer),
-            'description' => $course->description
-                ? (new TextRenderer)->toHtml($course->description, $course->description_type)
-                : null,
             'enrollment' => $enrollment ? [
                 'isCompleted' => $enrollment->isCompleted(),
                 'progress' => $enrollment->progress,
                 'completedLessons' => $user->completedLessons()->whereRelation('lesson.course', 'id', $course->id)->count(),
             ] : null,
-            'author' => [
-                'name' => $course->author->name,
-                'avatarUrl' => $course->author->getAvatarUrl(),
-                'bio' => $course->author->bio,
-            ],
-            'chapters' => $course->chapters->sortBy('position')->values()->map(fn (Chapter $chapter) => [
-                'id' => $chapter->uuid,
-                'title' => $chapter->title,
-                'lessons' => $chapter->lessons->sortBy('position')->values()->map(fn (Lesson $lesson) => [
-                    'id' => $lesson->uuid,
-                    'title' => $lesson->title,
-                    'duration' => $lesson->video?->getDurationLabel(),
-                ]),
-            ]),
         ]);
     }
 }

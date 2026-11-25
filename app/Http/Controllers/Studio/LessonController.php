@@ -43,7 +43,7 @@ class LessonController
             'lesson' => [
                 'id' => $lesson->uuid,
                 'title' => $lesson->title,
-                'fallbackTitle' => $lesson->getFallbackTitle(),
+                'displayTitle' => $lesson->getDisplayTitle(),
                 'description' => $lesson->description,
                 'descriptionType' => $lesson->description_type,
                 'video' => VideoSource::for($lesson->video),
@@ -68,7 +68,8 @@ class LessonController
         $lesson->description = $request->input('description');
         $lesson->description_type = $request->enum('description_type', TextContentType::class);
 
-        if ($title = $request->input('title')) {
+        $title = $request->input('title');
+        if (filled($title)) {
             $lesson->title = $title;
             $lesson->slug = Str::slug($title);
         } else {

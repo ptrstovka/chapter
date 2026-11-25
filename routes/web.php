@@ -133,6 +133,16 @@ Route::middleware('auth')->group(function () {
             Route::patch('/courses/{course:uuid}', [Studio\CourseController::class, 'update'])->name('courses.update');
             Route::delete('/courses/{course:uuid}', [Studio\CourseController::class, 'destroy'])->name('courses.destroy');
             Route::get('/courses/{course:uuid}/content', Studio\CourseContentController::class)->name('courses.content');
+            Route::prefix('/courses/{course:uuid}/preview/{version}')
+                ->name('courses.preview.')
+                ->middleware('cache.headers:private;no_store')
+                ->group(function () {
+                    Route::get('/', [Studio\CoursePreviewController::class, 'show'])->name('show');
+                    Route::get('/lessons/{lessonUuid}', [Studio\CoursePreviewController::class, 'lesson'])
+                        ->whereUuid('lessonUuid')->name('lesson');
+                    Route::get('/lessons/{lessonUuid}/resources/{resourceUuid}', [Studio\CoursePreviewController::class, 'resource'])
+                        ->whereUuid(['lessonUuid', 'resourceUuid'])->name('resource');
+                });
             Route::get('/courses/{course:uuid}/access', [Studio\CourseAccessController::class, 'show'])->name('courses.access');
             Route::patch('/courses/{course:uuid}/access', [Studio\CourseAccessController::class, 'update'])->name('courses.access.update');
             Route::post('/courses/{course:uuid}/access/users', [Studio\CourseUserAccessController::class, 'store'])->name('courses.access.users.store');

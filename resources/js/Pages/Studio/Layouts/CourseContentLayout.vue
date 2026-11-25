@@ -18,7 +18,7 @@
                 :course-id="page.props.id"
                 :chapter-id="chapter.id"
                 :lesson-id="lesson.id"
-                :title="lesson.title || lesson.fallbackTitle"
+                :title="lesson.title"
                 :active="route().current('studio.course.lessons.show', [page.props.id, lesson.id])"
                 :disabled="!canEditOutline"
               />
@@ -74,8 +74,7 @@ const props = defineProps<{ editor?: CourseEditorForm }>()
 
 interface Lesson {
   id: string
-  title: string | null
-  fallbackTitle: string
+  title: string
 }
 
 interface Chapter {
@@ -243,12 +242,6 @@ const moveLessonToChapter = (sourceChapterId: string, destinationChapterId: stri
 const updateFallbackTitles = () => {
   chapters.value = chapters.value.map((chapter, chapterIndex) => {
     chapter.fallbackTitle = trans('Chapter :value', { value: `${chapterIndex + 1}` })
-
-    chapter.lessons = chapter.lessons.map((lesson, lessonIndex) => {
-      lesson.fallbackTitle = trans('Lesson :value', { value: `${lessonIndex + 1}` })
-
-      return lesson
-    })
 
     return chapter
   })

@@ -9,7 +9,7 @@
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbPage>
-              {{ lesson.title || lesson.fallbackTitle }}
+              {{ lesson.displayTitle }}
             </BreadcrumbPage>
           </BreadcrumbList>
         </Breadcrumb>
@@ -28,11 +28,11 @@
 
       <div class="flex flex-col gap-4 p-3">
         <FormControl :label="$t('Title')" :error="form.errors.title" class="max-w-lg">
-          <Input v-model="form.title" :placeholder="lesson.fallbackTitle" :disabled="disabled" />
+          <Input v-model="form.title" :placeholder="$t('Untitled')" :disabled="disabled" />
         </FormControl>
 
         <FormControl :label="$t('Video')" class="max-w-lg">
-          <VideoInput :course-id="id" :lesson-id="lesson.id" :source="lesson.video" :label="lesson.title || lesson.fallbackTitle" :disabled="disabled" />
+          <VideoInput :course-id="id" :lesson-id="lesson.id" :source="lesson.video" :label="lesson.displayTitle" :disabled="disabled" />
         </FormControl>
 
         <FormControl :label="$t('Description')" :error="form.errors.description || form.errors.description_type">
@@ -107,7 +107,7 @@ const props = defineProps<{
   lesson: {
     id: string
     title: string | null
-    fallbackTitle: string
+    displayTitle: string
     description: string | null
     descriptionType: TextContentType
     video: VideoSource | null

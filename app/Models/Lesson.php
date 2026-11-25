@@ -7,22 +7,24 @@ use App\Enums\TextContentType;
 use App\Models\Concerns\HasSlugId;
 use App\Models\Concerns\HasUuid;
 use App\Support\FileList;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Str;
 
 /**
- * @property string $slug
- * @property string $title
+ * @property string|null $slug
+ * @property string|null $title
  * @property string|null $description
- * @property \App\Enums\TextContentType $description_type
- * @property \App\Models\Video|null $video
+ * @property TextContentType $description_type
+ * @property Video|null $video
  * @property int $position
  * @property int $position_within_course
- * @property \App\Models\Chapter $chapter
- * @property \App\Models\Course $course
- * @property \Illuminate\Database\Eloquent\Collection<int, \App\Models\Resource> $resources
+ * @property Chapter $chapter
+ * @property Course $course
+ * @property Collection<int, \App\Models\Resource> $resources
  *
  * @method static \Database\Factories\LessonFactory factory($count = null, $state = [])
  */
@@ -91,11 +93,8 @@ class Lesson extends Model
         return $completion;
     }
 
-    /**
-     * Get the lesson fallback title.
-     */
-    public function getFallbackTitle(): string
+    public function getDisplayTitle(): string
     {
-        return __('Lesson :value', ['value' => $this->position]);
+        return Str::trim($this->title ?? '') === '' ? __('Untitled') : $this->title;
     }
 }

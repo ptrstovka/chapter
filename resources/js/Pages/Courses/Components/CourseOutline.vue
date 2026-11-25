@@ -17,6 +17,7 @@
             )"
             >
               <PlayIcon v-if="item.lesson.isCurrent" class="w-4 h-4" />
+              <BookOpenIcon v-else-if="preview" class="w-4 h-4" />
               <template v-else>
                 <CheckIcon v-if="item.lesson.isCompleted" class="w-4 h-4" />
                 <HourglassIcon v-else class="w-4 h-4" />
@@ -44,7 +45,7 @@
 import type { Chapter, Lesson } from "@/Pages/Courses";
 import { cn } from "@/Utils";
 import { Link } from "@inertiajs/vue3";
-import { CheckIcon, HourglassIcon, PlayIcon, TimerIcon } from "lucide-vue-next";
+import { BookOpenIcon, CheckIcon, HourglassIcon, PlayIcon, TimerIcon } from "lucide-vue-next";
 import { computed, ref, useTemplateRef } from "vue";
 
 interface ChapterItem {
@@ -61,6 +62,7 @@ type ListItem = ChapterItem | LessonItem
 
 const props = defineProps<{
   chapters: Array<Chapter>
+  preview?: boolean
 }>()
 
 const flattenItems = computed<Array<ListItem>>(() => props.chapters.reduce((acc: Array<ListItem>, val) => {

@@ -1,106 +1,115 @@
 <template>
-  <div v-if="video" class="mb-6 relative">
-    <Player
-      :src="video.url"
-      :type="video.type"
-      :poster="video.posterImageUrl"
-      @ended="onPlaybackEnded"
-      :autoplay="shouldAutoPlay === 'on'"
-    >
-      <template #settings>
-        <PlayerSubmenu :label="$t('Autoplay')" :hint="shouldAutoPlay === 'on' ? $t('On') : $t('Off')">
-          <template #icon>
-            <PlayCircleIcon class="size-5" />
-          </template>
-          <template #content>
-            <PlayerMenuRadioGroup v-model="shouldAutoPlay">
-              <PlayerMenuRadioItem value="on">{{ $t('On') }}</PlayerMenuRadioItem>
-              <PlayerMenuRadioItem value="off">{{ $t('Off') }}</PlayerMenuRadioItem>
-            </PlayerMenuRadioGroup>
-          </template>
-        </PlayerSubmenu>
+  <div>
+    <div v-if="video" class="mb-6 relative">
+      <Player
+        v-if="video.url"
+        :src="video.url"
+        :type="video.type"
+        :poster="video.posterImageUrl"
+        @ended="onPlaybackEnded"
+        :autoplay="!preview && shouldAutoPlay === 'on'"
+      >
+        <template v-if="!preview" #settings>
+          <PlayerSubmenu :label="$t('Autoplay')" :hint="shouldAutoPlay === 'on' ? $t('On') : $t('Off')">
+            <template #icon>
+              <PlayCircleIcon class="size-5" />
+            </template>
+            <template #content>
+              <PlayerMenuRadioGroup v-model="shouldAutoPlay">
+                <PlayerMenuRadioItem value="on">{{ $t('On') }}</PlayerMenuRadioItem>
+                <PlayerMenuRadioItem value="off">{{ $t('Off') }}</PlayerMenuRadioItem>
+              </PlayerMenuRadioGroup>
+            </template>
+          </PlayerSubmenu>
 
-        <PlayerSubmenu :label="$t('Auto next lesson')" :hint="shouldPlayNextLesson === 'on' ? $t('On') : $t('Off')">
-          <template #icon>
-            <SkipForwardIcon class="size-5" />
-          </template>
-          <template #content>
-            <PlayerMenuRadioGroup v-model="shouldPlayNextLesson">
-              <PlayerMenuRadioItem value="on">{{ $t('On') }}</PlayerMenuRadioItem>
-              <PlayerMenuRadioItem value="off">{{ $t('Off') }}</PlayerMenuRadioItem>
-            </PlayerMenuRadioGroup>
-          </template>
-        </PlayerSubmenu>
-      </template>
-    </Player>
+          <PlayerSubmenu :label="$t('Auto next lesson')" :hint="shouldPlayNextLesson === 'on' ? $t('On') : $t('Off')">
+            <template #icon>
+              <SkipForwardIcon class="size-5" />
+            </template>
+            <template #content>
+              <PlayerMenuRadioGroup v-model="shouldPlayNextLesson">
+                <PlayerMenuRadioItem value="on">{{ $t('On') }}</PlayerMenuRadioItem>
+                <PlayerMenuRadioItem value="off">{{ $t('Off') }}</PlayerMenuRadioItem>
+              </PlayerMenuRadioGroup>
+            </template>
+          </PlayerSubmenu>
+        </template>
+      </Player>
+      <CourseVideoStatus v-else :status="video.status" />
 
-    <LessonCompleted
-      v-if="showLessonCompleted"
-      class="absolute inset-0 z-50"
-      v-motion
-      :initial="{ opacity: 0 }"
-      :enter="{ opacity: 1, transition: { duration: 300, easing: 'easeInOut', delay: 0 } }"
-      :auto="shouldPlayNextLesson == 'on'"
-      :next="remainingLessons == 1 && !isCompleted ? false : !!nextLesson"
-      @next="navigateToNextLesson"
-    />
-  </div>
-
-  <div class="flex flex-col lg:flex-row justify-between items-start gap-4 lg:gap-6">
-    <h2 class="font-semibold text-xl leading-tight">{{ lessonTitle }}</h2>
-
-    <div class="inline-flex flex-row gap-3">
-      <template v-if="! courseCompleted">
-        <Button v-if="isCompleted" variant="positive" :processing="markCompletedForm.processing" @click="markNotCompleted">
-          <CheckIcon class="w-4 h-4" /> {{ $t('Lesson Completed') }}
-        </Button>
-        <Button v-else-if="!isCompleted && remainingLessons > 1" :processing="markCompletedForm.processing" @click="markCompleted" variant="outline">
-          <CheckIcon class="w-4 h-4" /> {{ $t('Mark Completed') }}
-        </Button>
-      </template>
-
-      <LinkButton v-if="prevLesson" :href="prevLesson.url" class="gap-2" variant="outline">
-        <RewindIcon class="w-4 h-4" />
-        {{ $t('Previous Lesson') }}
-      </LinkButton>
-      <Button v-if="remainingLessons == 1 && !isCompleted" @click="finish">
-        <CheckIcon class="w-4 h-4" />
-        {{ $t('Finish Course') }}
-      </Button>
-      <Button v-else-if="nextLesson" @click="navigateToNextLesson">
-        {{ $t('Next Lesson') }}
-        <FastForwardIcon class="w-4 h-4" />
-      </Button>
+      <LessonCompleted
+        v-if="!preview && showLessonCompleted"
+        class="absolute inset-0 z-50"
+        v-motion
+        :initial="{ opacity: 0 }"
+        :enter="{ opacity: 1, transition: { duration: 300, easing: 'easeInOut', delay: 0 } }"
+        :auto="shouldPlayNextLesson == 'on'"
+        :next="remainingLessons == 1 && !isCompleted ? false : !!nextLesson"
+        @next="navigateToNextLesson"
+      />
     </div>
+
+    <div class="flex flex-col lg:flex-row justify-between items-start gap-4 lg:gap-6">
+      <h2 class="font-semibold text-xl leading-tight">{{ lessonTitle }}</h2>
+
+      <div class="inline-flex flex-row gap-3">
+        <template v-if="!preview && !courseCompleted">
+          <Button v-if="isCompleted" variant="positive" :processing="markCompletedForm.processing" @click="markNotCompleted">
+            <CheckIcon class="w-4 h-4" /> {{ $t('Lesson Completed') }}
+          </Button>
+          <Button v-else-if="!isCompleted && remainingLessons > 1" :processing="markCompletedForm.processing" @click="markCompleted" variant="outline">
+            <CheckIcon class="w-4 h-4" /> {{ $t('Mark Completed') }}
+          </Button>
+        </template>
+
+        <LinkButton v-if="prevLesson" :href="prevLesson.url" class="gap-2" variant="outline">
+          <RewindIcon class="w-4 h-4" />
+          {{ $t('Previous Lesson') }}
+        </LinkButton>
+        <LinkButton v-if="preview && nextLesson" :href="nextLesson.url">
+          {{ $t('Next Lesson') }}
+          <FastForwardIcon class="w-4 h-4" />
+        </LinkButton>
+        <Button v-else-if="!preview && remainingLessons == 1 && !isCompleted" @click="finish">
+          <CheckIcon class="w-4 h-4" />
+          {{ $t('Finish Course') }}
+        </Button>
+        <Button v-else-if="!preview && nextLesson" @click="navigateToNextLesson">
+          {{ $t('Next Lesson') }}
+          <FastForwardIcon class="w-4 h-4" />
+        </Button>
+      </div>
+    </div>
+
+    <Tabs v-if="description || resources.length > 0" v-model="visibleTab">
+      <TabsList v-if="description && resources.length > 0" class="mt-6 w-full md:w-1/2">
+        <TabsTrigger class="flex-1 justify-center" v-if="description" value="description">{{ $t('Description') }}</TabsTrigger>
+        <TabsTrigger class="flex-1 justify-center" v-if="resources.length > 0" value="resources">{{ $t('Resources') }}</TabsTrigger>
+      </TabsList>
+      <TabsContent value="description" v-if="description">
+        <div class="prose dark:prose-invert mt-4" v-html="description"></div>
+      </TabsContent>
+      <TabsContent value="resources">
+        <ul class="lg:max-w-xs flex flex-col gap-2 mt-4">
+          <ResourceItem v-for="resource in resources" :resource="resource" />
+        </ul>
+      </TabsContent>
+    </Tabs>
+    <p v-else-if="!video" class="mt-4 text-sm text-muted-foreground">{{ $t('This lesson has no content yet.') }}</p>
+
+    <Dialog v-if="!preview" :control="completeDialog">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{{ $t('Congratulations!') }} 🎉</DialogTitle>
+        </DialogHeader>
+        <p>{{ $t("You did it! You’ve officially completed the course.") }}</p>
+        <p>{{ $t('Taking the time and effort to learn something new is no small feat, and you should be proud of yourself for making it through to the end.') }}</p>
+        <DialogFooter>
+          <Button @click="exit">{{ $t('Continue') }}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
-
-  <Tabs v-if="description || resources.length > 0" v-model="visibleTab">
-    <TabsList v-if="description && resources.length > 0" class="mt-6 w-full md:w-1/2">
-      <TabsTrigger class="flex-1 justify-center" v-if="description" value="description">{{ $t('Description') }}</TabsTrigger>
-      <TabsTrigger class="flex-1 justify-center" v-if="resources.length > 0" value="resources">{{ $t('Resources') }}</TabsTrigger>
-    </TabsList>
-    <TabsContent value="description" v-if="description">
-      <div class="prose dark:prose-invert mt-4" v-html="description"></div>
-    </TabsContent>
-    <TabsContent value="resources">
-      <ul class="lg:max-w-xs flex flex-col gap-2 mt-4">
-        <ResourceItem v-for="resource in resources" :resource="resource" />
-      </ul>
-    </TabsContent>
-  </Tabs>
-
-  <Dialog :control="completeDialog">
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>{{ $t('Congratulations!') }} 🎉</DialogTitle>
-      </DialogHeader>
-      <p>{{ $t("You did it! You’ve officially completed the course.") }}</p>
-      <p>{{ $t('Taking the time and effort to learn something new is no small feat, and you should be proud of yourself for making it through to the end.') }}</p>
-      <DialogFooter>
-        <Button @click="exit">{{ $t('Continue') }}</Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -120,17 +129,8 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { useToggle } from '@stacktrace/ui'
 import LessonCompleted from './Components/LessonCompleted.vue'
 import ResourceItem from './Components/ResourceItem.vue'
-import { type Resource } from '.'
-
-interface Lesson {
-  slugId: string
-  title: string
-  no: number
-  isCurrent: boolean
-  duration: string | null
-  url: string
-  isCompleted: boolean
-}
+import CourseVideoStatus from './Components/CourseVideoStatus.vue'
+import type { Chapter, CoursePreview, Lesson, Resource } from '.'
 
 defineOptions({
   layout: [RootLayout, LessonLayout],
@@ -139,19 +139,14 @@ defineOptions({
 const props = defineProps<{
   id: string
   isCompleted: boolean
-  courseSlug: string
-  courseTitle: string
+  courseSlug: string | null
+  preview?: CoursePreview
   lessonTitle: string
-  progress: number
   video: VideoSource | null
   description: string | null
   remainingLessons: number
   resources: Array<Resource>
-  chapters: Array<{
-    no: number
-    title: string
-    lessons: Array<Lesson>
-  }>
+  chapters: Array<Chapter>
 }>()
 
 const showLessonCompleted = ref(false)
@@ -210,6 +205,8 @@ const markNotCompleted = () => {
 }
 
 const navigateToNextLesson = () => {
+  if (props.preview || !props.courseSlug) return
+
   router.post(route('lessons.next', props.courseSlug), {
     from: props.id,
   })
@@ -258,10 +255,14 @@ const finish = () => {
 
 const exit = () => {
   completeDialog.deactivate()
-  router.visit(route('courses.show', props.courseSlug))
+  if (props.courseSlug) {
+    router.visit(route('courses.show', props.courseSlug))
+  }
 }
 
 const onPlaybackEnded = () => {
+  if (props.preview) return
+
   showLessonCompleted.value = true
 
   if (props.remainingLessons === 1 && !props.isCompleted && !completeDialog.active.value) {

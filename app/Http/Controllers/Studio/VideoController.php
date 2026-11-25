@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Studio;
 
+use App\Enums\CoursePreviewVersion;
 use App\Enums\VideoUploadStatus;
 use App\Models\Course;
 use App\Models\CourseDraft;
@@ -33,6 +34,7 @@ class VideoController
             'hasCourseDraft' => $course->draft !== null,
             'courseStatus' => $course->status,
             'revision' => $course->studio_revision,
+            'previewOptions' => CoursePreviewVersion::optionsFor($course),
         ]);
     }
 
