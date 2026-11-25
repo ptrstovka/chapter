@@ -57,13 +57,13 @@ class CourseAccessController
     protected function accessModeOptions(): array
     {
         return [
-            new SelectOption(__('Public'), CourseAccessMode::Public->value, [
+            new SelectOption(__('Course access:Public'), CourseAccessMode::Public->value, [
                 'description' => __('Anyone signed in can enroll.'),
             ]),
             new SelectOption(__('Approval required'), CourseAccessMode::RequestOnly->value, [
                 'description' => __('Learners can find the course and request access before enrolling.'),
             ]),
-            new SelectOption(__('Private'), CourseAccessMode::Private->value, [
+            new SelectOption(__('Course access:Private'), CourseAccessMode::Private->value, [
                 'description' => __('Only directly granted users or members of granted groups can access it.'),
             ]),
         ];
